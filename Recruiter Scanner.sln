@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34701.34
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Recruiter Scanner", "Recruiter Scanner\Recruiter Scanner.csproj", "{CDAC6562-B9EF-4052-9CA1-87C40F62DBD3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CDAC6562-B9EF-4052-9CA1-87C40F62DBD3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CDAC6562-B9EF-4052-9CA1-87C40F62DBD3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CDAC6562-B9EF-4052-9CA1-87C40F62DBD3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CDAC6562-B9EF-4052-9CA1-87C40F62DBD3}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {86A66214-B5D1-4B3D-B70F-F93B33790AD5}
+	EndGlobalSection
+EndGlobal

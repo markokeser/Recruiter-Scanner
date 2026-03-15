@@ -1,0 +1,66 @@
+C:\Users\Marko\OneDrive\Радна површина\Marko Keser Website\Recruiter Scanner\Recruiter Scanner\bin\Debug\net8.0\appsettings.Development.json
+C:\Users\Marko\OneDrive\Радна површина\Marko Keser Website\Recruiter Scanner\Recruiter Scanner\bin\Debug\net8.0\appsettings.json
+C:\Users\Marko\OneDrive\Радна површина\Marko Keser Website\Recruiter Scanner\Recruiter Scanner\bin\Debug\net8.0\Recruiter Scanner.staticwebassets.runtime.json
+C:\Users\Marko\OneDrive\Радна површина\Marko Keser Website\Recruiter Scanner\Recruiter Scanner\bin\Debug\net8.0\Recruiter Scanner.exe
+C:\Users\Marko\OneDrive\Радна површина\Marko Keser Website\Recruiter Scanner\Recruiter Scanner\bin\Debug\net8.0\Recruiter Scanner.deps.json
+C:\Users\Marko\OneDrive\Радна површина\Marko Keser Website\Recruiter Scanner\Recruiter Scanner\bin\Debug\net8.0\Recruiter Scanner.runtimeconfig.json
+C:\Users\Marko\OneDrive\Радна површина\Marko Keser Website\Recruiter Scanner\Recruiter Scanner\bin\Debug\net8.0\Recruiter Scanner.dll
+C:\Users\Marko\OneDrive\Радна површина\Marko Keser Website\Recruiter Scanner\Recruiter Scanner\bin\Debug\net8.0\Recruiter Scanner.pdb
+C:\Users\Marko\OneDrive\Радна површина\Marko Keser Website\Recruiter Scanner\Recruiter Scanner\obj\Debug\net8.0\Recruiter Scanner.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Marko\OneDrive\Радна површина\Marko Keser Website\Recruiter Scanner\Recruiter Scanner\obj\Debug\net8.0\Recruiter Scanner.AssemblyInfoInputs.cache
+C:\Users\Marko\OneDrive\Радна површина\Marko Keser Website\Recruiter Scanner\Recruiter Scanner\obj\Debug\net8.0\Recruiter Scanner.AssemblyInfo.cs
+C:\Users\Marko\OneDrive\Радна површина\Marko Keser Website\Recruiter Scanner\Recruiter Scanner\obj\Debug\net8.0\Recruiter Scanner.csproj.CoreCompileInputs.cache
+C:\Users\Marko\OneDrive\Радна површина\Marko Keser Website\Recruiter Scanner\Recruiter Scanner\obj\Debug\net8.0\Recruiter Scanner.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\Marko\OneDrive\Радна површина\Marko Keser Website\Recruiter Scanner\Recruiter Scanner\obj\Debug\net8.0\Recruiter Scanner.RazorAssemblyInfo.cache
+C:\Users\Marko\OneDrive\Радна површина\Marko Keser Website\Recruiter Scanner\Recruiter Scanner\obj\Debug\net8.0\Recruiter Scanner.RazorAssemblyInfo.cs
+C:\Users\Marko\OneDrive\Радна површина\Marko Keser Website\Recruiter Scanner\Recruiter Scanner\obj\Debug\net8.0\staticwebassets.build.json
+C:\Users\Marko\OneDrive\Радна површина\Marko Keser Website\Recruiter Scanner\Recruiter Scanner\obj\Debug\net8.0\staticwebassets.development.json
+C:\Users\Marko\OneDrive\Радна површина\Marko Keser Website\Recruiter Scanner\Recruiter Scanner\obj\Debug\net8.0\staticwebassets\msbuild.Recruiter Scanner.Microsoft.AspNetCore.StaticWebAssets.props
+C:\Users\Marko\OneDrive\Радна површина\Marko Keser Website\Recruiter Scanner\Recruiter Scanner\obj\Debug\net8.0\staticwebassets\msbuild.build.Recruiter Scanner.props
+C:\Users\Marko\OneDrive\Радна површина\Marko Keser Website\Recruiter Scanner\Recruiter Scanner\obj\Debug\net8.0\staticwebassets\msbuild.buildMultiTargeting.Recruiter Scanner.props
+C:\Users\Marko\OneDrive\Радна површина\Marko Keser Website\Recruiter Scanner\Recruiter Scanner\obj\Debug\net8.0\staticwebassets\msbuild.buildTransitive.Recruiter Scanner.props
+C:\Users\Marko\OneDrive\Радна површина\Marko Keser Website\Recruiter Scanner\Recruiter Scanner\obj\Debug\net8.0\staticwebassets.pack.json
+C:\Users\Marko\OneDrive\Радна површина\Marko Keser Website\Recruiter Scanner\Recruiter Scanner\obj\Debug\net8.0\scopedcss\Views\Shared\_Layout.cshtml.rz.scp.css
+C:\Users\Marko\OneDrive\Радна површина\Marko Keser Website\Recruiter Scanner\Recruiter Scanner\obj\Debug\net8.0\scopedcss\bundle\Recruiter Scanner.styles.css
+C:\Users\Marko\OneDrive\Радна површина\Marko Keser Website\Recruiter Scanner\Recruiter Scanner\obj\Debug\net8.0\scopedcss\projectbundle\Recruiter Scanner.bundle.scp.css
+C:\Users\Marko\OneDrive\Радна површина\Marko Keser Website\Recruiter Scanner\Recruiter Scanner\obj\Debug\net8.0\Recruiter Scanner.dll
+C:\Users\Marko\OneDrive\Радна површина\Marko Keser Website\Recruiter Scanner\Recruiter Scanner\obj\Debug\net8.0\refint\Recruiter Scanner.dll
+C:\Users\Marko\OneDrive\Радна површина\Marko Keser Website\Recruiter Scanner\Recruiter Scanner\obj\Debug\net8.0\Recruiter Scanner.pdb
+C:\Users\Marko\OneDrive\Радна површина\Marko Keser Website\Recruiter Scanner\Recruiter Scanner\obj\Debug\net8.0\Recruiter Scanner.genruntimeconfig.cache
+C:\Users\Marko\OneDrive\Радна површина\Marko Keser Website\Recruiter Scanner\Recruiter Scanner\obj\Debug\net8.0\ref\Recruiter Scanner.dll
+C:\Users\Marko\OneDrive\Радна површина\Marko Keser Website\Recruiter Scanner\Recruiter Scanner\bin\Debug\net8.0\CsvHelper.dll
+C:\Users\Marko\OneDrive\Радна површина\Marko Keser Website\Recruiter Scanner\Recruiter Scanner\obj\Debug\net8.0\Recruiter Scanner.csproj.AssemblyReference.cache
+C:\Users\Marko\OneDrive\Радна површина\Marko Keser Website\Recruiter Scanner\Recruiter Scanner\obj\Debug\net8.0\Recruite.F86E5164.Up2Date
+C:\Users\Marko\OneDrive\Радна површина\Recruiter Scanner(GitHub)\Recruiter Scanner\Recruiter Scanner\bin\Debug\net8.0\appsettings.Development.json
+C:\Users\Marko\OneDrive\Радна површина\Recruiter Scanner(GitHub)\Recruiter Scanner\Recruiter Scanner\bin\Debug\net8.0\appsettings.json
+C:\Users\Marko\OneDrive\Радна површина\Recruiter Scanner(GitHub)\Recruiter Scanner\Recruiter Scanner\bin\Debug\net8.0\Recruiter Scanner.staticwebassets.runtime.json
+C:\Users\Marko\OneDrive\Радна површина\Recruiter Scanner(GitHub)\Recruiter Scanner\Recruiter Scanner\bin\Debug\net8.0\Recruiter Scanner.exe
+C:\Users\Marko\OneDrive\Радна површина\Recruiter Scanner(GitHub)\Recruiter Scanner\Recruiter Scanner\bin\Debug\net8.0\Recruiter Scanner.deps.json
+C:\Users\Marko\OneDrive\Радна површина\Recruiter Scanner(GitHub)\Recruiter Scanner\Recruiter Scanner\bin\Debug\net8.0\Recruiter Scanner.runtimeconfig.json
+C:\Users\Marko\OneDrive\Радна површина\Recruiter Scanner(GitHub)\Recruiter Scanner\Recruiter Scanner\bin\Debug\net8.0\Recruiter Scanner.dll
+C:\Users\Marko\OneDrive\Радна површина\Recruiter Scanner(GitHub)\Recruiter Scanner\Recruiter Scanner\bin\Debug\net8.0\Recruiter Scanner.pdb
+C:\Users\Marko\OneDrive\Радна површина\Recruiter Scanner(GitHub)\Recruiter Scanner\Recruiter Scanner\bin\Debug\net8.0\CsvHelper.dll
+C:\Users\Marko\OneDrive\Радна површина\Recruiter Scanner(GitHub)\Recruiter Scanner\Recruiter Scanner\obj\Debug\net8.0\Recruiter Scanner.csproj.AssemblyReference.cache
+C:\Users\Marko\OneDrive\Радна површина\Recruiter Scanner(GitHub)\Recruiter Scanner\Recruiter Scanner\obj\Debug\net8.0\Recruiter Scanner.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Marko\OneDrive\Радна површина\Recruiter Scanner(GitHub)\Recruiter Scanner\Recruiter Scanner\obj\Debug\net8.0\Recruiter Scanner.AssemblyInfoInputs.cache
+C:\Users\Marko\OneDrive\Радна површина\Recruiter Scanner(GitHub)\Recruiter Scanner\Recruiter Scanner\obj\Debug\net8.0\Recruiter Scanner.AssemblyInfo.cs
+C:\Users\Marko\OneDrive\Радна површина\Recruiter Scanner(GitHub)\Recruiter Scanner\Recruiter Scanner\obj\Debug\net8.0\Recruiter Scanner.csproj.CoreCompileInputs.cache
+C:\Users\Marko\OneDrive\Радна површина\Recruiter Scanner(GitHub)\Recruiter Scanner\Recruiter Scanner\obj\Debug\net8.0\Recruiter Scanner.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\Marko\OneDrive\Радна површина\Recruiter Scanner(GitHub)\Recruiter Scanner\Recruiter Scanner\obj\Debug\net8.0\Recruiter Scanner.RazorAssemblyInfo.cache
+C:\Users\Marko\OneDrive\Радна површина\Recruiter Scanner(GitHub)\Recruiter Scanner\Recruiter Scanner\obj\Debug\net8.0\Recruiter Scanner.RazorAssemblyInfo.cs
+C:\Users\Marko\OneDrive\Радна површина\Recruiter Scanner(GitHub)\Recruiter Scanner\Recruiter Scanner\obj\Debug\net8.0\staticwebassets.build.json
+C:\Users\Marko\OneDrive\Радна површина\Recruiter Scanner(GitHub)\Recruiter Scanner\Recruiter Scanner\obj\Debug\net8.0\staticwebassets.development.json
+C:\Users\Marko\OneDrive\Радна површина\Recruiter Scanner(GitHub)\Recruiter Scanner\Recruiter Scanner\obj\Debug\net8.0\staticwebassets\msbuild.Recruiter Scanner.Microsoft.AspNetCore.StaticWebAssets.props
+C:\Users\Marko\OneDrive\Радна површина\Recruiter Scanner(GitHub)\Recruiter Scanner\Recruiter Scanner\obj\Debug\net8.0\staticwebassets\msbuild.build.Recruiter Scanner.props
+C:\Users\Marko\OneDrive\Радна површина\Recruiter Scanner(GitHub)\Recruiter Scanner\Recruiter Scanner\obj\Debug\net8.0\staticwebassets\msbuild.buildMultiTargeting.Recruiter Scanner.props
+C:\Users\Marko\OneDrive\Радна површина\Recruiter Scanner(GitHub)\Recruiter Scanner\Recruiter Scanner\obj\Debug\net8.0\staticwebassets\msbuild.buildTransitive.Recruiter Scanner.props
+C:\Users\Marko\OneDrive\Радна површина\Recruiter Scanner(GitHub)\Recruiter Scanner\Recruiter Scanner\obj\Debug\net8.0\staticwebassets.pack.json
+C:\Users\Marko\OneDrive\Радна површина\Recruiter Scanner(GitHub)\Recruiter Scanner\Recruiter Scanner\obj\Debug\net8.0\scopedcss\Views\Shared\_Layout.cshtml.rz.scp.css
+C:\Users\Marko\OneDrive\Радна површина\Recruiter Scanner(GitHub)\Recruiter Scanner\Recruiter Scanner\obj\Debug\net8.0\scopedcss\bundle\Recruiter Scanner.styles.css
+C:\Users\Marko\OneDrive\Радна површина\Recruiter Scanner(GitHub)\Recruiter Scanner\Recruiter Scanner\obj\Debug\net8.0\scopedcss\projectbundle\Recruiter Scanner.bundle.scp.css
+C:\Users\Marko\OneDrive\Радна површина\Recruiter Scanner(GitHub)\Recruiter Scanner\Recruiter Scanner\obj\Debug\net8.0\Recruite.F86E5164.Up2Date
+C:\Users\Marko\OneDrive\Радна површина\Recruiter Scanner(GitHub)\Recruiter Scanner\Recruiter Scanner\obj\Debug\net8.0\Recruiter Scanner.dll
+C:\Users\Marko\OneDrive\Радна површина\Recruiter Scanner(GitHub)\Recruiter Scanner\Recruiter Scanner\obj\Debug\net8.0\refint\Recruiter Scanner.dll
+C:\Users\Marko\OneDrive\Радна површина\Recruiter Scanner(GitHub)\Recruiter Scanner\Recruiter Scanner\obj\Debug\net8.0\Recruiter Scanner.pdb
+C:\Users\Marko\OneDrive\Радна површина\Recruiter Scanner(GitHub)\Recruiter Scanner\Recruiter Scanner\obj\Debug\net8.0\Recruiter Scanner.genruntimeconfig.cache
+C:\Users\Marko\OneDrive\Радна површина\Recruiter Scanner(GitHub)\Recruiter Scanner\Recruiter Scanner\obj\Debug\net8.0\ref\Recruiter Scanner.dll

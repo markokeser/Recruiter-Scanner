@@ -1,0 +1,69 @@
+﻿@model List<Recruiter_Scanner.Models.MatchData>
+
+@foreach (var rec in Model.Select((value, index) => new { value, index }))
+{
+    var scoreClass = rec.value.MatchScore >= 8 ? "high" : (rec.value.MatchScore >= 5 ? "medium" : "low");
+
+    <div class="recruiter-card" onclick="selectRecruiter(@rec.index)" id="card-@rec.index"
+         data-company="@rec.value.CompanyName" data-city="@rec.value.City" data-score="@rec.value.MatchScore">
+        <div class="card-header">
+            <span class="company-name">@(rec.value.CompanyName ?? "Nepoznata kompanija")</span>
+            <span class="match-score @scoreClass">@(rec.value.MatchScore?.ToString() ?? "?")/10</span>
+        </div>
+
+        <div class="recruiter-info">
+            <div class="recruiter-name">@(rec.value.RecruiterName ?? "Nepoznat recruiter")</div>
+            <div class="recruiter-title">@(rec.value.RecruiterTitle ?? "Nepoznata pozicija")</div>
+        </div>
+
+        <div class="company-details">
+            <div>📍 @(rec.value.City ?? "Nepoznat grad"), @(rec.value.Country ?? "Nepoznata država")</div>
+            <div>📧 @(rec.value.RecruiterEmail ?? "Nema emaila") (@(rec.value.EmailStatus ?? "Unknown"))</div>
+
+            <!-- LinkedIn link - prikazan u kartici -->
+            @if (!string.IsNullOrEmpty(rec.value.RecruiterLinkedIn))
+            {
+                <div>🔗 <a href="@@rec.value.RecruiterLinkedIn" target="_blank" onclick="event.stopPropagation()">LinkedIn profil</a></div>
+            }
+
+            @if (!string.IsNullOrEmpty(rec.value.Website))
+            {
+                <div>🌐 <a href="@@rec.value.Website" target="_blank" onclick="event.stopPropagation()">@rec.value.Website</a></div>
+            }
+        </div>
+
+        <div class="reasoning">
+            <strong>💡 Reasoning:</strong> @(rec.value.Reasoning ?? "Nema reasoninga")
+        </div>
+
+        <div class="strengths">
+            @foreach (var s in rec.value.Strengths ?? new List<string>())
+            {
+                <span class="strength-tag">✓ @s</span>
+            }
+        </div>
+
+        <div class="weaknesses">
+            @foreach (var w in rec.value.Weaknesses ?? new List<string>())
+            {
+                <span class="weakness-tag">⚠ @w</span>
+            }
+        </div>
+
+        <div class="card-footer">
+            <button class="btn btn-primary" onclick="event.stopPropagation(); generateEmail(@rec.index)">
+                ✉ Generiši email
+            </button>
+
+            <!-- Novo dugme za LinkedIn poruku - disabled ako nema LinkedIn profila -->
+            <button class="btn btn-purple" onclick="event.stopPropagation(); generateLinkedInMessage(@rec.index)"
+            @(string.IsNullOrEmpty(rec.value.RecruiterLinkedIn) ? "disabled" : "")>
+                🔗 Generiši LinkedIn poruku
+            </button>
+
+            <button class="btn btn-outline" onclick="event.stopPropagation(); viewDetails(@rec.index)">
+                ℹ Detalji
+            </button>
+        </div>
+    </div>
+}

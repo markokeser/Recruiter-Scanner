@@ -1,0 +1,1379 @@
+﻿@model Recruiter_Scanner.Models.EmailGeneratorViewModel
+@{
+    ViewData["Title"] = "Email Generator - Recruiter Scanner";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+        background: #f5f5f5;
+        color: #333;
+    }
+
+    .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    header {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    h1 {
+        color: #2c3e50;
+        font-size: 24px;
+    }
+
+    .btn {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: all 0.3s;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .btn-primary {
+        background: #3498db;
+        color: white;
+    }
+
+        .btn-primary:hover {
+            background: #2980b9;
+        }
+
+    .btn-success {
+        background: #27ae60;
+        color: white;
+    }
+
+        .btn-success:hover {
+            background: #2ecc71;
+        }
+
+    .btn-warning {
+        background: #f39c12;
+        color: white;
+    }
+
+        .btn-warning:hover {
+            background: #e67e22;
+        }
+
+    .btn-danger {
+        background: #e74c3c;
+        color: white;
+    }
+
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+
+    .btn-outline {
+        background: transparent;
+        border: 1px solid #3498db;
+        color: #3498db;
+    }
+
+        .btn-outline:hover {
+            background: #3498db;
+            color: white;
+        }
+
+    .btn-purple {
+        background: #9b59b6;
+        color: white;
+    }
+
+        .btn-purple:hover {
+            background: #8e44ad;
+        }
+
+    .btn-info {
+        background: #3498db;
+        color: white;
+    }
+
+    .stats {
+        background: white;
+        padding: 15px 20px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        display: flex;
+        gap: 30px;
+        flex-wrap: wrap;
+    }
+
+    .stat-item {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .stat-label {
+        font-size: 12px;
+        color: #7f8c8d;
+        text-transform: uppercase;
+    }
+
+    .stat-value {
+        font-size: 24px;
+        font-weight: bold;
+        color: #2c3e50;
+    }
+
+    .alert {
+        padding: 15px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+    }
+
+    .alert-success {
+        background: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+    }
+
+    .alert-error {
+        background: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+    }
+
+    .alert-warning {
+        background: #fff3cd;
+        color: #856404;
+        border: 1px solid #ffeeba;
+    }
+
+    .filter-bar {
+        background: white;
+        padding: 15px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+
+    .filter-input {
+        padding: 8px 12px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        flex: 1;
+        min-width: 200px;
+    }
+
+    .filter-select {
+        padding: 8px 12px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        background: white;
+    }
+
+    .recruiters-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+
+    .recruiter-card {
+        background: white;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        transition: transform 0.2s, box-shadow 0.2s;
+        cursor: pointer;
+        border: 2px solid transparent;
+        position: relative;
+    }
+
+        .recruiter-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        .recruiter-card.selected {
+            border-color: #3498db;
+            background: #f0f7ff;
+        }
+
+        .recruiter-card.generating {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+            .recruiter-card.generating::after {
+                content: '';
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                width: 30px;
+                height: 30px;
+                border: 3px solid #f3f3f3;
+                border-top: 3px solid #3498db;
+                border-radius: 50%;
+                animation: spin 1s linear infinite;
+            }
+
+    @@keyframes spin {
+        0% {
+            transform: translate(-50%, -50%) rotate(0deg);
+        }
+
+        100% {
+            transform: translate(-50%, -50%) rotate(360deg);
+        }
+    }
+
+    .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: start;
+        margin-bottom: 15px;
+    }
+
+    .company-name {
+        font-size: 18px;
+        font-weight: bold;
+        color: #2c3e50;
+    }
+
+    .match-score {
+        background: #27ae60;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: bold;
+    }
+
+        .match-score.low {
+            background: #e74c3c;
+        }
+
+        .match-score.medium {
+            background: #f39c12;
+        }
+
+        .match-score.high {
+            background: #27ae60;
+        }
+
+    .recruiter-info {
+        margin-bottom: 15px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #eee;
+    }
+
+    .recruiter-name {
+        font-weight: 600;
+        color: #34495e;
+    }
+
+    .recruiter-title {
+        color: #7f8c8d;
+        font-size: 14px;
+        margin-top: 3px;
+    }
+
+    .company-details {
+        font-size: 14px;
+        color: #7f8c8d;
+        margin-bottom: 15px;
+    }
+
+        .company-details div {
+            margin-bottom: 5px;
+        }
+
+        .company-details a {
+            color: #3498db;
+            text-decoration: none;
+        }
+
+            .company-details a:hover {
+                text-decoration: underline;
+            }
+
+    .strengths, .weaknesses {
+        margin: 10px 0;
+    }
+
+    .strength-tag {
+        background: #e8f5e9;
+        color: #2e7d32;
+        padding: 3px 10px;
+        border-radius: 15px;
+        font-size: 12px;
+        display: inline-block;
+        margin: 2px;
+    }
+
+    .weakness-tag {
+        background: #ffebee;
+        color: #c62828;
+        padding: 3px 10px;
+        border-radius: 15px;
+        font-size: 12px;
+        display: inline-block;
+        margin: 2px;
+    }
+
+    .card-footer {
+        display: flex;
+        gap: 10px;
+        margin-top: 15px;
+        flex-wrap: wrap;
+    }
+
+        .card-footer .btn {
+            flex: 1;
+            padding: 8px;
+            text-align: center;
+            min-width: 100px;
+        }
+
+            .card-footer .btn:disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+            }
+
+    .reasoning {
+        background: #f8f9fa;
+        padding: 12px;
+        border-radius: 5px;
+        font-size: 14px;
+        color: #555;
+        margin: 10px 0;
+        border-left: 3px solid #3498db;
+    }
+
+    /* Modal Styles */
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+    }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+    .modal-content {
+        background: white;
+        border-radius: 10px;
+        padding: 25px;
+        width: 90%;
+        max-width: 800px;
+        max-height: 90vh;
+        overflow-y: auto;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        position: relative;
+    }
+
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #eee;
+    }
+
+        .modal-header h2 {
+            color: #2c3e50;
+            font-size: 20px;
+        }
+
+    .modal-close {
+        background: none;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+        color: #7f8c8d;
+    }
+
+        .modal-close:hover {
+            color: #2c3e50;
+        }
+
+    .modal-body {
+        margin-bottom: 20px;
+    }
+
+    .modal-actions {
+        display: flex;
+        gap: 10px;
+        justify-content: flex-end;
+        flex-wrap: wrap;
+        border-top: 1px solid #eee;
+        padding-top: 20px;
+    }
+
+    .details-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+        margin-bottom: 20px;
+    }
+
+    .details-section {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 8px;
+    }
+
+        .details-section.full-width {
+            grid-column: span 2;
+        }
+
+        .details-section h3 {
+            color: #2c3e50;
+            font-size: 16px;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #3498db;
+        }
+
+        .details-section .detail-item {
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .details-section .detail-label {
+            font-weight: 600;
+            color: #34495e;
+            display: inline-block;
+            min-width: 120px;
+        }
+
+        .details-section .detail-value {
+            color: #7f8c8d;
+        }
+
+    .detail-score {
+        display: inline-block;
+        padding: 3px 10px;
+        border-radius: 15px;
+        font-size: 14px;
+        font-weight: bold;
+        color: white;
+    }
+
+        .detail-score.high {
+            background: #27ae60;
+        }
+
+        .detail-score.medium {
+            background: #f39c12;
+        }
+
+        .detail-score.low {
+            background: #e74c3c;
+        }
+
+    .email-field {
+        margin-bottom: 20px;
+    }
+
+        .email-field label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #34495e;
+        }
+
+        .email-field input,
+        .email-field textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-family: inherit;
+            font-size: 14px;
+            background: #f9f9f9;
+        }
+
+        .email-field textarea {
+            min-height: 300px;
+            resize: vertical;
+        }
+
+    .tone-badge {
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        margin-left: 10px;
+    }
+
+        .tone-badge.Professional {
+            background: #3498db;
+            color: white;
+        }
+
+        .tone-badge.Enthusiastic {
+            background: #f39c12;
+            color: white;
+        }
+
+        .tone-badge.Exploratory {
+            background: #27ae60;
+            color: white;
+        }
+
+        .tone-badge.Humble {
+            background: #95a5a6;
+            color: white;
+        }
+
+    .progress-bar {
+        width: 100%;
+        height: 4px;
+        background: #ecf0f1;
+        border-radius: 2px;
+        margin: 10px 0;
+        display: none;
+    }
+
+        .progress-bar.active {
+            display: block;
+        }
+
+    .progress-fill {
+        height: 100%;
+        background: #3498db;
+        border-radius: 2px;
+        width: 0%;
+        transition: width 0.3s;
+    }
+
+    .batch-progress {
+        background: white;
+        border-radius: 10px;
+        padding: 15px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        display: none;
+    }
+
+        .batch-progress.active {
+            display: block;
+        }
+
+    .batch-stats {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 10px;
+        font-size: 14px;
+    }
+
+    .toast {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: #2c3e50;
+        color: white;
+        padding: 12px 24px;
+        border-radius: 5px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        transform: translateY(100px);
+        opacity: 0;
+        transition: all 0.3s;
+        z-index: 1100;
+    }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .toast.success {
+            background: #27ae60;
+        }
+
+        .toast.error {
+            background: #e74c3c;
+        }
+
+        .toast.warning {
+            background: #f39c12;
+        }
+
+    .empty-state {
+        text-align: center;
+        padding: 60px;
+        background: white;
+        border-radius: 10px;
+        color: #7f8c8d;
+    }
+
+        .empty-state i {
+            font-size: 48px;
+            margin-bottom: 20px;
+            color: #bdc3c7;
+        }
+
+    .loading {
+        text-align: center;
+        padding: 50px;
+        color: #7f8c8d;
+    }
+
+    .linkedin-badge {
+        display: inline-block;
+        background: #0077b5;
+        color: white;
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-size: 11px;
+        margin-left: 5px;
+    }
+</style>
+
+<div class="container">
+    <header>
+        <h1>📧 Recruiter Scanner - Email & LinkedIn Generator</h1>
+    </header>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">@TempData["Success"]</div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-error">@TempData["Error"]</div>
+    }
+
+    @if (Model.Matches.Any())
+    {
+        <div class="stats" id="stats">
+            <div class="stat-item">
+                <span class="stat-label">Total Recruiters</span>
+                <span class="stat-value" id="totalCount">@Model.Matches.Count</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Average Score</span>
+                <span class="stat-value" id="avgScore">@Model.Matches.Average(m => m.MatchScore ?? 0).ToString("0.0")</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">In Barcelona</span>
+                <span class="stat-value" id="barcelonaCount">@Model.Matches.Count(m => m.City?.Contains("Barcelona") == true)</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Emails Generated</span>
+                <span class="stat-value" id="generatedCount">0</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">LinkedIn Generated</span>
+                <span class="stat-value" id="linkedinGeneratedCount">0</span>
+            </div>
+        </div>
+
+        <div class="filter-bar">
+            <input type="text" class="filter-input" id="searchInput" placeholder="🔍 Search companies, recruiters, cities..." onkeyup="filterRecruiters()">
+            <select class="filter-select" id="scoreFilter" onchange="filterRecruiters()">
+                <option value="all">All Scores</option>
+                <option value="high">High (8-10)</option>
+                <option value="medium">Medium (5-7)</option>
+                <option value="low">Low (0-4)</option>
+            </select>
+            <select class="filter-select" id="locationFilter" onchange="filterRecruiters()">
+                <option value="all">All Locations</option>
+                <option value="barcelona">Barcelona</option>
+                <option value="other">Other</option>
+            </select>
+            <select class="filter-select" id="linkedinFilter" onchange="filterRecruiters()">
+                <option value="all">All</option>
+                <option value="hasLinkedIn">Has LinkedIn</option>
+                <option value="noLinkedIn">No LinkedIn</option>
+            </select>
+        </div>
+
+        <div class="progress-bar" id="globalProgress">
+            <div class="progress-fill" id="globalProgressFill"></div>
+        </div>
+
+        <div class="batch-progress" id="batchProgress">
+            <h3>Generating in progress...</h3>
+            <div class="progress-bar active">
+                <div class="progress-fill" id="batchProgressFill" style="width: 0%"></div>
+            </div>
+            <div class="batch-stats">
+                <span id="batchCompleted">0</span> / <span id="batchTotal">@Model.Matches.Count</span> completed
+                <span id="batchStatus">Preparing...</span>
+            </div>
+        </div>
+
+        <div id="recruitersGrid" class="recruiters-grid">
+            @await Html.PartialAsync("_RecruiterCards", Model.Matches)
+        </div>
+    }
+    else
+    {
+        <div class="empty-state">
+            <div>📂</div>
+            <h3>No Data Loaded</h3>
+            <p>Please upload a JSON file with match analysis to view recruiters.</p>
+        </div>
+    }
+</div>
+
+<!-- Message Modal -->
+<div id="messageModal" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-header">
+            <div>
+                <h2 id="modalTitle">Generate Message</h2>
+                <span id="modalToneBadge" class="tone-badge"></span>
+            </div>
+            <button class="modal-close" onclick="closeMessageModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="email-field">
+                <label id="toLabel">To / LinkedIn URL:</label>
+                <input type="text" id="modalTo" readonly>
+            </div>
+            <div class="email-field">
+                <label>Subject:</label>
+                <input type="text" id="modalSubject" readonly>
+            </div>
+            <div class="email-field">
+                <label>Body:</label>
+                <textarea id="modalBody" readonly></textarea>
+            </div>
+            <div class="email-field">
+                <label>Key Selling Points:</label>
+                <input type="text" id="modalKeySellingPoints" readonly>
+            </div>
+        </div>
+        <div class="modal-actions">
+            <button class="btn btn-success" onclick="copyToClipboard()">📋 Copy All</button>
+            <button class="btn btn-primary" onclick="downloadMessage()">📥 Download .txt</button>
+            <button class="btn btn-warning" id="modalSendBtn" onclick="handleSendAction()">📤 Send Email</button>
+            <button class="btn btn-danger" onclick="closeMessageModal()">✕ Close</button>
+        </div>
+    </div>
+</div>
+
+<!-- Details Modal -->
+<div id="detailsModal" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 id="detailsModalTitle">Recruiter Details</h2>
+            <button class="modal-close" onclick="closeDetailsModal()">&times;</button>
+        </div>
+        <div class="modal-body" id="detailsModalBody">
+            <!-- Content dynamically populated -->
+        </div>
+        <div class="modal-actions">
+            <button class="btn btn-primary" onclick="closeDetailsModal()">Close</button>
+        </div>
+    </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+@section Scripts {
+    <script>
+        // State
+        let recruitersData = @Html.Raw(Json.Serialize(Model.Matches));
+
+        // Map LinkedIn fields to expected names
+        recruitersData = recruitersData.map(rec => {
+            if (!rec.recruiterLinkedIn && rec.linkedinProfile) {
+                rec.recruiterLinkedIn = rec.linkedinProfile;
+            }
+            if (!rec.companyLinkedIn && rec.linkedinCompany) {
+                rec.companyLinkedIn = rec.linkedinCompany;
+            }
+            return rec;
+        });
+
+        let filteredData = [...recruitersData];
+        let selectedRecruiterIndex = -1;
+        let currentMessageData = null;
+        let currentRecruiter = null;
+        let currentMessageType = 'email';
+        let generatedEmails = new Map();
+        let generatedLinkedInMessages = new Map();
+
+        const API_BASE_URL = '@Url.Content("~")';
+
+        const recruitersGrid = document.getElementById('recruitersGrid');
+        const stats = document.getElementById('stats');
+        const messageModal = document.getElementById('messageModal');
+        const detailsModal = document.getElementById('detailsModal');
+        const batchProgress = document.getElementById('batchProgress');
+        const globalProgress = document.getElementById('globalProgress');
+        const globalProgressFill = document.getElementById('globalProgressFill');
+        const toast = document.getElementById('toast');
+
+        // ===== FILTER FUNCTIONS =====
+        function filterRecruiters() {
+            const searchTerm = document.getElementById('searchInput')?.value.toLowerCase() || '';
+            const scoreFilter = document.getElementById('scoreFilter')?.value || 'all';
+            const locationFilter = document.getElementById('locationFilter')?.value || 'all';
+            const linkedinFilter = document.getElementById('linkedinFilter')?.value || 'all';
+
+            filteredData = recruitersData.filter(rec => {
+                const matchesSearch =
+                    (rec.companyName?.toLowerCase().includes(searchTerm) ||
+                        rec.recruiterName?.toLowerCase().includes(searchTerm) ||
+                        rec.city?.toLowerCase().includes(searchTerm) ||
+                        rec.recruiterTitle?.toLowerCase().includes(searchTerm));
+
+                let matchesScore = true;
+                const score = rec.matchScore || 0;
+                if (scoreFilter === 'high') matchesScore = score >= 8;
+                else if (scoreFilter === 'medium') matchesScore = score >= 5 && score < 8;
+                else if (scoreFilter === 'low') matchesScore = score < 5;
+
+                let matchesLocation = true;
+                const city = rec.city?.toLowerCase() || '';
+                if (locationFilter === 'barcelona') matchesLocation = city.includes('barcelona');
+                else if (locationFilter === 'other') matchesLocation = !city.includes('barcelona');
+
+                let matchesLinkedIn = true;
+                const hasLinkedIn = !!rec.recruiterLinkedIn;
+                if (linkedinFilter === 'hasLinkedIn') matchesLinkedIn = hasLinkedIn;
+                else if (linkedinFilter === 'noLinkedIn') matchesLinkedIn = !hasLinkedIn;
+
+                return matchesSearch && matchesScore && matchesLocation && matchesLinkedIn;
+            });
+
+            displayRecruiters(filteredData);
+        }
+
+        function displayRecruiters(recruiters) {
+            if (!recruiters || recruiters.length === 0) {
+                recruitersGrid.innerHTML = '<div class="loading">📭 No data matching filters</div>';
+                return;
+            }
+
+            let html = '';
+
+            recruiters.forEach((rec, index) => {
+                const scoreClass = getScoreClass(rec.matchScore || 0);
+                const hasEmail = generatedEmails.has(rec.companyName || index.toString());
+                const hasLinkedInMsg = generatedLinkedInMessages.has(rec.companyName || index.toString());
+                const emailStatus = hasEmail ? '✅ Email generated' : '';
+                const linkedinStatus = hasLinkedInMsg ? '🔗 LinkedIn generated' : '';
+                const statusText = [emailStatus, linkedinStatus].filter(s => s).join(' • ');
+
+                html += `
+                            <div class="recruiter-card ${selectedRecruiterIndex === index ? 'selected' : ''}"
+                                 onclick="selectRecruiter(${index})"
+                                 id="card-${index}"
+                                 data-company="${rec.companyName || ''}"
+                                 data-city="${rec.city || ''}"
+                                 data-score="${rec.matchScore || 0}">
+                                <div class="card-header">
+                                    <span class="company-name">${rec.companyName || 'Unknown Company'}</span>
+                                    <span class="match-score ${scoreClass}">${rec.matchScore || '?'}/10</span>
+                                </div>
+
+                                <div class="recruiter-info">
+                                    <div class="recruiter-name">${rec.recruiterName || 'Unknown Recruiter'}</div>
+                                    <div class="recruiter-title">${rec.recruiterTitle || 'Unknown Position'}</div>
+                                </div>
+
+                                <div class="company-details">
+                                    <div>📍 ${rec.city || 'Unknown City'}, ${rec.country || 'Unknown Country'}</div>
+                                    <div>📧 ${rec.recruiterEmail || 'No email'} (${rec.emailStatus || 'Unknown'})</div>
+                                    ${rec.recruiterLinkedIn ?
+                        `<div>🔗 <a href="${rec.recruiterLinkedIn}" target="_blank" onclick="event.stopPropagation()">LinkedIn Profile</a> <span class="linkedin-badge">LINKEDIN</span></div>` :
+                        '<div>🔗 No LinkedIn Profile</div>'}
+                                    ${rec.website ? `<div>🌐 <a href="${rec.website}" target="_blank" onclick="event.stopPropagation()">${rec.website}</a></div>` : ''}
+                                </div>
+
+                                <div class="reasoning">
+                                    <strong>💡 Reasoning:</strong> ${rec.reasoning || 'No reasoning available'}
+                                </div>
+
+                                <div class="strengths">
+                                    ${(rec.strengths || []).map(s => `<span class="strength-tag">✓ ${s}</span>`).join('')}
+                                </div>
+
+                                <div class="weaknesses">
+                                    ${(rec.weaknesses || []).map(w => `<span class="weakness-tag">⚠ ${w}</span>`).join('')}
+                                </div>
+
+                                <div class="card-footer">
+                                    <button class="btn btn-primary" onclick="event.stopPropagation(); generateEmail(${index})">
+                                        ${hasEmail ? '🔄 Regenerate Email' : '✉ Generate Email'}
+                                    </button>
+                                    <button class="btn btn-purple" onclick="event.stopPropagation(); generateLinkedInMessage(${index})" ${!rec.recruiterLinkedIn ? 'disabled' : ''}>
+                                        ${hasLinkedInMsg ? '🔄 Regenerate LinkedIn' : '🔗 Generate LinkedIn'}
+                                    </button>
+                                    <button class="btn btn-outline" onclick="event.stopPropagation(); viewDetails(${index})">
+                                        ℹ Details
+                                    </button>
+                                </div>
+
+                                ${statusText ?
+                        `<div style="font-size: 11px; color: #666; margin-top: 10px; text-align: right; border-top: 1px dashed #eee; padding-top: 8px;">
+                                        ${statusText}
+                                    </div>` : ''
+                    }
+                            </div>
+                        `;
+            });
+
+            recruitersGrid.innerHTML = html;
+        }
+
+        function getScoreClass(score) {
+            if (score >= 8) return 'high';
+            if (score >= 5) return 'medium';
+            return 'low';
+        }
+
+        function selectRecruiter(index) {
+            document.querySelectorAll('.recruiter-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+
+            const card = document.getElementById(`card-${index}`);
+            if (card) {
+                card.classList.add('selected');
+                selectedRecruiterIndex = index;
+            }
+        }
+
+        // ===== EMAIL FUNCTIONS =====
+        async function generateEmail(index) {
+            const recruiter = filteredData[index];
+            if (!recruiter) return;
+
+            const card = document.getElementById(`card-${index}`);
+            card.classList.add('generating');
+
+            try {
+                const response = await fetch('@Url.Action("GenerateEmail", "EmailGeneration")', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        matchData: recruiter,
+                        includeSignature: true
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                if (data.success) {
+                    generatedEmails.set(recruiter.companyName || index.toString(), data);
+                    currentMessageType = 'email';
+                    currentRecruiter = recruiter;
+                    currentMessageData = data;
+
+                    showMessageModal(recruiter, data, 'email');
+                    showToast(`Email generated for ${recruiter.companyName}`, 'success');
+
+                    document.getElementById('generatedCount').textContent = generatedEmails.size;
+                    displayRecruiters(filteredData);
+                } else {
+                    throw new Error(data.error || 'Unknown error');
+                }
+            } catch (error) {
+                showToast('Error generating email: ' + error.message, 'error');
+                console.error('Generate email error:', error);
+            } finally {
+                card.classList.remove('generating');
+            }
+        }
+
+        // ===== LINKEDIN FUNCTIONS =====
+        async function generateLinkedInMessage(index) {
+            const recruiter = filteredData[index];
+            if (!recruiter) return;
+
+            if (!recruiter.recruiterLinkedIn) {
+                showToast('❌ Recruiter has no LinkedIn profile', 'warning');
+                return;
+            }
+
+            const card = document.getElementById(`card-${index}`);
+            card.classList.add('generating');
+
+            try {
+                const response = await fetch('@Url.Action("GenerateLinkedInMessage", "EmailGeneration")', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        matchData: recruiter,
+                        includeSignature: true
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                if (data.success) {
+                    generatedLinkedInMessages.set(recruiter.companyName || index.toString(), data);
+                    currentMessageType = 'linkedin';
+                    currentRecruiter = recruiter;
+                    currentMessageData = data;
+
+                    showMessageModal(recruiter, data, 'linkedin');
+                    showToast(`LinkedIn message generated for ${recruiter.companyName}`, 'success');
+
+                    document.getElementById('linkedinGeneratedCount').textContent = generatedLinkedInMessages.size;
+                    displayRecruiters(filteredData);
+                } else {
+                    throw new Error(data.error || 'Unknown error');
+                }
+            } catch (error) {
+                showToast('Error generating LinkedIn message: ' + error.message, 'error');
+                console.error('Generate LinkedIn message error:', error);
+            } finally {
+                card.classList.remove('generating');
+            }
+        }
+
+        // ===== MODAL FUNCTIONS =====
+        function showMessageModal(recruiter, messageData, type) {
+            document.getElementById('modalTitle').textContent = type === 'email' ?
+                `Email for ${recruiter.companyName}` :
+                `LinkedIn Message for ${recruiter.companyName}`;
+
+            document.getElementById('modalTo').value = type === 'email' ?
+                (recruiter.recruiterEmail || '') :
+                (recruiter.recruiterLinkedIn || '');
+
+            document.getElementById('modalSubject').value = messageData.subject || '';
+            document.getElementById('modalBody').value = messageData.body || '';
+            document.getElementById('modalKeySellingPoints').value = (messageData.keySellingPoints || []).join('; ');
+
+            const toneBadge = document.getElementById('modalToneBadge');
+            toneBadge.textContent = messageData.tone || 'Professional';
+            toneBadge.className = `tone-badge ${messageData.tone || 'Professional'}`;
+
+            document.getElementById('toLabel').textContent = type === 'email' ? 'To:' : 'LinkedIn URL:';
+
+            const sendBtn = document.getElementById('modalSendBtn');
+            if (type === 'email') {
+                sendBtn.innerHTML = '📤 Send Email';
+            } else {
+                sendBtn.innerHTML = '🔗 Open LinkedIn & Copy';
+            }
+
+            messageModal.classList.add('active');
+        }
+
+        function closeMessageModal() {
+            messageModal.classList.remove('active');
+            currentMessageData = null;
+            currentRecruiter = null;
+        }
+
+        function viewDetails(index) {
+            const recruiter = filteredData[index];
+            if (!recruiter) return;
+
+            const scoreClass = getScoreClass(recruiter.matchScore || 0);
+            const strengthsList = (recruiter.strengths || []).map(s => `<span class="strength-tag">✓ ${s}</span>`).join(' ');
+            const weaknessesList = (recruiter.weaknesses || []).map(w => `<span class="weakness-tag">⚠ ${w}</span>`).join(' ');
+
+            const detailsHtml = `
+                        <div class="details-grid">
+                            <div class="details-section">
+                                <h3>Basic Information</h3>
+                                <div class="detail-item">
+                                    <span class="detail-label">Company:</span>
+                                    <span class="detail-value">${recruiter.companyName || 'Unknown'}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Recruiter:</span>
+                                    <span class="detail-value">${recruiter.recruiterName || 'Unknown'}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Position:</span>
+                                    <span class="detail-value">${recruiter.recruiterTitle || 'Unknown'}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Match Score:</span>
+                                    <span class="detail-value"><span class="detail-score ${scoreClass}">${recruiter.matchScore || '?'}/10</span></span>
+                                </div>
+                            </div>
+
+                            <div class="details-section">
+                                <h3>Location & Contact</h3>
+                                <div class="detail-item">
+                                    <span class="detail-label">City:</span>
+                                    <span class="detail-value">${recruiter.city || 'Unknown'}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Country:</span>
+                                    <span class="detail-value">${recruiter.country || 'Unknown'}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Email:</span>
+                                    <span class="detail-value">${recruiter.recruiterEmail || 'No email'} (${recruiter.emailStatus || 'Unknown'})</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">LinkedIn:</span>
+                                    <span class="detail-value">${recruiter.recruiterLinkedIn ?
+                    `<a href="${recruiter.recruiterLinkedIn}" target="_blank">Profile Link</a>` :
+                    'No LinkedIn Profile'}</span>
+                                </div>
+                                ${recruiter.website ? `
+                                <div class="detail-item">
+                                    <span class="detail-label">Website:</span>
+                                    <span class="detail-value"><a href="${recruiter.website}" target="_blank">${recruiter.website}</a></span>
+                                </div>` : ''}
+                            </div>
+
+                            <div class="details-section full-width">
+                                <h3>Company Analysis</h3>
+                                <div class="detail-item">
+                                    <span class="detail-label">Company Analysis:</span>
+                                    <span class="detail-value">${recruiter.companyAnalysis || 'N/A'}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Industry Match:</span>
+                                    <span class="detail-value">${recruiter.industryMatch || 'N/A'}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Location Match:</span>
+                                    <span class="detail-value">${recruiter.locationMatch || 'N/A'}</span>
+                                </div>
+                            </div>
+
+                            <div class="details-section full-width">
+                                <h3>Key Findings</h3>
+                                <div class="detail-item">
+                                    <span class="detail-value">${recruiter.keyFindings || 'N/A'}</span>
+                                </div>
+                            </div>
+
+                            <div class="details-section full-width">
+                                <h3>Reasoning</h3>
+                                <div class="detail-item">
+                                    <span class="detail-value">${recruiter.reasoning || 'No reasoning available'}</span>
+                                </div>
+                            </div>
+
+                            <div class="details-section">
+                                <h3>Strengths</h3>
+                                <div class="detail-item">
+                                    ${strengthsList || 'No strengths'}
+                                </div>
+                            </div>
+
+                            <div class="details-section">
+                                <h3>Weaknesses</h3>
+                                <div class="detail-item">
+                                    ${weaknessesList || 'No weaknesses'}
+                                </div>
+                            </div>
+
+                            <div class="details-section full-width">
+                                <h3>Additional Information</h3>
+                                <div class="detail-item">
+                                    <span class="detail-label">Analyzed:</span>
+                                    <span class="detail-value">${recruiter.analyzedAt ? new Date(recruiter.analyzedAt).toLocaleString() : 'N/A'}</span>
+                                </div>
+                                ${recruiter.companySize ? `
+                                <div class="detail-item">
+                                    <span class="detail-label">Company Size:</span>
+                                    <span class="detail-value">${recruiter.companySize}</span>
+                                </div>` : ''}
+                                ${recruiter.industry ? `
+                                <div class="detail-item">
+                                    <span class="detail-label">Industry:</span>
+                                    <span class="detail-value">${recruiter.industry}</span>
+                                </div>` : ''}
+                            </div>
+                        </div>
+                    `;
+
+            document.getElementById('detailsModalTitle').textContent = `Details: ${recruiter.companyName}`;
+            document.getElementById('detailsModalBody').innerHTML = detailsHtml;
+            detailsModal.classList.add('active');
+        }
+
+        function closeDetailsModal() {
+            detailsModal.classList.remove('active');
+        }
+
+        async function handleSendAction() {
+            if (currentMessageType === 'email') {
+                await sendEmail();
+            } else {
+                openLinkedInAndCopy();
+            }
+        }
+
+        async function sendEmail() {
+            const to = document.getElementById('modalTo').value;
+            const subject = document.getElementById('modalSubject').value;
+            const body = document.getElementById('modalBody').value;
+
+            if (!to || !subject || !body) {
+                showToast('No data to send', 'warning');
+                return;
+            }
+
+            const sendBtn = document.getElementById('modalSendBtn');
+            sendBtn.disabled = true;
+            sendBtn.innerHTML = '⏳ Sending...';
+
+            try {
+                const response = await fetch('@Url.Action("SendEmail", "EmailGeneration")', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        to: to,
+                        subject: subject,
+                        body: body,
+                        recruiterName: document.getElementById('modalTitle').textContent.replace('Email for ', '')
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    showToast('Email sent successfully!', 'success');
+                    closeMessageModal();
+                } else {
+                    throw new Error(data.error || 'Error sending email');
+                }
+            } catch (error) {
+                showToast('Error: ' + error.message, 'error');
+                console.error('Send email error:', error);
+            } finally {
+                sendBtn.disabled = false;
+                sendBtn.innerHTML = '📤 Send Email';
+            }
+        }
+
+        function openLinkedInAndCopy() {
+            if (!currentRecruiter || !currentRecruiter.recruiterLinkedIn) {
+                showToast('No LinkedIn profile', 'warning');
+                return;
+            }
+
+            const message = document.getElementById('modalBody').value;
+
+            navigator.clipboard.writeText(message).then(() => {
+                showToast('Message copied! Opening LinkedIn profile...', 'success');
+                window.open(currentRecruiter.recruiterLinkedIn, '_blank');
+                closeMessageModal();
+            }).catch(err => {
+                showToast('Error copying: ' + err, 'error');
+            });
+        }
+
+        function copyToClipboard() {
+            const to = document.getElementById('modalTo').value;
+            const subject = document.getElementById('modalSubject').value;
+            const body = document.getElementById('modalBody').value;
+            const fullMessage = `To: ${to}\nSubject: ${subject}\n\n${body}`;
+
+            navigator.clipboard.writeText(fullMessage).then(() => {
+                showToast('Message copied to clipboard!', 'success');
+            }).catch(err => {
+                showToast('Error copying: ' + err, 'error');
+            });
+        }
+
+        function downloadMessage() {
+            const to = document.getElementById('modalTo').value;
+            const subject = document.getElementById('modalSubject').value;
+            const body = document.getElementById('modalBody').value;
+            const company = document.getElementById('modalTitle').textContent.replace('Email for ', '').replace('LinkedIn Message for ', '');
+            const fullMessage = `To: ${to}\nSubject: ${subject}\n\n${body}`;
+
+            const blob = new Blob([fullMessage], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${currentMessageType}-${company}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            showToast('Message downloaded', 'success');
+        }
+
+        function showToast(message, type = 'info') {
+            toast.textContent = message;
+            toast.className = `toast show ${type}`;
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Keyboard shortcut for closing modals (ESC)
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                if (messageModal.classList.contains('active')) {
+                    closeMessageModal();
+                }
+                if (detailsModal.classList.contains('active')) {
+                    closeDetailsModal();
+                }
+            }
+        });
+
+        // Initialization
+        if (recruitersData.length > 0) {
+            displayRecruiters(recruitersData);
+
+            document.getElementById('generatedCount').textContent = generatedEmails.size;
+            document.getElementById('linkedinGeneratedCount').textContent = generatedLinkedInMessages.size;
+
+            if (recruitersData.length > 0) {
+                const avg = recruitersData.reduce((sum, r) => sum + (r.matchScore || 0), 0) / recruitersData.length;
+                document.getElementById('avgScore').textContent = avg.toFixed(1);
+            }
+        }
+    </script>
+}
