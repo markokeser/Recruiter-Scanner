@@ -39,8 +39,8 @@ using System.Net;
             {
                 _httpClient = httpClient;
                 _configuration = configuration;
-                _apiKey = configuration["OpenAI:ApiKey"];
-                _model = configuration["OpenAI:Model"] ?? "gpt-4o-mini";
+                _apiKey = Environment.GetEnvironmentVariable("AI_PASS");
+            _model = configuration["OpenAI:Model"] ?? "gpt-4o-mini";
                 _logger = logger;
             }
 
