@@ -2,18 +2,18 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /app
 
-# Copy solution and project files - koristi navodnike za putanje sa razmacima
+# Copy solution and project files
 COPY *.sln .
-COPY "Recriter Scanner/Recriter Scanner.csproj" "Recriter Scanner/"
-RUN dotnet restore "Recriter Scanner/Recriter Scanner.csproj"
+COPY "Recruiter Scanner/Recruiter Scanner.csproj" "Recruiter Scanner/"
+RUN dotnet restore "Recruiter Scanner/Recruiter Scanner.csproj"
 
 # Copy everything else and build
 COPY . .
-WORKDIR "/app/Recriter Scanner"
-RUN dotnet publish -c Release -o out
+WORKDIR "/app/Recruiter Scanner"
+RUN dotnet publish "Recruiter Scanner.csproj" -c Release -o out
 
 # Stage 2: runtime
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
-COPY --from=build "/app/Recriter Scanner/out" .
-ENTRYPOINT ["dotnet", "Recriter Scanner.dll"]
+COPY --from=build "/app/Recruiter Scanner/out" .
+ENTRYPOINT ["dotnet", "Recruiter Scanner.dll"]
