@@ -113,6 +113,12 @@
         color: white;
     }
 
+    .btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        pointer-events: none;
+    }
+
     .stats {
         background: white;
         padding: 15px 20px;
@@ -774,15 +780,9 @@
                 <label>Body:</label>
                 <textarea id="modalBody" readonly></textarea>
             </div>
-            <div class="email-field">
-                <label>Key Selling Points:</label>
-                <input type="text" id="modalKeySellingPoints" readonly>
-            </div>
         </div>
         <div class="modal-actions">
-            <button class="btn btn-success" onclick="copyToClipboard()">📋 Copy All</button>
-            <button class="btn btn-primary" onclick="downloadMessage()">📥 Download .txt</button>
-            <button class="btn btn-warning" id="modalSendBtn" onclick="handleSendAction()">📤 Send Email</button>
+            <button class="btn btn-warning" id="modalSendBtn" onclick="handleSendAction()" disabled>📤 Send Email</button>
             <button class="btn btn-danger" onclick="closeMessageModal()">✕ Close</button>
         </div>
     </div>
@@ -894,62 +894,62 @@
                 const statusText = [emailStatus, linkedinStatus].filter(s => s).join(' • ');
 
                 html += `
-                            <div class="recruiter-card ${selectedRecruiterIndex === index ? 'selected' : ''}"
-                                 onclick="selectRecruiter(${index})"
-                                 id="card-${index}"
-                                 data-company="${rec.companyName || ''}"
-                                 data-city="${rec.city || ''}"
-                                 data-score="${rec.matchScore || 0}">
-                                <div class="card-header">
-                                    <span class="company-name">${rec.companyName || 'Unknown Company'}</span>
-                                    <span class="match-score ${scoreClass}">${rec.matchScore || '?'}/10</span>
-                                </div>
+                                    <div class="recruiter-card ${selectedRecruiterIndex === index ? 'selected' : ''}"
+                                         onclick="selectRecruiter(${index})"
+                                         id="card-${index}"
+                                         data-company="${rec.companyName || ''}"
+                                         data-city="${rec.city || ''}"
+                                         data-score="${rec.matchScore || 0}">
+                                        <div class="card-header">
+                                            <span class="company-name">${rec.companyName || 'Unknown Company'}</span>
+                                            <span class="match-score ${scoreClass}">${rec.matchScore || '?'}/10</span>
+                                        </div>
 
-                                <div class="recruiter-info">
-                                    <div class="recruiter-name">${rec.recruiterName || 'Unknown Recruiter'}</div>
-                                    <div class="recruiter-title">${rec.recruiterTitle || 'Unknown Position'}</div>
-                                </div>
+                                        <div class="recruiter-info">
+                                            <div class="recruiter-name">${rec.recruiterName || 'Unknown Recruiter'}</div>
+                                            <div class="recruiter-title">${rec.recruiterTitle || 'Unknown Position'}</div>
+                                        </div>
 
-                                <div class="company-details">
-                                    <div>📍 ${rec.city || 'Unknown City'}, ${rec.country || 'Unknown Country'}</div>
-                                    <div>📧 ${rec.recruiterEmail || 'No email'} (${rec.emailStatus || 'Unknown'})</div>
-                                    ${rec.recruiterLinkedIn ?
+                                        <div class="company-details">
+                                            <div>📍 ${rec.city || 'Unknown City'}, ${rec.country || 'Unknown Country'}</div>
+                                            <div>📧 ${rec.recruiterEmail || 'No email'} (${rec.emailStatus || 'Unknown'})</div>
+                                            ${rec.recruiterLinkedIn ?
                         `<div>🔗 <a href="${rec.recruiterLinkedIn}" target="_blank" onclick="event.stopPropagation()">LinkedIn Profile</a> <span class="linkedin-badge">LINKEDIN</span></div>` :
                         '<div>🔗 No LinkedIn Profile</div>'}
-                                    ${rec.website ? `<div>🌐 <a href="${rec.website}" target="_blank" onclick="event.stopPropagation()">${rec.website}</a></div>` : ''}
-                                </div>
+                                            ${rec.website ? `<div>🌐 <a href="${rec.website}" target="_blank" onclick="event.stopPropagation()">${rec.website}</a></div>` : ''}
+                                        </div>
 
-                                <div class="reasoning">
-                                    <strong>💡 Reasoning:</strong> ${rec.reasoning || 'No reasoning available'}
-                                </div>
+                                        <div class="reasoning">
+                                            <strong>💡 Reasoning:</strong> ${rec.reasoning || 'No reasoning available'}
+                                        </div>
 
-                                <div class="strengths">
-                                    ${(rec.strengths || []).map(s => `<span class="strength-tag">✓ ${s}</span>`).join('')}
-                                </div>
+                                        <div class="strengths">
+                                            ${(rec.strengths || []).map(s => `<span class="strength-tag">✓ ${s}</span>`).join('')}
+                                        </div>
 
-                                <div class="weaknesses">
-                                    ${(rec.weaknesses || []).map(w => `<span class="weakness-tag">⚠ ${w}</span>`).join('')}
-                                </div>
+                                        <div class="weaknesses">
+                                            ${(rec.weaknesses || []).map(w => `<span class="weakness-tag">⚠ ${w}</span>`).join('')}
+                                        </div>
 
-                                <div class="card-footer">
-                                    <button class="btn btn-primary" onclick="event.stopPropagation(); generateEmail(${index})">
-                                        ${hasEmail ? '🔄 Regenerate Email' : '✉ Generate Email'}
-                                    </button>
-                                    <button class="btn btn-purple" onclick="event.stopPropagation(); generateLinkedInMessage(${index})" ${!rec.recruiterLinkedIn ? 'disabled' : ''}>
-                                        ${hasLinkedInMsg ? '🔄 Regenerate LinkedIn' : '🔗 Generate LinkedIn'}
-                                    </button>
-                                    <button class="btn btn-outline" onclick="event.stopPropagation(); viewDetails(${index})">
-                                        ℹ Details
-                                    </button>
-                                </div>
+                                        <div class="card-footer">
+                                            <button class="btn btn-primary" onclick="event.stopPropagation(); generateEmail(${index})">
+                                                ${hasEmail ? '🔄 Regenerate Email' : '✉ Generate Email'}
+                                            </button>
+                                            <button class="btn btn-purple" onclick="event.stopPropagation(); generateLinkedInMessage(${index})" ${!rec.recruiterLinkedIn ? 'disabled' : ''}>
+                                                ${hasLinkedInMsg ? '🔄 Regenerate LinkedIn' : '🔗 Generate LinkedIn'}
+                                            </button>
+                                            <button class="btn btn-outline" onclick="event.stopPropagation(); viewDetails(${index})">
+                                                ℹ Details
+                                            </button>
+                                        </div>
 
-                                ${statusText ?
+                                        ${statusText ?
                         `<div style="font-size: 11px; color: #666; margin-top: 10px; text-align: right; border-top: 1px dashed #eee; padding-top: 8px;">
-                                        ${statusText}
-                                    </div>` : ''
+                                                ${statusText}
+                                            </div>` : ''
                     }
-                            </div>
-                        `;
+                                    </div>
+                                `;
             });
 
             recruitersGrid.innerHTML = html;
@@ -992,7 +992,7 @@
                     },
                     body: JSON.stringify({
                         matchData: recruiter,
-                        cvData: cvData,  // ← DODATO
+                        cvData: cvData,
                         includeSignature: true
                     })
                 });
@@ -1049,7 +1049,7 @@
                     },
                     body: JSON.stringify({
                         matchData: recruiter,
-                        cvData: cvData,  // ← DODATO
+                        cvData: cvData,
                         includeSignature: true
                     })
                 });
@@ -1094,7 +1094,6 @@
 
             document.getElementById('modalSubject').value = messageData.subject || '';
             document.getElementById('modalBody').value = messageData.body || '';
-            document.getElementById('modalKeySellingPoints').value = (messageData.keySellingPoints || []).join('; ');
 
             const toneBadge = document.getElementById('modalToneBadge');
             toneBadge.textContent = messageData.tone || 'Professional';
@@ -1102,7 +1101,10 @@
 
             document.getElementById('toLabel').textContent = type === 'email' ? 'To:' : 'LinkedIn URL:';
 
+            // Send dugme je uvek disabled
             const sendBtn = document.getElementById('modalSendBtn');
+            sendBtn.disabled = true;
+
             if (type === 'email') {
                 sendBtn.innerHTML = '📤 Send Email';
             } else {
@@ -1127,117 +1129,117 @@
             const weaknessesList = (recruiter.weaknesses || []).map(w => `<span class="weakness-tag">⚠ ${w}</span>`).join(' ');
 
             const detailsHtml = `
-                        <div class="details-grid">
-                            <div class="details-section">
-                                <h3>Basic Information</h3>
-                                <div class="detail-item">
-                                    <span class="detail-label">Company:</span>
-                                    <span class="detail-value">${recruiter.companyName || 'Unknown'}</span>
-                                </div>
-                                <div class="detail-item">
-                                    <span class="detail-label">Recruiter:</span>
-                                    <span class="detail-value">${recruiter.recruiterName || 'Unknown'}</span>
-                                </div>
-                                <div class="detail-item">
-                                    <span class="detail-label">Position:</span>
-                                    <span class="detail-value">${recruiter.recruiterTitle || 'Unknown'}</span>
-                                </div>
-                                <div class="detail-item">
-                                    <span class="detail-label">Match Score:</span>
-                                    <span class="detail-value"><span class="detail-score ${scoreClass}">${recruiter.matchScore || '?'}/10</span></span>
-                                </div>
-                            </div>
+                                <div class="details-grid">
+                                    <div class="details-section">
+                                        <h3>Basic Information</h3>
+                                        <div class="detail-item">
+                                            <span class="detail-label">Company:</span>
+                                            <span class="detail-value">${recruiter.companyName || 'Unknown'}</span>
+                                        </div>
+                                        <div class="detail-item">
+                                            <span class="detail-label">Recruiter:</span>
+                                            <span class="detail-value">${recruiter.recruiterName || 'Unknown'}</span>
+                                        </div>
+                                        <div class="detail-item">
+                                            <span class="detail-label">Position:</span>
+                                            <span class="detail-value">${recruiter.recruiterTitle || 'Unknown'}</span>
+                                        </div>
+                                        <div class="detail-item">
+                                            <span class="detail-label">Match Score:</span>
+                                            <span class="detail-value"><span class="detail-score ${scoreClass}">${recruiter.matchScore || '?'}/10</span></span>
+                                        </div>
+                                    </div>
 
-                            <div class="details-section">
-                                <h3>Location & Contact</h3>
-                                <div class="detail-item">
-                                    <span class="detail-label">City:</span>
-                                    <span class="detail-value">${recruiter.city || 'Unknown'}</span>
-                                </div>
-                                <div class="detail-item">
-                                    <span class="detail-label">Country:</span>
-                                    <span class="detail-value">${recruiter.country || 'Unknown'}</span>
-                                </div>
-                                <div class="detail-item">
-                                    <span class="detail-label">Email:</span>
-                                    <span class="detail-value">${recruiter.recruiterEmail || 'No email'} (${recruiter.emailStatus || 'Unknown'})</span>
-                                </div>
-                                <div class="detail-item">
-                                    <span class="detail-label">LinkedIn:</span>
-                                    <span class="detail-value">${recruiter.recruiterLinkedIn ?
+                                    <div class="details-section">
+                                        <h3>Location & Contact</h3>
+                                        <div class="detail-item">
+                                            <span class="detail-label">City:</span>
+                                            <span class="detail-value">${recruiter.city || 'Unknown'}</span>
+                                        </div>
+                                        <div class="detail-item">
+                                            <span class="detail-label">Country:</span>
+                                            <span class="detail-value">${recruiter.country || 'Unknown'}</span>
+                                        </div>
+                                        <div class="detail-item">
+                                            <span class="detail-label">Email:</span>
+                                            <span class="detail-value">${recruiter.recruiterEmail || 'No email'} (${recruiter.emailStatus || 'Unknown'})</span>
+                                        </div>
+                                        <div class="detail-item">
+                                            <span class="detail-label">LinkedIn:</span>
+                                            <span class="detail-value">${recruiter.recruiterLinkedIn ?
                     `<a href="${recruiter.recruiterLinkedIn}" target="_blank">Profile Link</a>` :
                     'No LinkedIn Profile'}</span>
-                                </div>
-                                ${recruiter.website ? `
-                                <div class="detail-item">
-                                    <span class="detail-label">Website:</span>
-                                    <span class="detail-value"><a href="${recruiter.website}" target="_blank">${recruiter.website}</a></span>
-                                </div>` : ''}
-                            </div>
+                                        </div>
+                                        ${recruiter.website ? `
+                                        <div class="detail-item">
+                                            <span class="detail-label">Website:</span>
+                                            <span class="detail-value"><a href="${recruiter.website}" target="_blank">${recruiter.website}</a></span>
+                                        </div>` : ''}
+                                    </div>
 
-                            <div class="details-section full-width">
-                                <h3>Company Analysis</h3>
-                                <div class="detail-item">
-                                    <span class="detail-label">Company Analysis:</span>
-                                    <span class="detail-value">${recruiter.companyAnalysis || 'N/A'}</span>
-                                </div>
-                                <div class="detail-item">
-                                    <span class="detail-label">Industry Match:</span>
-                                    <span class="detail-value">${recruiter.industryMatch || 'N/A'}</span>
-                                </div>
-                                <div class="detail-item">
-                                    <span class="detail-label">Location Match:</span>
-                                    <span class="detail-value">${recruiter.locationMatch || 'N/A'}</span>
-                                </div>
-                            </div>
+                                    <div class="details-section full-width">
+                                        <h3>Company Analysis</h3>
+                                        <div class="detail-item">
+                                            <span class="detail-label">Company Analysis:</span>
+                                            <span class="detail-value">${recruiter.companyAnalysis || 'N/A'}</span>
+                                        </div>
+                                        <div class="detail-item">
+                                            <span class="detail-label">Industry Match:</span>
+                                            <span class="detail-value">${recruiter.industryMatch || 'N/A'}</span>
+                                        </div>
+                                        <div class="detail-item">
+                                            <span class="detail-label">Location Match:</span>
+                                            <span class="detail-value">${recruiter.locationMatch || 'N/A'}</span>
+                                        </div>
+                                    </div>
 
-                            <div class="details-section full-width">
-                                <h3>Key Findings</h3>
-                                <div class="detail-item">
-                                    <span class="detail-value">${recruiter.keyFindings || 'N/A'}</span>
-                                </div>
-                            </div>
+                                    <div class="details-section full-width">
+                                        <h3>Key Findings</h3>
+                                        <div class="detail-item">
+                                            <span class="detail-value">${recruiter.keyFindings || 'N/A'}</span>
+                                        </div>
+                                    </div>
 
-                            <div class="details-section full-width">
-                                <h3>Reasoning</h3>
-                                <div class="detail-item">
-                                    <span class="detail-value">${recruiter.reasoning || 'No reasoning available'}</span>
-                                </div>
-                            </div>
+                                    <div class="details-section full-width">
+                                        <h3>Reasoning</h3>
+                                        <div class="detail-item">
+                                            <span class="detail-value">${recruiter.reasoning || 'No reasoning available'}</span>
+                                        </div>
+                                    </div>
 
-                            <div class="details-section">
-                                <h3>Strengths</h3>
-                                <div class="detail-item">
-                                    ${strengthsList || 'No strengths'}
-                                </div>
-                            </div>
+                                    <div class="details-section">
+                                        <h3>Strengths</h3>
+                                        <div class="detail-item">
+                                            ${strengthsList || 'No strengths'}
+                                        </div>
+                                    </div>
 
-                            <div class="details-section">
-                                <h3>Weaknesses</h3>
-                                <div class="detail-item">
-                                    ${weaknessesList || 'No weaknesses'}
-                                </div>
-                            </div>
+                                    <div class="details-section">
+                                        <h3>Weaknesses</h3>
+                                        <div class="detail-item">
+                                            ${weaknessesList || 'No weaknesses'}
+                                        </div>
+                                    </div>
 
-                            <div class="details-section full-width">
-                                <h3>Additional Information</h3>
-                                <div class="detail-item">
-                                    <span class="detail-label">Analyzed:</span>
-                                    <span class="detail-value">${recruiter.analyzedAt ? new Date(recruiter.analyzedAt).toLocaleString() : 'N/A'}</span>
+                                    <div class="details-section full-width">
+                                        <h3>Additional Information</h3>
+                                        <div class="detail-item">
+                                            <span class="detail-label">Analyzed:</span>
+                                            <span class="detail-value">${recruiter.analyzedAt ? new Date(recruiter.analyzedAt).toLocaleString() : 'N/A'}</span>
+                                        </div>
+                                        ${recruiter.companySize ? `
+                                        <div class="detail-item">
+                                            <span class="detail-label">Company Size:</span>
+                                            <span class="detail-value">${recruiter.companySize}</span>
+                                        </div>` : ''}
+                                        ${recruiter.industry ? `
+                                        <div class="detail-item">
+                                            <span class="detail-label">Industry:</span>
+                                            <span class="detail-value">${recruiter.industry}</span>
+                                        </div>` : ''}
+                                    </div>
                                 </div>
-                                ${recruiter.companySize ? `
-                                <div class="detail-item">
-                                    <span class="detail-label">Company Size:</span>
-                                    <span class="detail-value">${recruiter.companySize}</span>
-                                </div>` : ''}
-                                ${recruiter.industry ? `
-                                <div class="detail-item">
-                                    <span class="detail-label">Industry:</span>
-                                    <span class="detail-value">${recruiter.industry}</span>
-                                </div>` : ''}
-                            </div>
-                        </div>
-                    `;
+                            `;
 
             document.getElementById('detailsModalTitle').textContent = `Details: ${recruiter.companyName}`;
             document.getElementById('detailsModalBody').innerHTML = detailsHtml;
@@ -1249,106 +1251,9 @@
         }
 
         async function handleSendAction() {
-            if (currentMessageType === 'email') {
-                await sendEmail();
-            } else {
-                openLinkedInAndCopy();
-            }
-        }
-
-        async function sendEmail() {
-            const to = document.getElementById('modalTo').value;
-            const subject = document.getElementById('modalSubject').value;
-            const body = document.getElementById('modalBody').value;
-
-            if (!to || !subject || !body) {
-                showToast('No data to send', 'warning');
-                return;
-            }
-
-            const sendBtn = document.getElementById('modalSendBtn');
-            sendBtn.disabled = true;
-            sendBtn.innerHTML = '⏳ Sending...';
-
-            try {
-                const response = await fetch('@Url.Action("SendEmail", "EmailGeneration")', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        to: to,
-                        subject: subject,
-                        body: body,
-                        recruiterName: document.getElementById('modalTitle').textContent.replace('Email for ', '')
-                    })
-                });
-
-                const data = await response.json();
-
-                if (response.ok && data.success) {
-                    showToast('Email sent successfully!', 'success');
-                    closeMessageModal();
-                } else {
-                    throw new Error(data.error || 'Error sending email');
-                }
-            } catch (error) {
-                showToast('Error: ' + error.message, 'error');
-                console.error('Send email error:', error);
-            } finally {
-                sendBtn.disabled = false;
-                sendBtn.innerHTML = '📤 Send Email';
-            }
-        }
-
-        function openLinkedInAndCopy() {
-            if (!currentRecruiter || !currentRecruiter.recruiterLinkedIn) {
-                showToast('No LinkedIn profile', 'warning');
-                return;
-            }
-
-            const message = document.getElementById('modalBody').value;
-
-            navigator.clipboard.writeText(message).then(() => {
-                showToast('Message copied! Opening LinkedIn profile...', 'success');
-                window.open(currentRecruiter.recruiterLinkedIn, '_blank');
-                closeMessageModal();
-            }).catch(err => {
-                showToast('Error copying: ' + err, 'error');
-            });
-        }
-
-        function copyToClipboard() {
-            const to = document.getElementById('modalTo').value;
-            const subject = document.getElementById('modalSubject').value;
-            const body = document.getElementById('modalBody').value;
-            const fullMessage = `To: ${to}\nSubject: ${subject}\n\n${body}`;
-
-            navigator.clipboard.writeText(fullMessage).then(() => {
-                showToast('Message copied to clipboard!', 'success');
-            }).catch(err => {
-                showToast('Error copying: ' + err, 'error');
-            });
-        }
-
-        function downloadMessage() {
-            const to = document.getElementById('modalTo').value;
-            const subject = document.getElementById('modalSubject').value;
-            const body = document.getElementById('modalBody').value;
-            const company = document.getElementById('modalTitle').textContent.replace('Email for ', '').replace('LinkedIn Message for ', '');
-            const fullMessage = `To: ${to}\nSubject: ${subject}\n\n${body}`;
-
-            const blob = new Blob([fullMessage], { type: 'text/plain' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `${currentMessageType}-${company}.txt`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-
-            showToast('Message downloaded', 'success');
+            // Ova funkcija neće biti pozvana jer je dugme uvek disabled
+            // Ali ostavljamo praznu implementaciju za slučaj da se pozove
+            showToast('Send email functionality is currently disabled', 'warning');
         }
 
         function showToast(message, type = 'info') {
