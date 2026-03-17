@@ -66,6 +66,115 @@
             background: white;
         }
 
+    /* PDF Upload deo */
+    .pdf-upload-container {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        border-radius: 15px;
+        padding: 25px;
+        margin-bottom: 25px;
+        border: 2px dashed #adb5bd;
+        transition: all 0.3s;
+    }
+
+        .pdf-upload-container:hover {
+            border-color: #667eea;
+            background: white;
+        }
+
+    .pdf-upload-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 15px;
+        color: #2c3e50;
+        font-weight: 600;
+    }
+
+    .file-input-wrapper {
+        position: relative;
+        display: inline-block;
+        width: 100%;
+    }
+
+        .file-input-wrapper input[type=file] {
+            position: absolute;
+            left: -9999px;
+            opacity: 0;
+        }
+
+    .file-label {
+        background: white;
+        color: #495057;
+        padding: 12px 20px;
+        border-radius: 10px;
+        cursor: pointer;
+        display: inline-block;
+        border: 2px solid #dee2e6;
+        transition: all 0.3s;
+        font-size: 14px;
+        width: 100%;
+        box-sizing: border-box;
+        text-align: center;
+    }
+
+        .file-label:hover {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+    .btn-upload-pdf {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 12px 25px;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 600;
+        transition: transform 0.2s, box-shadow 0.2s;
+        width: 100%;
+        margin-top: 10px;
+    }
+
+        .btn-upload-pdf:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-upload-pdf:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+    .pdf-progress {
+        margin-top: 15px;
+        display: none;
+    }
+
+    .progress-bar {
+        width: 100%;
+        height: 6px;
+        background: #e9ecef;
+        border-radius: 3px;
+        overflow: hidden;
+    }
+
+    .progress-fill {
+        height: 100%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        width: 0%;
+        transition: width 0.3s;
+    }
+
+    .pdf-status {
+        font-size: 12px;
+        color: #6c757d;
+        margin-top: 5px;
+        text-align: center;
+    }
+    /* Kraj PDF upload dela */
+
     .button-group {
         display: flex;
         gap: 15px;
@@ -145,6 +254,14 @@
         background: #28a745;
     }
 
+    .notification-error {
+        background: #dc3545;
+    }
+
+    .notification-info {
+        background: #17a2b8;
+    }
+
     @@keyframes slideIn {
         from {
             transform: translateX(100%);
@@ -184,6 +301,29 @@
         </h2>
 
         <form id="cvForm">
+            <!-- NOVO: PDF Upload deo -->
+            <div class="pdf-upload-container">
+                <div class="pdf-upload-header">
+                    <span>📄 Upload PDF CV (optional)</span>
+                </div>
+
+                <div class="file-input-wrapper">
+                    <input type="file" id="pdfFile" name="pdfFile" accept=".pdf" />
+                    <label for="pdfFile" class="file-label" id="pdfFileLabel">📁 Choose PDF file</label>
+                </div>
+
+                <button type="button" class="btn-upload-pdf" id="uploadPdfBtn" onclick="uploadPDF()">
+                    ⚡ Extract Text from PDF
+                </button>
+
+                <div id="pdfProgress" class="pdf-progress">
+                    <div class="progress-bar">
+                        <div id="pdfProgressFill" class="progress-fill"></div>
+                    </div>
+                    <div id="pdfStatus" class="pdf-status">Processing...</div>
+                </div>
+            </div>
+
             <div class="form-group">
                 <label class="form-label" for="cvData">
                     📄 Your CV:
@@ -212,57 +352,57 @@
     // Default CV content
     const DEFAULT_CV = `SOFTWARE ENGINEER - FULL STACK DEVELOPER
 
-    PERSONAL INFORMATION
-    Location: Barcelona, Spain (EU Citizen)
-    Languages: English (Fluent), Serbian (Native), Spanish (Learning)
+        PERSONAL INFORMATION
+        Location: Barcelona, Spain (EU Citizen)
+        Languages: English (Fluent), Serbian (Native), Spanish (Learning)
 
-    PROFESSIONAL SUMMARY
-    Full Stack Developer with professional experience building scalable web applications and AI integrations. Strong background in backend development with C#/.NET and Java, with a focus on clean architecture and production-ready systems.
+        PROFESSIONAL SUMMARY
+        Full Stack Developer with professional experience building scalable web applications and AI integrations. Strong background in backend development with C#/.NET and Java, with a focus on clean architecture and production-ready systems.
 
-    TECHNICAL SKILLS
-    • Backend: C# / .NET Core / ASP.NET, Java, Node.js, RESTful APIs
-    • Frontend: JavaScript, TypeScript, React, HTML5, CSS3
-    • Databases: MySQL, SQL Server, PostgreSQL, Redis
-    • AI & Tools: AI API Integration, Prompt Engineering, Git, GitHub Actions
-    • Architecture: Clean Architecture, MVC, JWT Authentication
+        TECHNICAL SKILLS
+        • Backend: C# / .NET Core / ASP.NET, Java, Node.js, RESTful APIs
+        • Frontend: JavaScript, TypeScript, React, HTML5, CSS3
+        • Databases: MySQL, SQL Server, PostgreSQL, Redis
+        • AI & Tools: AI API Integration, Prompt Engineering, Git, GitHub Actions
+        • Architecture: Clean Architecture, MVC, JWT Authentication
 
-    WORK EXPERIENCE
+        WORK EXPERIENCE
 
-    WICKED GAMES (Feb 2025 - Oct 2025)
-    Backend / Math Developer
-    • Designed mathematical models and game logic for online slot games
-    • Ensured compliance with legal guidelines and optimized player experience
-    • Developed backend systems using Java
+        WICKED GAMES (Feb 2025 - Oct 2025)
+        Backend / Math Developer
+        • Designed mathematical models and game logic for online slot games
+        • Ensured compliance with legal guidelines and optimized player experience
+        • Developed backend systems using Java
 
-    QUADRO CONSULTING (Jan 2024 - Dec 2024)
-    Backend Developer
-    • Worked on enterprise software with Java and C#
-    • Contributed to U.S. client project - debugging and ensuring production stability
-    • Full stack development across multiple technologies
+        QUADRO CONSULTING (Jan 2024 - Dec 2024)
+        Backend Developer
+        • Worked on enterprise software with Java and C#
+        • Contributed to U.S. client project - debugging and ensuring production stability
+        • Full stack development across multiple technologies
 
-    KAMELEON SOLUTIONS (Sep 2022 - Feb 2023)
-    Salesforce Developer (Internship)
-    • Developed components for Salesforce organizations
-    • Assisted with development and administrative tasks
+        KAMELEON SOLUTIONS (Sep 2022 - Feb 2023)
+        Salesforce Developer (Internship)
+        • Developed components for Salesforce organizations
+        • Assisted with development and administrative tasks
 
-    FEATURED PROJECT
+        FEATURED PROJECT
 
-    RESTAURANT MANAGEMENT SYSTEM
-    • Full production system used by real restaurants
-    • ASP.NET Core backend with Entity Framework and MySQL
-    • Role-based authentication and real-time order management
-    • Live demo: zubac-matine-production.up.railway.app
+        RESTAURANT MANAGEMENT SYSTEM
+        • Full production system used by real restaurants
+        • ASP.NET Core backend with Entity Framework and MySQL
+        • Role-based authentication and real-time order management
+        • Live demo: zubac-matine-production.up.railway.app
 
-    RECRUITER SCANNER
-    • AI-powered email and LinkedIn message generator
-    • 4 different communication tones (Professional, Enthusiastic, Exploratory, Humble)
-    • Batch generation with real-time progress tracking
-    • Built with C#, ASP.NET Core, and vanilla JavaScript
+        RECRUITER SCANNER
+        • AI-powered email and LinkedIn message generator
+        • 4 different communication tones (Professional, Enthusiastic, Exploratory, Humble)
+        • Batch generation with real-time progress tracking
+        • Built with C#, ASP.NET Core, and vanilla JavaScript
 
-    EDUCATION
+        EDUCATION
 
-    FACULTY OF TECHNICAL SCIENCES, NOVI SAD
-    Bachelor's degree in Computer Science`;
+        FACULTY OF TECHNICAL SCIENCES, NOVI SAD
+        Bachelor's degree in Computer Science`;
 
     // Character counter
     document.getElementById('cvData').addEventListener('input', function () {
@@ -290,6 +430,97 @@
         const event = new Event('input');
         cvField.dispatchEvent(event);
     });
+
+    // Display selected PDF file name
+    document.getElementById('pdfFile')?.addEventListener('change', function (e) {
+        var fileName = e.target.files[0]?.name;
+        var label = document.getElementById('pdfFileLabel');
+        if (fileName) {
+            label.innerHTML = '📄 ' + fileName;
+            label.style.background = '#d4edda';
+            label.style.borderColor = '#28a745';
+        } else {
+            label.innerHTML = '📁 Choose PDF file';
+            label.style.background = 'white';
+            label.style.borderColor = '#dee2e6';
+        }
+    });
+
+    // NOVO: Funkcija za upload PDF-a i ekstrakciju CV-a
+    async function uploadPDF() {
+        const fileInput = document.getElementById('pdfFile');
+        const file = fileInput.files[0];
+
+        if (!file) {
+            showNotification('Please select a PDF file first.', 'error');
+            return;
+        }
+
+        // Prikaži progress
+        document.getElementById('pdfProgress').style.display = 'block';
+        document.getElementById('uploadPdfBtn').disabled = true;
+        document.getElementById('pdfProgressFill').style.width = '30%';
+        document.getElementById('pdfStatus').textContent = 'Uploading...';
+
+        const formData = new FormData();
+        formData.append('pdfFile', file);
+
+        try {
+            const response = await fetch('/Home/ExtractCVFromPDF', {
+                method: 'POST',
+                body: formData
+            });
+
+            document.getElementById('pdfProgressFill').style.width = '80%';
+            document.getElementById('pdfStatus').textContent = 'Processing...';
+
+            const result = await response.json();
+
+            if (result.success) {
+                // Postavi formatirani CV u textarea
+                const cvField = document.getElementById('cvData');
+                cvField.value = result.data;
+
+                // Trigger input event da se ažurira brojač
+                const event = new Event('input');
+                cvField.dispatchEvent(event);
+
+                // Ažuriraj indikator
+                document.getElementById('defaultIndicator').textContent = '(PDF CV loaded)';
+
+                // Prikaži uspeh
+                document.getElementById('pdfProgressFill').style.width = '100%';
+                document.getElementById('pdfStatus').textContent = '✓ CV extracted successfully!';
+
+                showNotification('CV successfully extracted from PDF!', 'success');
+
+                // Sačekaj malo pa sakrij progress
+                setTimeout(() => {
+                    document.getElementById('pdfProgress').style.display = 'none';
+                    document.getElementById('uploadPdfBtn').disabled = false;
+                    document.getElementById('pdfProgressFill').style.width = '0%';
+
+                    // Resetuj file input
+                    fileInput.value = '';
+                    document.getElementById('pdfFileLabel').innerHTML = '📁 Choose PDF file';
+                    document.getElementById('pdfFileLabel').style.background = 'white';
+                    document.getElementById('pdfFileLabel').style.borderColor = '#dee2e6';
+                }, 2000);
+            } else {
+                throw new Error(result.message || 'Failed to extract CV from PDF');
+            }
+        } catch (error) {
+            document.getElementById('pdfProgressFill').style.width = '0%';
+            document.getElementById('pdfStatus').textContent = '❌ Error: ' + error.message;
+            document.getElementById('uploadPdfBtn').disabled = false;
+
+            showNotification('Error: ' + error.message, 'error');
+
+            setTimeout(() => {
+                document.getElementById('pdfProgress').style.display = 'none';
+            }, 3000);
+        }
+    }
 
     function saveCVAndRedirect() {
         const cvData = document.getElementById('cvData').value;
@@ -331,10 +562,10 @@
     // Add slideOut animation
     const style = document.createElement('style');
     style.textContent = `
-            @@keyframes slideOut {
-                from { transform: translateX(0); opacity: 1; }
-                to { transform: translateX(100%); opacity: 0; }
-            }
-        `;
+                @@keyframes slideOut {
+                    from { transform: translateX(0); opacity: 1; }
+                    to { transform: translateX(100%); opacity: 0; }
+                }
+            `;
     document.head.appendChild(style);
 </script>

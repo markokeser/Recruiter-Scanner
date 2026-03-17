@@ -241,18 +241,22 @@
     .batch-analyze-btn {
         background: linear-gradient(135deg, #fd7e14 0%, #dc3545 100%);
         color: white;
-        padding: 12px 25px;
+        padding: 12px 35px;
         border: none;
-        border-radius: 8px;
+        border-radius: 50px;
         font-weight: 600;
         cursor: pointer;
         transition: transform 0.2s;
         display: inline-flex;
         align-items: center;
+        justify-content: center;
         gap: 8px;
+        box-shadow: 0 5px 15px rgba(253, 126, 20, 0.3);
+        font-size: 16px;
+        min-width: 200px;
     }
 
-        .batch-analyze-btn:hover {
+        .batch-analyze-btn:hover:not(:disabled) {
             transform: translateY(-2px);
             box-shadow: 0 8px 25px rgba(253, 126, 20, 0.4);
         }
@@ -429,45 +433,19 @@
         display: inline-flex;
         align-items: center;
         gap: 5px;
-        padding: 6px 12px;
+        padding: 8px 12px;
         background: #e8f4fd;
         border-radius: 5px;
         font-size: 12px;
-        margin-bottom: 5px;
         width: 100%;
         box-sizing: border-box;
+        transition: all 0.2s;
     }
 
         .linkedin-link:hover {
             background: #0077b5;
             color: white;
-        }
-
-    .btn-ai-match {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        border: none;
-        border-radius: 5px;
-        padding: 6px 12px;
-        font-size: 12px;
-        cursor: pointer;
-        transition: transform 0.2s;
-        width: 100%;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 5px;
-        box-sizing: border-box;
-    }
-
-        .btn-ai-match:hover {
-            transform: scale(1.05);
-        }
-
-        .btn-ai-match:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
+            transform: scale(1.02);
         }
 
     .email-link {
@@ -811,7 +789,7 @@
 
     .bottom-actions {
         display: flex;
-        justify-content: space-between;
+        justify-content: flex-end;
         align-items: center;
         margin-top: 20px;
         gap: 15px;
@@ -832,7 +810,7 @@
         gap: 8px;
         box-shadow: 0 5px 15px rgba(253, 126, 20, 0.3);
         font-size: 16px;
-        min-width: 150px;
+        min-width: 200px;
     }
 
         .btn-next:hover:not(:disabled) {
@@ -844,20 +822,6 @@
             opacity: 0.5;
             cursor: not-allowed;
             transform: none;
-        }
-
-    .analysis-status {
-        background: white;
-        border-radius: 50px;
-        padding: 10px 20px;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-        font-size: 14px;
-        color: #2c3e50;
-    }
-
-        .analysis-status span {
-            font-weight: 600;
-            color: #667eea;
         }
 </style>
 
@@ -1047,9 +1011,6 @@
                                             🔗 LinkedIn
                                         </a>
                                     }
-                                    <button onclick="analyzeMatch(@index); event.stopPropagation();" class="btn-ai-match" id="analyzeBtn-@index">
-                                        🤖 AI Match
-                                    </button>
                                 </td>
                             </tr>
                             index++;
@@ -1061,13 +1022,10 @@
             <!-- Bottom actions with Batch Analyze and Next button -->
             <div class="bottom-actions">
                 <button id="batchAnalyzeBtn" class="batch-analyze-btn" onclick="batchAnalyzeAll()">
-                    ⚡ Batch Analyze All
+                    Analyze All
                 </button>
-                <div class="analysis-status" id="analysisStatus">
-                    Analyzed: <span id="analyzedCount">0</span> / <span id="totalCount">@Model.Recruiters.Count</span>
-                </div>
                 <button id="nextBtn" class="btn-next" onclick="goToNextStep()" disabled>
-                    Next →
+                    Next
                 </button>
             </div>
         }
@@ -1177,7 +1135,6 @@
         updateStatsFromModel();
 
         updateNextButton();
-        updateAnalysisStatus();
 
         // Add click listeners to table rows
         addRowClickListeners();
@@ -1203,15 +1160,15 @@
             document.getElementById('withEmail').innerText = '0';
         </text>
     }
-            }
+                }
 
     // Function to add click events to rows
     function addRowClickListeners() {
         const rows = document.querySelectorAll('#tableBody tr');
         rows.forEach(row => {
             row.addEventListener('click', function (e) {
-                // Don't open modal if button or link was clicked
-                if (e.target.tagName === 'BUTTON' || e.target.tagName === 'A' || e.target.closest('button') || e.target.closest('a')) {
+                // Don't open modal if link was clicked
+                if (e.target.tagName === 'A' || e.target.closest('a')) {
                     return;
                 }
 
@@ -1220,7 +1177,7 @@
                     displayMatchResult(matchResults[index]);
                     document.getElementById('matchModal').style.display = 'flex';
                 } else if (index) {
-                    showNotification('First analyze this recruiter by clicking the "AI Match" button', 'warning');
+                    showNotification('First run batch analysis to get AI results', 'warning');
                 }
             });
         });
@@ -1266,9 +1223,9 @@
 
         // Kreiraj CSV fajl od demo podataka
         const demoContent = `Company Name for Emails,Website,First Name,Last Name,Person Linkedin Url,Title,Email,Email Status,Corporate Phone,# Employees,Company Linkedin Url,Facebook Url,Twitter Url,City,State,Country,Company Address,Company City
-    GitHub,https://github.com,Alex,Chen,http://www.linkedin.com/in/alex-chen-github,Technical Recruiter - Developer Platforms,alex.chen@github.com,Verified,+1 415-735-4488,1200,https://www.linkedin.com/company/github,https://www.facebook.com/GitHub,https://twitter.com/github,Barcelona,Catalonia,Spain,"88 Colin P Kelly Jr St, San Francisco, CA, United States, 94107",San Francisco
-    Goldman Sachs,https://goldmansachs.com,Sofia,Rodriguez,http://www.linkedin.com/in/sofia-rodriguez-gs,Tech Recruiter - Investment Banking Tech,sofia.rodriguez@gs.com,Verified,+1 212-902-1000,48500,https://www.linkedin.com/company/goldman-sachs,https://www.facebook.com/GoldmanSachs,https://twitter.com/GoldmanSachs,Barcelona,Catalonia,Spain,"200 West Street, New York, NY, United States, 10282",New York
-    Zara,https://zara.com,David,Martinez,http://www.linkedin.com/in/david-martinez-inditex,Retail Recruitment Specialist,david.martinez@zara.com,Verified,+34 981 18 54 00,45000,https://www.linkedin.com/company/inditex,https://www.facebook.com/zara,https://twitter.com/ZARA,Barcelona,Catalonia,Spain,"Avenida de la Diputacion, Arteixo, A Coruna, Spain, 15142",Arteixo`;
+        GitHub,https://github.com,Alex,Chen,http://www.linkedin.com/in/alex-chen-github,Technical Recruiter - Developer Platforms,alex.chen@github.com,Verified,+1 415-735-4488,1200,https://www.linkedin.com/company/github,https://www.facebook.com/GitHub,https://twitter.com/github,Barcelona,Catalonia,Spain,"88 Colin P Kelly Jr St, San Francisco, CA, United States, 94107",San Francisco
+        Goldman Sachs,https://goldmansachs.com,Sofia,Rodriguez,http://www.linkedin.com/in/sofia-rodriguez-gs,Tech Recruiter - Investment Banking Tech,sofia.rodriguez@gs.com,Verified,+1 212-902-1000,48500,https://www.linkedin.com/company/goldman-sachs,https://www.facebook.com/GoldmanSachs,https://twitter.com/GoldmanSachs,Barcelona,Catalonia,Spain,"200 West Street, New York, NY, United States, 10282",New York
+        Zara,https://zara.com,David,Martinez,http://www.linkedin.com/in/david-martinez-inditex,Retail Recruitment Specialist,david.martinez@zara.com,Verified,+34 981 18 54 00,45000,https://www.linkedin.com/company/inditex,https://www.facebook.com/zara,https://twitter.com/ZARA,Barcelona,Catalonia,Spain,"Avenida de la Diputacion, Arteixo, A Coruna, Spain, 15142",Arteixo`;
 
         const blob = new Blob([demoContent], { type: 'text/csv' });
         const file = new File([blob], 'demo_recruiters.csv', { type: 'text/csv' });
@@ -1324,29 +1281,14 @@
         document.getElementById('batchAnalyzeBtn').disabled = true;
         document.getElementById('nextBtn').disabled = true;
 
-        // Disable all AI Match buttons
-        for (let i = 0; i < totalRecruiters; i++) {
-            const btn = document.getElementById(`analyzeBtn-${i}`);
-            if (btn) {
-                btn.disabled = true;
-                btn.innerHTML = '⏳ Queue...';
-            }
-        }
-
         showNotification(`Starting analysis of ${totalRecruiters} recruiters...`, 'info');
 
         for (let i = 0; i < totalRecruiters; i++) {
-            const btn = document.getElementById(`analyzeBtn-${i}`);
-
             // Update progress
             const percent = Math.round((i / totalRecruiters) * 100);
             document.getElementById('progressFill').style.width = percent + '%';
             document.getElementById('progressPercent').innerHTML = percent + '%';
             document.getElementById('progressText').innerHTML = `Analyzing ${i + 1}/${totalRecruiters}: ${recruitersData[i]?.companyNameForEmails || 'N/A'}`;
-
-            if (btn) {
-                btn.innerHTML = '⏳ Analyzing...';
-            }
 
             try {
                 const response = await fetch('/Home/AnalyzeMatch', {
@@ -1367,25 +1309,11 @@
                     matchResults[i] = data.data;
                     updateScoreInTable(i, data.data.score);
                     completed++;
-
-                    if (btn) {
-                        btn.innerHTML = '✅ Done';
-                        setTimeout(() => {
-                            if (btn) btn.innerHTML = '🤖 AI Match';
-                        }, 2000);
-                    }
                 } else {
                     failed++;
-                    if (btn) {
-                        btn.innerHTML = '❌ Error';
-                        setTimeout(() => {
-                            if (btn) btn.innerHTML = '🤖 AI Match';
-                        }, 2000);
-                    }
                 }
 
                 updateNextButton();
-                updateAnalysisStatus();
 
                 // 1.5 second delay between requests (to avoid overloading the API)
                 if (i < totalRecruiters - 1) {
@@ -1395,12 +1323,6 @@
             } catch (error) {
                 console.error('Error analyzing:', error);
                 failed++;
-                if (btn) {
-                    btn.innerHTML = '❌ Error';
-                    setTimeout(() => {
-                        if (btn) btn.innerHTML = '🤖 AI Match';
-                    }, 2000);
-                }
             }
         }
 
@@ -1418,15 +1340,6 @@
 
         document.getElementById('batchAnalyzeBtn').disabled = false;
 
-        // Enable all AI Match buttons
-        for (let i = 0; i < totalRecruiters; i++) {
-            const btn = document.getElementById(`analyzeBtn-${i}`);
-            if (btn) {
-                btn.disabled = false;
-                btn.innerHTML = '🤖 AI Match';
-            }
-        }
-
         // Only enable Next button if all analyses completed successfully
         if (completed === totalRecruiters) {
             document.getElementById('nextBtn').disabled = false;
@@ -1438,94 +1351,6 @@
     }
 
     // ===== HELPER FUNCTIONS =====
-    function analyzeMatch(index) {
-        // If we already have a result for this index, display it
-        if (matchResults[index]) {
-            displayMatchResult(matchResults[index]);
-            document.getElementById('matchModal').style.display = 'flex';
-            return;
-        }
-
-        const cvData = localStorage.getItem('userCV');
-
-        if (!cvData) {
-            showNotification('Please enter your CV first. Click on the "AI Match Setup" button.', 'warning');
-            return;
-        }
-
-        if (!recruitersData || recruitersData.length === 0) {
-            showNotification('No recruiter data available.', 'warning');
-            return;
-        }
-
-        const recruiter = recruitersData[index];
-        if (!recruiter) {
-            showNotification('Recruiter not found.', 'warning');
-            return;
-        }
-
-        const analyzeBtn = document.getElementById(`analyzeBtn-${index}`);
-        const originalText = analyzeBtn ? analyzeBtn.innerHTML : '🤖 AI Match';
-
-        if (analyzeBtn) {
-            analyzeBtn.innerHTML = '⏳ Analyzing...';
-            analyzeBtn.disabled = true;
-        }
-
-        // Show modal and loading
-        document.getElementById('loadingSpinner').style.display = 'flex';
-        document.getElementById('matchModal').style.display = 'flex';
-        document.getElementById('matchContent').innerHTML = '';
-
-        fetch('/Home/AnalyzeMatch', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                recruiterIndex: index,
-                recruiter: recruiter,
-                cvData: cvData
-            })
-        })
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('loadingSpinner').style.display = 'none';
-                if (analyzeBtn) {
-                    analyzeBtn.innerHTML = originalText;
-                    analyzeBtn.disabled = false;
-                }
-
-                if (data.success) {
-                    matchResults[index] = data.data;
-                    updateScoreInTable(index, data.data.score);
-                    displayMatchResult(data.data);
-                    updateNextButton();
-                    updateAnalysisStatus();
-                } else {
-                    document.getElementById('matchContent').innerHTML = `
-                                <div style="color: #dc3545; text-align: center; padding: 20px;">
-                                    <h3 style="margin-bottom: 10px;">❌ Error</h3>
-                                    <p>${data.message || 'An error occurred during analysis.'}</p>
-                                </div>
-                            `;
-                }
-            })
-            .catch(error => {
-                document.getElementById('loadingSpinner').style.display = 'none';
-                if (analyzeBtn) {
-                    analyzeBtn.innerHTML = originalText;
-                    analyzeBtn.disabled = false;
-                }
-                document.getElementById('matchContent').innerHTML = `
-                            <div style="color: #dc3545; text-align: center; padding: 20px;">
-                                <h3 style="margin-bottom: 10px;">❌ Error</h3>
-                                <p>An error occurred while communicating with the server.</p>
-                            </div>
-                        `;
-            });
-    }
-
     function updateScoreInTable(index, score) {
         const row = document.querySelector(`tr[data-index="${index}"]`);
         if (row) {
@@ -1561,17 +1386,6 @@
         }
     }
 
-    function updateAnalysisStatus() {
-        const analyzedCount = Object.keys(matchResults).length;
-        const totalCount = recruitersData ? recruitersData.length : 0;
-
-        const analyzedSpan = document.getElementById('analyzedCount');
-        const totalSpan = document.getElementById('totalCount');
-
-        if (analyzedSpan) analyzedSpan.innerText = analyzedCount;
-        if (totalSpan) totalSpan.innerText = totalCount;
-    }
-
     function goToNextStep() {
         const results = [];
 
@@ -1592,18 +1406,18 @@
                     city: recruiter.city || '',
                     country: recruiter.country || '',
 
-                    // Podaci o recruiteru - KORISTI IMENA KOJA SE OČEKUJU U EmailGenerator
+                    // Podaci o recruiteru
                     recruiterName: `${recruiter.firstName || ''} ${recruiter.lastName || ''}`.trim() || 'N/A',
                     recruiterTitle: recruiter.title || 'N/A',
                     recruiterEmail: recruiter.email || 'N/A',
                     emailStatus: recruiter.emailStatus || 'N/A',
 
-                    // LinkedIn linkovi - OVO JE KLJUČNO! Koristi očekivana imena
-                    recruiterLinkedIn: recruiter.personLinkedinUrl || 'N/A',  // UMESTO linkedinProfile
-                    companyLinkedIn: recruiter.companyLinkedinUrl || 'N/A',   // UMESTO linkedinCompany
+                    // LinkedIn linkovi
+                    recruiterLinkedIn: recruiter.personLinkedinUrl || 'N/A',
+                    companyLinkedIn: recruiter.companyLinkedinUrl || 'N/A',
 
-                    // AI Match rezultati - KORISTI VELIKA SLOVA ZA MatchScore
-                    MatchScore: match.score || 0,  // VELIKO M, VELIKO S
+                    // AI Match rezultati
+                    MatchScore: match.score || 0,
                     reasoning: match.reasoning || '',
                     companyAnalysis: match.companyAnalysis || '',
                     locationMatch: match.locationMatch || '',
@@ -1748,63 +1562,63 @@
         }
 
         document.getElementById('matchContent').innerHTML = `
-                    <div style="text-align: center; margin-bottom: 20px;">
-                        <div class="score-circle" style="background: ${scoreColor}; margin: 0 auto;">
-                            ${result.score}/10
+                        <div style="text-align: center; margin-bottom: 20px;">
+                            <div class="score-circle" style="background: ${scoreColor}; margin: 0 auto;">
+                                ${result.score}/10
+                            </div>
+                            <div style="font-size: 18px; color: #2c3e50; margin-top: 5px;">
+                                Match Score
+                            </div>
                         </div>
-                        <div style="font-size: 18px; color: #2c3e50; margin-top: 5px;">
-                            Match Score
-                        </div>
-                    </div>
 
-                    <div style="margin: 20px 0; padding: 15px; background: #f8f9fa; border-radius: 10px;">
-                        <h4 style="color: #2c3e50; margin-bottom: 10px;">📊 Overall Assessment</h4>
-                        <p style="color: #495057; line-height: 1.6;">${result.reasoning || 'No description'}</p>
-                    </div>
-
-                    <div class="analysis-grid">
-                        <div class="analysis-item" style="background: #e8f4fd;">
-                            <h5 style="color: #0077b5;">🏢 Company Analysis</h5>
-                            <p>${result.companyAnalysis || 'N/A'}</p>
+                        <div style="margin: 20px 0; padding: 15px; background: #f8f9fa; border-radius: 10px;">
+                            <h4 style="color: #2c3e50; margin-bottom: 10px;">📊 Overall Assessment</h4>
+                            <p style="color: #495057; line-height: 1.6;">${result.reasoning || 'No description'}</p>
                         </div>
-                        <div class="analysis-item" style="background: #f0f7e8;">
-                            <h5 style="color: #28a745;">📍 Location Match</h5>
-                            <p>${result.locationMatch || 'N/A'}</p>
-                        </div>
-                        <div class="analysis-item" style="background: #fff3cd;">
-                            <h5 style="color: #856404;">🔧 Industry Match</h5>
-                            <p>${result.industryMatch || 'N/A'}</p>
-                        </div>
-                        <div class="analysis-item" style="background: #d4edda;">
-                            <h5 style="color: #155724;">💡 Key Finding</h5>
-                            <p>${result.keyFindings || 'N/A'}</p>
-                        </div>
-                    </div>
 
-                    <div style="margin: 20px 0;">
-                        <h4 style="color: #2c3e50; margin-bottom: 10px;">💪 Strengths</h4>
-                        <ul class="strengths-list">
-                            ${strengthsHtml}
-                        </ul>
-                    </div>
+                        <div class="analysis-grid">
+                            <div class="analysis-item" style="background: #e8f4fd;">
+                                <h5 style="color: #0077b5;">🏢 Company Analysis</h5>
+                                <p>${result.companyAnalysis || 'N/A'}</p>
+                            </div>
+                            <div class="analysis-item" style="background: #f0f7e8;">
+                                <h5 style="color: #28a745;">📍 Location Match</h5>
+                                <p>${result.locationMatch || 'N/A'}</p>
+                            </div>
+                            <div class="analysis-item" style="background: #fff3cd;">
+                                <h5 style="color: #856404;">🔧 Industry Match</h5>
+                                <p>${result.industryMatch || 'N/A'}</p>
+                            </div>
+                            <div class="analysis-item" style="background: #d4edda;">
+                                <h5 style="color: #155724;">💡 Key Finding</h5>
+                                <p>${result.keyFindings || 'N/A'}</p>
+                            </div>
+                        </div>
 
-                    <div style="margin: 20px 0;">
-                        <h4 style="color: #2c3e50; margin-bottom: 10px;">📉 Areas for Improvement</h4>
-                        <ul class="weaknesses-list">
-                            ${weaknessesHtml}
-                        </ul>
-                    </div>
+                        <div style="margin: 20px 0;">
+                            <h4 style="color: #2c3e50; margin-bottom: 10px;">💪 Strengths</h4>
+                            <ul class="strengths-list">
+                                ${strengthsHtml}
+                            </ul>
+                        </div>
 
-                    <div style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 10px;">
-                        <h5 style="color: #2c3e50; margin-bottom: 10px;">📋 Company Details:</h5>
-                        <p style="color: #666; font-size: 13px; line-height: 1.6;">
-                            <strong>${result.recruiter?.companyNameForEmails || 'N/A'}</strong><br>
-                            📍 ${result.recruiter?.city || 'N/A'}, ${result.recruiter?.country || 'N/A'}<br>
-                            👤 ${result.recruiter?.firstName || ''} ${result.recruiter?.lastName || ''} - ${result.recruiter?.title || 'N/A'}<br>
-                            ${result.recruiter?.email ? '📧 ' + result.recruiter.email : ''}
-                        </p>
-                    </div>
-                `;
+                        <div style="margin: 20px 0;">
+                            <h4 style="color: #2c3e50; margin-bottom: 10px;">📉 Areas for Improvement</h4>
+                            <ul class="weaknesses-list">
+                                ${weaknessesHtml}
+                            </ul>
+                        </div>
+
+                        <div style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 10px;">
+                            <h5 style="color: #2c3e50; margin-bottom: 10px;">📋 Company Details:</h5>
+                            <p style="color: #666; font-size: 13px; line-height: 1.6;">
+                                <strong>${result.recruiter?.companyNameForEmails || 'N/A'}</strong><br>
+                                📍 ${result.recruiter?.city || 'N/A'}, ${result.recruiter?.country || 'N/A'}<br>
+                                👤 ${result.recruiter?.firstName || ''} ${result.recruiter?.lastName || ''} - ${result.recruiter?.title || 'N/A'}<br>
+                                ${result.recruiter?.email ? '📧 ' + result.recruiter.email : ''}
+                            </p>
+                        </div>
+                    `;
     }
 
     function closeModal() {

@@ -372,6 +372,43 @@ namespace Recruiter_Scanner.Controllers
             }
         }
 
+        // POST: Home/ExtractCVFromPDF
+        [HttpPost]
+        public async Task<IActionResult> ExtractCVFromPDF(IFormFile pdfFile)
+        {
+            try
+            {
+                if (pdfFile == null || pdfFile.Length == 0)
+                {
+                    return Json(new { success = false, message = "No file uploaded" });
+                }
+
+                if (Path.GetExtension(pdfFile.FileName).ToLowerInvariant() != ".pdf")
+                {
+                    return Json(new { success = false, message = "Please upload a PDF file" });
+                }
+
+                using (var stream = pdfFile.OpenReadStream())
+                {
+                    string formattedCV = await _aiService.ExtractCVFromPDF(stream, pdfFile.FileName);
+
+                    return Json(new
+                    {
+                        success = true,
+                        data = formattedCV
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = ex.Message
+                });
+            }
+        }
+
         public class BatchAnalyzeRequest
         {
             public List<Recruiter> Recruiters { get; set; }
