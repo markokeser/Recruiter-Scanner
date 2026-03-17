@@ -227,7 +227,6 @@ namespace Recruiter_Scanner.Controllers
             return Json(sample);
         }
 
-        // OVA METODA FALI - DODAJ JE!!!
         [HttpPost]
         public async Task<IActionResult> GenerateEmail([FromBody] GenerateEmailRequest request)
         {
@@ -236,8 +235,8 @@ namespace Recruiter_Scanner.Controllers
                 if (request?.MatchData == null)
                     return BadRequest(new { error = "Match data is required" });
 
-                // Učitaj CV (iz fajla ili baze)
-                var cvData = await LoadCVData();
+                // Koristi CV iz request-a umesto LoadCVData()
+                var cvData = request.CvData;
 
                 // Konvertuj MatchData u AIMatchResponse
                 var matchResponse = MapToAIMatchResponse(request.MatchData);
@@ -385,6 +384,7 @@ namespace Recruiter_Scanner.Controllers
     public class GenerateEmailRequest
     {
         public MatchData MatchData { get; set; }
+        public string CvData { get; set; }  // ← DODATO
         public bool IncludeSignature { get; set; } = true;
     }
 }

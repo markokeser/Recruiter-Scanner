@@ -24,47 +24,25 @@
 
     h2 {
         color: #2c3e50;
-        margin-bottom: 20px;
+        margin-bottom: 30px;
         font-size: 32px;
         display: flex;
         align-items: center;
         gap: 10px;
+        border-bottom: 2px solid #e9ecef;
+        padding-bottom: 15px;
     }
-
-    .info-box {
-        background: linear-gradient(135deg, #667eea10 0%, #764ba210 100%);
-        border-left: 5px solid #667eea;
-        padding: 20px;
-        border-radius: 12px;
-        margin-bottom: 30px;
-    }
-
-        .info-box h4 {
-            color: #2c3e50;
-            margin-bottom: 10px;
-            font-size: 18px;
-        }
-
-        .info-box ul {
-            margin: 10px 0 0 20px;
-            color: #495057;
-            line-height: 1.6;
-        }
-
-        .info-box li {
-            margin-bottom: 8px;
-        }
 
     .form-group {
-        margin-bottom: 25px;
+        margin-bottom: 30px;
     }
 
     .form-label {
         display: block;
-        margin-bottom: 10px;
+        margin-bottom: 15px;
         font-weight: 600;
         color: #2c3e50;
-        font-size: 16px;
+        font-size: 18px;
     }
 
     .cv-textarea {
@@ -86,11 +64,6 @@
             outline: none;
             box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
             background: white;
-        }
-
-        .cv-textarea::placeholder {
-            color: #adb5bd;
-            font-style: italic;
         }
 
     .button-group {
@@ -148,38 +121,6 @@
             color: #667eea;
         }
 
-    .sample-cv {
-        margin-top: 30px;
-        background: #f8f9fa;
-        border-radius: 12px;
-        padding: 20px;
-    }
-
-        .sample-cv h4 {
-            color: #2c3e50;
-            margin-bottom: 15px;
-            font-size: 16px;
-        }
-
-    .sample-btn {
-        background: none;
-        border: 2px dashed #adb5bd;
-        padding: 10px 20px;
-        border-radius: 8px;
-        color: #495057;
-        cursor: pointer;
-        font-size: 14px;
-        transition: all 0.3s;
-        width: 100%;
-        text-align: left;
-    }
-
-        .sample-btn:hover {
-            border-color: #667eea;
-            color: #667eea;
-            background: white;
-        }
-
     .char-counter {
         text-align: right;
         font-size: 12px;
@@ -187,13 +128,53 @@
         margin-top: 8px;
     }
 
-        .char-counter.warning {
-            color: #ffc107;
+    .notification {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 15px 25px;
+        color: white;
+        border-radius: 10px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        z-index: 1000;
+        animation: slideIn 0.3s ease;
+        font-weight: 500;
+    }
+
+    .notification-success {
+        background: #28a745;
+    }
+
+    @@keyframes slideIn {
+        from {
+            transform: translateX(100%);
+            opacity: 0;
         }
 
-        .char-counter.danger {
-            color: #dc3545;
+        to {
+            transform: translateX(0);
+            opacity: 1;
         }
+    }
+
+    @@keyframes slideOut {
+        from {
+            transform: translateX(0);
+            opacity: 1;
+        }
+
+        to {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+    }
+
+    .default-cv-indicator {
+        font-size: 13px;
+        color: #28a745;
+        margin-left: 15px;
+        font-weight: normal;
+    }
 </style>
 
 <div class="container">
@@ -202,73 +183,112 @@
             <span>🎯 AI Match Setup</span>
         </h2>
 
-        <div class="info-box">
-            <h4>📋 CV Entry Instructions</h4>
-            <ul>
-                <li>Copy your entire CV content (you can paste from Word, PDF, or text file)</li>
-                <li>AI will analyze your CV and compare it with each recruiter</li>
-                <li>You'll receive a score from 1-10 for each company</li>
-                <li>Detailed explanation of why it's a good or bad match</li>
-                <li>Suggestions for contacting recruiters</li>
-            </ul>
-        </div>
-
         <form id="cvForm">
             <div class="form-group">
                 <label class="form-label" for="cvData">
-                    📄 Enter your CV (copy/paste):
+                    📄 Your CV:
+                    <span class="default-cv-indicator" id="defaultIndicator">(Default CV is loaded)</span>
                 </label>
                 <textarea id="cvData"
                           name="cvData"
                           class="cv-textarea"
-                          placeholder="Paste your CV here... e.g.:
-
-John Smith
-Senior Software Engineer
-
-TECHNICAL SKILLS:
-• C# / .NET Core / ASP.NET
-• Python / JavaScript / React
-• SQL Server / MongoDB
-• Git / GitHub
-• RESTful APIs / GraphQL
-• Cloud Services (AWS/Azure)"></textarea>
+                          placeholder="Your CV content..."></textarea>
                 <div id="charCounter" class="char-counter">0 characters</div>
             </div>
 
             <div class="button-group">
                 <button type="button" class="btn-primary" onclick="saveCVAndRedirect()">
-                    💾 Save CV & Go to Recruiters List
+                    💾 Save & Continue
                 </button>
                 <a href="/Home" class="btn-secondary">
-                    ← Back to List
+                    ← Cancel
                 </a>
             </div>
         </form>
-
-        <div class="sample-cv">
-            <h4>🔽 Sample CV for Testing (click to insert):</h4>
-            <button class="sample-btn" onclick="insertSampleCV()">
-                📋 Insert Sample CV
-            </button>
-        </div>
     </div>
 </div>
 
 <script>
+    // Default CV content
+    const DEFAULT_CV = `SOFTWARE ENGINEER - FULL STACK DEVELOPER
+
+    PERSONAL INFORMATION
+    Location: Barcelona, Spain (EU Citizen)
+    Languages: English (Fluent), Serbian (Native), Spanish (Learning)
+
+    PROFESSIONAL SUMMARY
+    Full Stack Developer with professional experience building scalable web applications and AI integrations. Strong background in backend development with C#/.NET and Java, with a focus on clean architecture and production-ready systems.
+
+    TECHNICAL SKILLS
+    • Backend: C# / .NET Core / ASP.NET, Java, Node.js, RESTful APIs
+    • Frontend: JavaScript, TypeScript, React, HTML5, CSS3
+    • Databases: MySQL, SQL Server, PostgreSQL, Redis
+    • AI & Tools: AI API Integration, Prompt Engineering, Git, GitHub Actions
+    • Architecture: Clean Architecture, MVC, JWT Authentication
+
+    WORK EXPERIENCE
+
+    WICKED GAMES (Feb 2025 - Oct 2025)
+    Backend / Math Developer
+    • Designed mathematical models and game logic for online slot games
+    • Ensured compliance with legal guidelines and optimized player experience
+    • Developed backend systems using Java
+
+    QUADRO CONSULTING (Jan 2024 - Dec 2024)
+    Backend Developer
+    • Worked on enterprise software with Java and C#
+    • Contributed to U.S. client project - debugging and ensuring production stability
+    • Full stack development across multiple technologies
+
+    KAMELEON SOLUTIONS (Sep 2022 - Feb 2023)
+    Salesforce Developer (Internship)
+    • Developed components for Salesforce organizations
+    • Assisted with development and administrative tasks
+
+    FEATURED PROJECT
+
+    RESTAURANT MANAGEMENT SYSTEM
+    • Full production system used by real restaurants
+    • ASP.NET Core backend with Entity Framework and MySQL
+    • Role-based authentication and real-time order management
+    • Live demo: zubac-matine-production.up.railway.app
+
+    RECRUITER SCANNER
+    • AI-powered email and LinkedIn message generator
+    • 4 different communication tones (Professional, Enthusiastic, Exploratory, Humble)
+    • Batch generation with real-time progress tracking
+    • Built with C#, ASP.NET Core, and vanilla JavaScript
+
+    EDUCATION
+
+    FACULTY OF TECHNICAL SCIENCES, NOVI SAD
+    Bachelor's degree in Computer Science`;
+
     // Character counter
     document.getElementById('cvData').addEventListener('input', function () {
         const count = this.value.length;
         const counter = document.getElementById('charCounter');
         counter.textContent = count + ' characters';
+    });
 
-        if (count > 5000) {
-            counter.className = 'char-counter warning';
-        } else if (count > 10000) {
-            counter.className = 'char-counter danger';
+    // Load default CV on page load
+    document.addEventListener('DOMContentLoaded', function () {
+        const cvField = document.getElementById('cvData');
+
+        // Check if there's already a CV in localStorage
+        const savedCV = localStorage.getItem('userCV');
+
+        if (savedCV) {
+            cvField.value = savedCV;
+            document.getElementById('defaultIndicator').textContent = '(Your saved CV is loaded)';
         } else {
-            counter.className = 'char-counter';
+            cvField.value = DEFAULT_CV;
+            document.getElementById('defaultIndicator').textContent = '(Default CV is loaded)';
         }
+
+        // Trigger input to update counter
+        const event = new Event('input');
+        cvField.dispatchEvent(event);
     });
 
     function saveCVAndRedirect() {
@@ -288,119 +308,17 @@ TECHNICAL SKILLS:
         localStorage.setItem('userCV', cvData);
 
         // Show notification
-        showNotification('✓ CV successfully saved!', 'success');
+        showNotification('✓ CV saved successfully!', 'success');
 
-        // Go to recruiters list
+        // Go back to recruiters list
         setTimeout(() => {
             window.location.href = '/Home';
         }, 1500);
     }
 
-    function insertSampleCV() {
-        const sampleCV = `SOFTWARE ENGINEER - FULL STACK DEVELOPER
-
-    PERSONAL INFORMATION
-    Location: Barcelona, Spain (EU Citizen)
-    Languages: English (Native), Spanish (Fluent)
-
-    PROFESSIONAL SUMMARY
-    Full Stack Developer with 6+ years of experience building scalable web applications and developer tools. Passionate about open source, clean code, and developer experience. Strong background in both frontend and backend technologies with a focus on modern JavaScript frameworks and cloud architecture.
-
-    TECHNICAL SKILLS
-    • Frontend: React, TypeScript, Next.js, HTML5, CSS3, Tailwind
-    • Backend: Node.js, Python, C#/.NET, RESTful APIs, GraphQL
-    • Databases: PostgreSQL, MongoDB, Redis
-    • DevOps: Docker, AWS (EC2, S3), CI/CD, GitHub Actions
-    • Tools: Git, VS Code, Postman, Jira, Figma
-    • Testing: Jest, Cypress, Playwright
-
-    WORK EXPERIENCE
-
-    TECHNOLOGY SOLUTIONS INC. (2022 - Present)
-    Senior Full Stack Developer
-    • Led development of internal developer portal used by 200+ engineers
-    • Built and maintained CI/CD pipelines using GitHub Actions
-    • Mentored junior developers and conducted code reviews
-    • Implemented OAuth2 authentication system for multiple client applications
-    • Reduced API response time by 40% through query optimization and caching
-
-    DIGITAL INNOVATIONS LTD (2019 - 2022)
-    Full Stack Developer
-    • Developed e-commerce platform processing 50k+ daily transactions
-    • Integrated payment gateways (Stripe, PayPal) and third-party APIs
-    • Built responsive frontend with React and Redux
-    • Optimized database queries resulting in 60% faster load times
-    • Participated in agile development process with bi-weekly sprints
-
-    STARTUP HUB (2018 - 2019)
-    Junior Developer
-    • Contributed to MVP development for 3 startup projects
-    • Built RESTful APIs using Node.js and Express
-    • Collaborated with UX designers to implement responsive interfaces
-    • Participated in hackathons and won "Best Technical Solution" award
-
-    OPEN SOURCE CONTRIBUTIONS
-    • Contributor to React core documentation
-    • Maintainer of popular GitHub Actions workflow templates
-    • Created and maintained 5 open source libraries with 1000+ GitHub stars
-
-    EDUCATION
-
-    MASTER OF COMPUTER SCIENCE (2016 - 2018)
-    Technical University of Barcelona
-    • Thesis: "Developer Experience in Modern CI/CD Pipelines"
-    • GPA: 3.8/4.0
-
-    BACHELOR OF SOFTWARE ENGINEERING (2013 - 2016)
-    University of Catalonia
-    • Focus: Web Technologies and Distributed Systems
-
-    CERTIFICATIONS
-    • AWS Certified Developer – Associate (2023)
-    • GitHub Actions Certification (2024)
-    • MongoDB Developer Certification (2023)
-
-    PROJECTS
-
-    DEVELOPER DASHBOARD
-    • Built developer productivity dashboard used by 500+ engineers
-    • Integrated with GitHub API to track pull requests and deployments
-    • Open sourced with 800+ GitHub stars
-
-    API GATEWAY TEMPLATE
-    • Created reusable API gateway template with authentication and rate limiting
-    • Downloaded 10k+ times on npm
-    • Used by 50+ companies in production
-
-    LANGUAGES
-    • English (Native)
-    • Spanish (Fluent - C1)
-    • Catalan (Basic)`;
-
-        document.getElementById('cvData').value = sampleCV;
-
-        // Trigger input event to update counter
-        const event = new Event('input');
-        document.getElementById('cvData').dispatchEvent(event);
-
-        showNotification('✓ Sample CV loaded!', 'success');
-    }
-
     function showNotification(message, type) {
         const notification = document.createElement('div');
-        notification.style.cssText = `
-                    position: fixed;
-                    top: 20px;
-                    right: 20px;
-                    padding: 15px 25px;
-                    background: ${type === 'success' ? '#28a745' : '#17a2b8'};
-                    color: white;
-                    border-radius: 10px;
-                    box-shadow: 0 5px 20px rgba(0,0,0,0.2);
-                    z-index: 1000;
-                    animation: slideIn 0.3s ease;
-                    font-weight: 500;
-                `;
+        notification.className = `notification notification-${type}`;
         notification.textContent = message;
         document.body.appendChild(notification);
 
@@ -410,17 +328,13 @@ TECHNICAL SKILLS:
         }, 3000);
     }
 
-    // Add animations if they don't exist
+    // Add slideOut animation
     const style = document.createElement('style');
     style.textContent = `
-        @@keyframes slideIn {
-                    from { transform: translateX(100%); opacity: 0; }
-                    to { transform: translateX(0); opacity: 1; }
-                }
-        @@keyframes slideOut {
-                    from { transform: translateX(0); opacity: 1; }
-                    to { transform: translateX(100%); opacity: 0; }
-                }
-            `;
+            @@keyframes slideOut {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+        `;
     document.head.appendChild(style);
 </script>

@@ -431,21 +431,15 @@ Return a JSON with this structure:
 
         private string BuildEmailPrompt(Recruiter recruiter, string cvData, AIMatchResponse matchAnalysis)
         {
-            return $@"Write a short outreach email to a recruiter following these EXACT examples:
+            return $@"Write a short outreach email to a recruiter based on this candidate's CV:
 
 RECRUITER INFO:
 - Name: {recruiter.FirstName} {recruiter.LastName}
 - Company: {recruiter.CompanyNameForEmails}  (use this EXACT company name in the email)
 - Company focus: {matchAnalysis.IndustryMatch ?? "IT recruitment"}
 
-CANDIDATE (MARKO KESER):
-- Role: Backend Developer
-- Core stack: C#/.NET
-- Experience: ~2 years
-- Location: Barcelona
-- Skills: APIs, automation, AI integration work
-- Phone: +34 637 18 27 83
-- Website: kesermarko.com
+CANDIDATE CV:
+{cvData}
 
 REFERENCE EXAMPLES (use exactly this style):
 
@@ -477,7 +471,7 @@ Marko Keser
 kesermarko.com
 
 YOUR TASK:
-Write an email that follows this EXACT style and length.
+Write an email that follows this EXACT style and length, using information from the candidate's CV above.
 
 RULES:
 1. Length: Same as examples (short, 4-6 sentences)
@@ -485,15 +479,23 @@ RULES:
 3. Company reference: Add ONE short, natural mention of what the company does, using the company name: {recruiter.CompanyNameForEmails}
    - Example: ""Noticing {recruiter.CompanyNameForEmails} works with [industry] companies""
    - Example: ""Given {recruiter.CompanyNameForEmails}'s focus on [sector]""
-4. Skills: Mention APIs, automation, AI integration (as shown in examples)
-5. NO previous companies (no Wicked Games, Quadro, etc.)
-6. NO generic compliments or flattery
-7. NO corporate buzzwords
-8. Signature: Name, phone, website
+4. Skills: Extract key skills from the CV and mention them naturally (focus on backend, APIs, automation, AI if present)
+5. Experience: Mention years of experience if found in CV (otherwise keep general)
+6. Location: Extract from CV if present (Barcelona/Spain or general)
+7. NO previous company names from CV (don't mention specific past employers)
+8. NO generic compliments or flattery
+9. NO corporate buzzwords
+10. Signature format:
+    Best regards,
+    [Name from CV]
+    [Phone from CV - ONLY include if phone number is explicitly found in the CV, otherwise omit this line completely]
+    [Website/Email from CV - ONLY include if website or email is explicitly found in the CV, otherwise omit this line completely]
+
+    IMPORTANT: Only include phone and website lines if they actually appear in the CV. If they don't exist, just skip those lines entirely.
 
 Return a JSON with this structure:
 {{
-    ""subject"": ""{recruiter.FirstName}, backend dev position?"",
+    ""subject"": ""Short subject line (like the examples)"",
     ""body"": ""Full email body with proper line breaks"",
     ""status"": ""Success""
 }}";
