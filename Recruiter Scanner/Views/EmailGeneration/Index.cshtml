@@ -667,6 +667,268 @@
         font-size: 11px;
         margin-left: 5px;
     }
+
+    /* ===== MOBILNA OPTIMIZACIJA - SAMO ZA MOBILNE UREĐAJE ===== */
+    @@media (max-width: 768px) {
+        body {
+            padding: 10px;
+        }
+
+        .container {
+            padding: 10px;
+        }
+
+        header {
+            padding: 15px;
+        }
+
+        h1 {
+            font-size: 20px;
+        }
+
+        .stats {
+            padding: 12px;
+            gap: 15px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 20px;
+        }
+
+        .stat-label {
+            font-size: 11px;
+        }
+
+        .filter-bar {
+            flex-direction: column;
+            align-items: stretch;
+            padding: 12px;
+        }
+
+        .filter-input,
+        .filter-select {
+            width: 100%;
+        }
+        /* Recruiters grid - veće kartice za mobilni */
+        .recruiters-grid {
+            grid-template-columns: 1fr !important;
+            gap: 15px;
+        }
+
+        .recruiter-card {
+            padding: 16px;
+            border-radius: 12px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+        }
+
+            .recruiter-card.selected {
+                border-width: 3px;
+            }
+
+        .card-header {
+            margin-bottom: 12px;
+        }
+
+        .company-name {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .match-score {
+            padding: 4px 12px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .recruiter-info {
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+        }
+
+        .recruiter-name {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .recruiter-title {
+            font-size: 14px;
+            margin-top: 4px;
+            color: #666;
+        }
+
+        .company-details {
+            font-size: 13px;
+            margin-bottom: 12px;
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+            .company-details div {
+                margin-bottom: 6px;
+                display: flex;
+                align-items: center;
+                gap: 5px;
+            }
+
+                .company-details div:last-child {
+                    margin-bottom: 0;
+                }
+
+        .reasoning {
+            padding: 10px;
+            font-size: 13px;
+            margin: 10px 0;
+            background: #f0f7ff;
+            border-left-width: 4px;
+        }
+
+        .strengths,
+        .weaknesses {
+            margin: 8px 0;
+        }
+
+        .strength-tag,
+        .weakness-tag {
+            padding: 4px 10px;
+            font-size: 11px;
+            margin: 3px;
+            display: inline-block;
+        }
+        /* Dugmad u footer-u - vertikalni raspored na mobilnom */
+        .card-footer {
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 15px;
+        }
+
+            .card-footer .btn {
+                width: 100%;
+                padding: 12px;
+                font-size: 14px;
+                font-weight: 500;
+                border-radius: 8px;
+            }
+        /* Status tekst na dnu kartice */
+        .recruiter-card > div:last-child {
+            font-size: 11px;
+            margin-top: 12px;
+            padding-top: 8px;
+        }
+        /* Modal optimizacija za mobilne */
+        .modal-content {
+            padding: 20px;
+            width: 95%;
+        }
+
+        .modal-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+            .modal-header h2 {
+                font-size: 18px;
+            }
+
+        .tone-badge {
+            margin-left: 0;
+            font-size: 11px;
+            padding: 3px 10px;
+        }
+
+        .email-field label {
+            font-size: 13px;
+        }
+
+        .email-field input,
+        .email-field textarea {
+            padding: 10px;
+            font-size: 13px;
+        }
+
+        .email-field textarea {
+            min-height: 200px;
+        }
+
+        .modal-actions {
+            flex-direction: column;
+            gap: 8px;
+        }
+
+            .modal-actions .btn {
+                width: 100%;
+                padding: 12px;
+                font-size: 14px;
+            }
+        /* Details modal optimizacija */
+        .details-grid {
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+
+        .details-section.full-width {
+            grid-column: span 1;
+        }
+
+        .details-section {
+            padding: 12px;
+        }
+
+            .details-section h3 {
+                font-size: 15px;
+                margin-bottom: 12px;
+            }
+
+        .detail-item {
+            font-size: 13px;
+        }
+
+        .detail-label {
+            min-width: 100px;
+        }
+        /* Toast notifikacija na dnu za mobilne */
+        .toast {
+            left: 20px;
+            right: 20px;
+            bottom: 20px;
+            text-align: center;
+            font-size: 14px;
+            padding: 15px;
+        }
+    }
+
+    /* Dodatna optimizacija za male telefone */
+    @@media (max-width: 480px) {
+        .stats {
+            grid-template-columns: 1fr;
+        }
+
+        .company-details {
+            font-size: 12px;
+        }
+
+        .strength-tag,
+        .weakness-tag {
+            font-size: 10px;
+            padding: 3px 8px;
+        }
+
+        .company-name {
+            font-size: 16px;
+        }
+
+        .match-score {
+            font-size: 12px;
+            padding: 3px 8px;
+        }
+    }
 </style>
 
 <div class="container">
@@ -894,62 +1156,62 @@
                 const statusText = [emailStatus, linkedinStatus].filter(s => s).join(' • ');
 
                 html += `
-                                    <div class="recruiter-card ${selectedRecruiterIndex === index ? 'selected' : ''}"
-                                         onclick="selectRecruiter(${index})"
-                                         id="card-${index}"
-                                         data-company="${rec.companyName || ''}"
-                                         data-city="${rec.city || ''}"
-                                         data-score="${rec.matchScore || 0}">
-                                        <div class="card-header">
-                                            <span class="company-name">${rec.companyName || 'Unknown Company'}</span>
-                                            <span class="match-score ${scoreClass}">${rec.matchScore || '?'}/10</span>
-                                        </div>
+                            <div class="recruiter-card ${selectedRecruiterIndex === index ? 'selected' : ''}"
+                                 onclick="selectRecruiter(${index})"
+                                 id="card-${index}"
+                                 data-company="${rec.companyName || ''}"
+                                 data-city="${rec.city || ''}"
+                                 data-score="${rec.matchScore || 0}">
+                                <div class="card-header">
+                                    <span class="company-name">${rec.companyName || 'Unknown Company'}</span>
+                                    <span class="match-score ${scoreClass}">${rec.matchScore || '?'}/10</span>
+                                </div>
 
-                                        <div class="recruiter-info">
-                                            <div class="recruiter-name">${rec.recruiterName || 'Unknown Recruiter'}</div>
-                                            <div class="recruiter-title">${rec.recruiterTitle || 'Unknown Position'}</div>
-                                        </div>
+                                <div class="recruiter-info">
+                                    <div class="recruiter-name">${rec.recruiterName || 'Unknown Recruiter'}</div>
+                                    <div class="recruiter-title">${rec.recruiterTitle || 'Unknown Position'}</div>
+                                </div>
 
-                                        <div class="company-details">
-                                            <div>📍 ${rec.city || 'Unknown City'}, ${rec.country || 'Unknown Country'}</div>
-                                            <div>📧 ${rec.recruiterEmail || 'No email'} (${rec.emailStatus || 'Unknown'})</div>
-                                            ${rec.recruiterLinkedIn ?
+                                <div class="company-details">
+                                    <div>📍 ${rec.city || 'Unknown City'}, ${rec.country || 'Unknown Country'}</div>
+                                    <div>📧 ${rec.recruiterEmail || 'No email'} (${rec.emailStatus || 'Unknown'})</div>
+                                    ${rec.recruiterLinkedIn ?
                         `<div>🔗 <a href="${rec.recruiterLinkedIn}" target="_blank" onclick="event.stopPropagation()">LinkedIn Profile</a> <span class="linkedin-badge">LINKEDIN</span></div>` :
                         '<div>🔗 No LinkedIn Profile</div>'}
-                                            ${rec.website ? `<div>🌐 <a href="${rec.website}" target="_blank" onclick="event.stopPropagation()">${rec.website}</a></div>` : ''}
-                                        </div>
+                                    ${rec.website ? `<div>🌐 <a href="${rec.website}" target="_blank" onclick="event.stopPropagation()">${rec.website}</a></div>` : ''}
+                                </div>
 
-                                        <div class="reasoning">
-                                            <strong>💡 Reasoning:</strong> ${rec.reasoning || 'No reasoning available'}
-                                        </div>
+                                <div class="reasoning">
+                                    <strong>💡 Reasoning:</strong> ${rec.reasoning || 'No reasoning available'}
+                                </div>
 
-                                        <div class="strengths">
-                                            ${(rec.strengths || []).map(s => `<span class="strength-tag">✓ ${s}</span>`).join('')}
-                                        </div>
+                                <div class="strengths">
+                                    ${(rec.strengths || []).map(s => `<span class="strength-tag">✓ ${s}</span>`).join('')}
+                                </div>
 
-                                        <div class="weaknesses">
-                                            ${(rec.weaknesses || []).map(w => `<span class="weakness-tag">⚠ ${w}</span>`).join('')}
-                                        </div>
+                                <div class="weaknesses">
+                                    ${(rec.weaknesses || []).map(w => `<span class="weakness-tag">⚠ ${w}</span>`).join('')}
+                                </div>
 
-                                        <div class="card-footer">
-                                            <button class="btn btn-primary" onclick="event.stopPropagation(); generateEmail(${index})">
-                                                ${hasEmail ? '🔄 Regenerate Email' : '✉ Generate Email'}
-                                            </button>
-                                            <button class="btn btn-purple" onclick="event.stopPropagation(); generateLinkedInMessage(${index})" ${!rec.recruiterLinkedIn ? 'disabled' : ''}>
-                                                ${hasLinkedInMsg ? '🔄 Regenerate LinkedIn' : '🔗 Generate LinkedIn'}
-                                            </button>
-                                            <button class="btn btn-outline" onclick="event.stopPropagation(); viewDetails(${index})">
-                                                ℹ Details
-                                            </button>
-                                        </div>
+                                <div class="card-footer">
+                                    <button class="btn btn-primary" onclick="event.stopPropagation(); generateEmail(${index})">
+                                        ${hasEmail ? '🔄 Regenerate Email' : '✉ Generate Email'}
+                                    </button>
+                                    <button class="btn btn-purple" onclick="event.stopPropagation(); generateLinkedInMessage(${index})" ${!rec.recruiterLinkedIn ? 'disabled' : ''}>
+                                        ${hasLinkedInMsg ? '🔄 Regenerate LinkedIn' : '🔗 Generate LinkedIn'}
+                                    </button>
+                                    <button class="btn btn-outline" onclick="event.stopPropagation(); viewDetails(${index})">
+                                        ℹ Details
+                                    </button>
+                                </div>
 
-                                        ${statusText ?
+                                ${statusText ?
                         `<div style="font-size: 11px; color: #666; margin-top: 10px; text-align: right; border-top: 1px dashed #eee; padding-top: 8px;">
-                                                ${statusText}
-                                            </div>` : ''
+                                        ${statusText}
+                                    </div>` : ''
                     }
-                                    </div>
-                                `;
+                            </div>
+                        `;
             });
 
             recruitersGrid.innerHTML = html;
@@ -1129,117 +1391,117 @@
             const weaknessesList = (recruiter.weaknesses || []).map(w => `<span class="weakness-tag">⚠ ${w}</span>`).join(' ');
 
             const detailsHtml = `
-                                <div class="details-grid">
-                                    <div class="details-section">
-                                        <h3>Basic Information</h3>
-                                        <div class="detail-item">
-                                            <span class="detail-label">Company:</span>
-                                            <span class="detail-value">${recruiter.companyName || 'Unknown'}</span>
-                                        </div>
-                                        <div class="detail-item">
-                                            <span class="detail-label">Recruiter:</span>
-                                            <span class="detail-value">${recruiter.recruiterName || 'Unknown'}</span>
-                                        </div>
-                                        <div class="detail-item">
-                                            <span class="detail-label">Position:</span>
-                                            <span class="detail-value">${recruiter.recruiterTitle || 'Unknown'}</span>
-                                        </div>
-                                        <div class="detail-item">
-                                            <span class="detail-label">Match Score:</span>
-                                            <span class="detail-value"><span class="detail-score ${scoreClass}">${recruiter.matchScore || '?'}/10</span></span>
-                                        </div>
-                                    </div>
+                        <div class="details-grid">
+                            <div class="details-section">
+                                <h3>Basic Information</h3>
+                                <div class="detail-item">
+                                    <span class="detail-label">Company:</span>
+                                    <span class="detail-value">${recruiter.companyName || 'Unknown'}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Recruiter:</span>
+                                    <span class="detail-value">${recruiter.recruiterName || 'Unknown'}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Position:</span>
+                                    <span class="detail-value">${recruiter.recruiterTitle || 'Unknown'}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Match Score:</span>
+                                    <span class="detail-value"><span class="detail-score ${scoreClass}">${recruiter.matchScore || '?'}/10</span></span>
+                                </div>
+                            </div>
 
-                                    <div class="details-section">
-                                        <h3>Location & Contact</h3>
-                                        <div class="detail-item">
-                                            <span class="detail-label">City:</span>
-                                            <span class="detail-value">${recruiter.city || 'Unknown'}</span>
-                                        </div>
-                                        <div class="detail-item">
-                                            <span class="detail-label">Country:</span>
-                                            <span class="detail-value">${recruiter.country || 'Unknown'}</span>
-                                        </div>
-                                        <div class="detail-item">
-                                            <span class="detail-label">Email:</span>
-                                            <span class="detail-value">${recruiter.recruiterEmail || 'No email'} (${recruiter.emailStatus || 'Unknown'})</span>
-                                        </div>
-                                        <div class="detail-item">
-                                            <span class="detail-label">LinkedIn:</span>
-                                            <span class="detail-value">${recruiter.recruiterLinkedIn ?
+                            <div class="details-section">
+                                <h3>Location & Contact</h3>
+                                <div class="detail-item">
+                                    <span class="detail-label">City:</span>
+                                    <span class="detail-value">${recruiter.city || 'Unknown'}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Country:</span>
+                                    <span class="detail-value">${recruiter.country || 'Unknown'}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Email:</span>
+                                    <span class="detail-value">${recruiter.recruiterEmail || 'No email'} (${recruiter.emailStatus || 'Unknown'})</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">LinkedIn:</span>
+                                    <span class="detail-value">${recruiter.recruiterLinkedIn ?
                     `<a href="${recruiter.recruiterLinkedIn}" target="_blank">Profile Link</a>` :
                     'No LinkedIn Profile'}</span>
-                                        </div>
-                                        ${recruiter.website ? `
-                                        <div class="detail-item">
-                                            <span class="detail-label">Website:</span>
-                                            <span class="detail-value"><a href="${recruiter.website}" target="_blank">${recruiter.website}</a></span>
-                                        </div>` : ''}
-                                    </div>
-
-                                    <div class="details-section full-width">
-                                        <h3>Company Analysis</h3>
-                                        <div class="detail-item">
-                                            <span class="detail-label">Company Analysis:</span>
-                                            <span class="detail-value">${recruiter.companyAnalysis || 'N/A'}</span>
-                                        </div>
-                                        <div class="detail-item">
-                                            <span class="detail-label">Industry Match:</span>
-                                            <span class="detail-value">${recruiter.industryMatch || 'N/A'}</span>
-                                        </div>
-                                        <div class="detail-item">
-                                            <span class="detail-label">Location Match:</span>
-                                            <span class="detail-value">${recruiter.locationMatch || 'N/A'}</span>
-                                        </div>
-                                    </div>
-
-                                    <div class="details-section full-width">
-                                        <h3>Key Findings</h3>
-                                        <div class="detail-item">
-                                            <span class="detail-value">${recruiter.keyFindings || 'N/A'}</span>
-                                        </div>
-                                    </div>
-
-                                    <div class="details-section full-width">
-                                        <h3>Reasoning</h3>
-                                        <div class="detail-item">
-                                            <span class="detail-value">${recruiter.reasoning || 'No reasoning available'}</span>
-                                        </div>
-                                    </div>
-
-                                    <div class="details-section">
-                                        <h3>Strengths</h3>
-                                        <div class="detail-item">
-                                            ${strengthsList || 'No strengths'}
-                                        </div>
-                                    </div>
-
-                                    <div class="details-section">
-                                        <h3>Weaknesses</h3>
-                                        <div class="detail-item">
-                                            ${weaknessesList || 'No weaknesses'}
-                                        </div>
-                                    </div>
-
-                                    <div class="details-section full-width">
-                                        <h3>Additional Information</h3>
-                                        <div class="detail-item">
-                                            <span class="detail-label">Analyzed:</span>
-                                            <span class="detail-value">${recruiter.analyzedAt ? new Date(recruiter.analyzedAt).toLocaleString() : 'N/A'}</span>
-                                        </div>
-                                        ${recruiter.companySize ? `
-                                        <div class="detail-item">
-                                            <span class="detail-label">Company Size:</span>
-                                            <span class="detail-value">${recruiter.companySize}</span>
-                                        </div>` : ''}
-                                        ${recruiter.industry ? `
-                                        <div class="detail-item">
-                                            <span class="detail-label">Industry:</span>
-                                            <span class="detail-value">${recruiter.industry}</span>
-                                        </div>` : ''}
-                                    </div>
                                 </div>
-                            `;
+                                ${recruiter.website ? `
+                                <div class="detail-item">
+                                    <span class="detail-label">Website:</span>
+                                    <span class="detail-value"><a href="${recruiter.website}" target="_blank">${recruiter.website}</a></span>
+                                </div>` : ''}
+                            </div>
+
+                            <div class="details-section full-width">
+                                <h3>Company Analysis</h3>
+                                <div class="detail-item">
+                                    <span class="detail-label">Company Analysis:</span>
+                                    <span class="detail-value">${recruiter.companyAnalysis || 'N/A'}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Industry Match:</span>
+                                    <span class="detail-value">${recruiter.industryMatch || 'N/A'}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Location Match:</span>
+                                    <span class="detail-value">${recruiter.locationMatch || 'N/A'}</span>
+                                </div>
+                            </div>
+
+                            <div class="details-section full-width">
+                                <h3>Key Findings</h3>
+                                <div class="detail-item">
+                                    <span class="detail-value">${recruiter.keyFindings || 'N/A'}</span>
+                                </div>
+                            </div>
+
+                            <div class="details-section full-width">
+                                <h3>Reasoning</h3>
+                                <div class="detail-item">
+                                    <span class="detail-value">${recruiter.reasoning || 'No reasoning available'}</span>
+                                </div>
+                            </div>
+
+                            <div class="details-section">
+                                <h3>Strengths</h3>
+                                <div class="detail-item">
+                                    ${strengthsList || 'No strengths'}
+                                </div>
+                            </div>
+
+                            <div class="details-section">
+                                <h3>Weaknesses</h3>
+                                <div class="detail-item">
+                                    ${weaknessesList || 'No weaknesses'}
+                                </div>
+                            </div>
+
+                            <div class="details-section full-width">
+                                <h3>Additional Information</h3>
+                                <div class="detail-item">
+                                    <span class="detail-label">Analyzed:</span>
+                                    <span class="detail-value">${recruiter.analyzedAt ? new Date(recruiter.analyzedAt).toLocaleString() : 'N/A'}</span>
+                                </div>
+                                ${recruiter.companySize ? `
+                                <div class="detail-item">
+                                    <span class="detail-label">Company Size:</span>
+                                    <span class="detail-value">${recruiter.companySize}</span>
+                                </div>` : ''}
+                                ${recruiter.industry ? `
+                                <div class="detail-item">
+                                    <span class="detail-label">Industry:</span>
+                                    <span class="detail-value">${recruiter.industry}</span>
+                                </div>` : ''}
+                            </div>
+                        </div>
+                    `;
 
             document.getElementById('detailsModalTitle').textContent = `Details: ${recruiter.companyName}`;
             document.getElementById('detailsModalBody').innerHTML = detailsHtml;
@@ -1289,4 +1551,13 @@
             }
         }
     </script>
+}
+
+@functions {
+    public string GetScoreClass(double? score)
+    {
+        if (score >= 8) return "high";
+        if (score >= 5) return "medium";
+        return "low";
+    }
 }

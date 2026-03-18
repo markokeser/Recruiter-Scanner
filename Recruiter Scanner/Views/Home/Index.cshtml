@@ -823,6 +823,250 @@
             cursor: not-allowed;
             transform: none;
         }
+
+    /* ===== MOBILNA OPTIMIZACIJA - SAMO ZA MOBILNE UREĐAJE ===== */
+    @@media (max-width: 768px) {
+        body {
+            padding: 10px;
+        }
+
+        .header-row {
+            flex-direction: column;
+            align-items: stretch;
+            padding: 15px;
+        }
+
+        .left-section {
+            width: 100%;
+        }
+
+        .upload-container {
+            flex-direction: column;
+            width: 100%;
+        }
+
+        .file-input-wrapper {
+            width: 100%;
+        }
+
+        .file-label {
+            width: 100%;
+            text-align: center;
+            padding: 15px;
+            font-size: 16px;
+        }
+
+        .btn-upload, .btn-demo {
+            width: 100%;
+            text-align: center;
+            padding: 12px;
+            font-size: 16px;
+        }
+
+        .right-section {
+            width: 100%;
+            margin-left: 0;
+        }
+
+        .btn-ai-setup {
+            width: 100%;
+            justify-content: center;
+            padding: 12px;
+            font-size: 16px;
+        }
+
+        .stats-container {
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .stat-card {
+            padding: 15px;
+        }
+
+        .stat-value {
+            font-size: 28px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+        }
+
+        .controls-container {
+            flex-direction: column;
+            align-items: stretch;
+            padding: 15px;
+        }
+
+        .sort-controls {
+            width: 100%;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .sort-select {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+        }
+
+        .sort-order-btn {
+            width: 100%;
+            justify-content: center;
+            padding: 12px;
+            font-size: 16px;
+        }
+        /* IZBRIŠI batch-analyze-btn iz controls-container na mobilnom */
+        .controls-container .batch-analyze-btn {
+            display: none;
+        }
+        /* DODAJ analyze all i next dugmad iznad tabele */
+        .mobile-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin: 15px 0 20px 0;
+            width: 100%;
+        }
+
+            .mobile-actions .btn {
+                width: 100%;
+                padding: 15px;
+                font-size: 16px;
+                min-width: auto;
+            }
+        /* Sakrij originalne bottom-actions na mobilnom */
+        .bottom-actions {
+            display: none;
+        }
+
+        .table-wrapper {
+            padding: 10px;
+            background: transparent;
+            box-shadow: none;
+            overflow-x: visible;
+        }
+
+        .recruiter-table,
+        .recruiter-table thead,
+        .recruiter-table tbody,
+        .recruiter-table th,
+        .recruiter-table td,
+        .recruiter-table tr {
+            display: block;
+        }
+
+            .recruiter-table thead {
+                display: none;
+            }
+
+            .recruiter-table tbody tr {
+                margin-bottom: 20px;
+                padding: 15px;
+                background: white;
+                border-radius: 12px;
+                box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            }
+
+            .recruiter-table td {
+                border: none;
+                padding: 8px 0;
+                position: relative;
+                padding-left: 120px;
+                min-height: 30px;
+                border-bottom: 1px solid #f0f0f0;
+            }
+
+                .recruiter-table td:last-child {
+                    border-bottom: none;
+                    padding-left: 0;
+                    padding-top: 15px;
+                }
+
+                .recruiter-table td:before {
+                    content: attr(data-label);
+                    position: absolute;
+                    left: 0;
+                    width: 110px;
+                    font-weight: 600;
+                    color: #2c3e50;
+                    font-size: 12px;
+                }
+
+        .company-info {
+            max-width: none;
+        }
+
+        .company-website {
+            max-width: none;
+            font-size: 12px;
+            white-space: normal;
+        }
+
+        .linkedin-link {
+            width: 100%;
+            justify-content: center;
+            padding: 12px;
+            font-size: 14px;
+        }
+
+        .email-link {
+            font-size: 14px;
+            word-break: break-all;
+        }
+
+        .score-badge {
+            font-size: 14px;
+            padding: 5px 12px;
+        }
+
+        .badge {
+            font-size: 12px;
+            padding: 5px 12px;
+        }
+
+        .modal-content {
+            width: 95%;
+            padding: 20px;
+        }
+
+        .analysis-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .modal-actions {
+            flex-direction: column;
+        }
+
+        .modal-btn {
+            width: 100%;
+        }
+
+        .notification {
+            left: 20px;
+            right: 20px;
+            top: auto;
+            bottom: 20px;
+            text-align: center;
+        }
+    }
+
+    @@media (max-width: 480px) {
+        .recruiter-table td {
+            padding-left: 100px;
+            font-size: 13px;
+        }
+
+            .recruiter-table td:before {
+                width: 90px;
+                font-size: 11px;
+            }
+
+        .stats-container {
+            grid-template-columns: 1fr;
+        }
+    }
 </style>
 
 <div class="container">
@@ -830,11 +1074,13 @@
     <div class="header-row">
         <div class="left-section">
             <div class="upload-container">
-                <div class="file-input-wrapper">
-                    <input type="file" id="csvFile" name="csvFile" accept=".csv,.json" required />
-                    <label for="csvFile" class="file-label" id="fileLabel">📁 Choose CSV file</label>
-                </div>
-                <button type="submit" form="uploadForm" class="btn-upload">Upload CSV file</button>
+                <form asp-action="Upload" method="post" enctype="multipart/form-data" id="uploadForm" style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
+                    <div class="file-input-wrapper">
+                        <input type="file" id="csvFile" name="csvFile" accept=".csv,.json" required />
+                        <label for="csvFile" class="file-label" id="fileLabel">📁 Choose CSV file</label>
+                    </div>
+                    <button type="submit" class="btn-upload">Upload CSV file</button>
+                </form>
                 <button onclick="showDemoFileModal()" class="btn-demo">Use Demo file</button>
             </div>
         </div>
@@ -845,10 +1091,6 @@
             </a>
         </div>
     </div>
-
-    <form id="uploadForm" asp-action="Upload" method="post" enctype="multipart/form-data" style="display: none;">
-        <input type="file" name="csvFile" id="hiddenFileInput" />
-    </form>
 
     @if (!string.IsNullOrEmpty(Model.ErrorMessage))
     {
@@ -894,6 +1136,19 @@
                         🔽 Descending
                     </button>
                 </div>
+                <button id="batchAnalyzeBtn" class="batch-analyze-btn" onclick="batchAnalyzeAll()">
+                    Analyze All
+                </button>
+            </div>
+
+            <!-- MOBILE ACTION BUTTONS - pojavljuju se samo na mobilnom -->
+            <div class="mobile-actions">
+                <button id="mobileBatchAnalyzeBtn" class="batch-analyze-btn" onclick="batchAnalyzeAll()">
+                    Analyze All
+                </button>
+                <button id="mobileNextBtn" class="btn-next" onclick="goToNextStep()" disabled>
+                    Next
+                </button>
             </div>
 
             <div id="progressContainer" class="progress-container">
@@ -929,7 +1184,7 @@
                         @foreach (var recruiter in Model.Recruiters)
                         {
                             <tr data-index="@index" data-company="@recruiter.CompanyNameForEmails" data-location="@recruiter.City" data-emailstatus="@recruiter.EmailStatus">
-                                <td>
+                                <td data-label="Company">
                                     <div class="company-info">
                                         <span class="company-name">@recruiter.CompanyNameForEmails</span>
                                         @if (!string.IsNullOrEmpty(recruiter.Website) && recruiter.Website != "https://")
@@ -940,15 +1195,15 @@
                                         }
                                     </div>
                                 </td>
-                                <td>
+                                <td data-label="Name">
                                     <strong>@recruiter.FirstName @recruiter.LastName</strong>
                                 </td>
-                                <td>
+                                <td data-label="Position">
                                     <div style="max-width: 200px; word-wrap: break-word;">
                                         @recruiter.Title
                                     </div>
                                 </td>
-                                <td>
+                                <td data-label="Email">
                                     @if (!string.IsNullOrEmpty(recruiter.Email))
                                     {
                                         <a href="mailto:@recruiter.Email" class="email-link" title="@recruiter.Email">
@@ -960,7 +1215,7 @@
                                         <span style="color: #999;">N/A</span>
                                     }
                                 </td>
-                                <td>
+                                <td data-label="Status">
                                     @if (recruiter.EmailStatus?.ToLower() == "verified")
                                     {
                                         <span class="badge badge-verified">✓ Verified</span>
@@ -978,7 +1233,7 @@
                                         <span class="badge">@recruiter.EmailStatus</span>
                                     }
                                 </td>
-                                <td>
+                                <td data-label="Phone">
                                     @if (!string.IsNullOrEmpty(recruiter.CorporatePhone))
                                     {
                                         <span>@recruiter.CorporatePhone</span>
@@ -988,7 +1243,7 @@
                                         <span style="color: #999;">-</span>
                                     }
                                 </td>
-                                <td>
+                                <td data-label="Location">
                                     <div class="location">
                                         @if (!string.IsNullOrEmpty(recruiter.City))
                                         {
@@ -1001,10 +1256,10 @@
                                         }
                                     </div>
                                 </td>
-                                <td class="score-cell" data-score="0">
+                                <td class="score-cell" data-score="0" data-label="Score">
                                     <span class="score-badge score-pending">⏳ N/A</span>
                                 </td>
-                                <td class="action-cell">
+                                <td class="action-cell" data-label="Actions">
                                     @if (!string.IsNullOrEmpty(recruiter.PersonLinkedinUrl) && recruiter.PersonLinkedinUrl != "http://")
                                     {
                                         <a href="@recruiter.PersonLinkedinUrl" target="_blank" class="linkedin-link">
@@ -1019,7 +1274,7 @@
                 </table>
             </div>
 
-            <!-- Bottom actions with Batch Analyze and Next button -->
+            <!-- Bottom actions with Batch Analyze and Next button (samo za desktop) -->
             <div class="bottom-actions">
                 <button id="batchAnalyzeBtn" class="batch-analyze-btn" onclick="batchAnalyzeAll()">
                     Analyze All
@@ -1112,6 +1367,8 @@
     </div>
 </div>
 
+<div id="toast" class="notification" style="display: none;"></div>
+
 <script>
     // Store for saving results (in memory only, not localStorage)
     let matchResults = {};
@@ -1124,6 +1381,7 @@
         const savedCV = localStorage.getItem('userCV');
         const cvStatus = document.getElementById('cvStatus');
         const nextBtn = document.getElementById('nextBtn');
+        const mobileNextBtn = document.getElementById('mobileNextBtn');
 
         if (savedCV) {
             cvStatus.style.display = 'inline-block';
@@ -1131,16 +1389,11 @@
             cvStatus.style.display = 'none';
         }
 
-        // Inicijalno postavi sve statističke vrednosti na 0
         updateStatsFromModel();
-
         updateNextButton();
-
-        // Add click listeners to table rows
         addRowClickListeners();
     });
 
-    // Funkcija za ažuriranje statistike iz modela (kada se učita fajl)
     function updateStatsFromModel() {
     @if (Model.ShowResults && Model.Recruiters.Any())
     {
@@ -1160,14 +1413,12 @@
             document.getElementById('withEmail').innerText = '0';
         </text>
     }
-                }
+                        }
 
-    // Function to add click events to rows
     function addRowClickListeners() {
         const rows = document.querySelectorAll('#tableBody tr');
         rows.forEach(row => {
             row.addEventListener('click', function (e) {
-                // Don't open modal if link was clicked
                 if (e.target.tagName === 'A' || e.target.closest('a')) {
                     return;
                 }
@@ -1183,7 +1434,7 @@
         });
     }
 
-    // Display selected file name
+    // Display selected file name - BEZ AUTOMATSKOG SUBMITA
     document.getElementById('csvFile')?.addEventListener('change', function (e) {
         var fileName = e.target.files[0]?.name;
         var label = document.getElementById('fileLabel');
@@ -1191,9 +1442,6 @@
             label.innerHTML = '📄 ' + fileName;
             label.style.background = '#d4edda';
             label.style.borderColor = '#28a745';
-
-            // Automatically submit the form when file is selected
-            document.getElementById('uploadForm').submit();
         } else {
             label.innerHTML = '📁 Choose CSV file';
             label.style.background = '#e9ecef';
@@ -1214,14 +1462,12 @@
         closeDemoModal();
         showNotification('Loading demo file...', 'info');
 
-        // Kreiraj skriveni form i pošalji demo fajl
         const form = document.createElement('form');
         form.method = 'POST';
         form.action = '/Home/Upload';
         form.style.display = 'none';
         form.enctype = 'multipart/form-data';
 
-        // Kreiraj CSV fajl od demo podataka
         const demoContent = `Company Name for Emails,Website,First Name,Last Name,Person Linkedin Url,Title,Email,Email Status,Corporate Phone,# Employees,Company Linkedin Url,Facebook Url,Twitter Url,City,State,Country,Company Address,Company City
         GitHub,https://github.com,Alex,Chen,http://www.linkedin.com/in/alex-chen-github,Technical Recruiter - Developer Platforms,alex.chen@github.com,Verified,+1 415-735-4488,1200,https://www.linkedin.com/company/github,https://www.facebook.com/GitHub,https://twitter.com/github,Barcelona,Catalonia,Spain,"88 Colin P Kelly Jr St, San Francisco, CA, United States, 94107",San Francisco
         Goldman Sachs,https://goldmansachs.com,Sofia,Rodriguez,http://www.linkedin.com/in/sofia-rodriguez-gs,Tech Recruiter - Investment Banking Tech,sofia.rodriguez@gs.com,Verified,+1 212-902-1000,48500,https://www.linkedin.com/company/goldman-sachs,https://www.facebook.com/GoldmanSachs,https://twitter.com/GoldmanSachs,Barcelona,Catalonia,Spain,"200 West Street, New York, NY, United States, 10282",New York
@@ -1230,22 +1476,18 @@
         const blob = new Blob([demoContent], { type: 'text/csv' });
         const file = new File([blob], 'demo_recruiters.csv', { type: 'text/csv' });
 
-        // Kreiraj FileList i dodaj u form
         const dataTransfer = new DataTransfer();
         dataTransfer.items.add(file);
 
-        // Kreiraj file input i dodaj ga u form
         const fileInput = document.createElement('input');
         fileInput.type = 'file';
         fileInput.name = 'csvFile';
         fileInput.files = dataTransfer.files;
         form.appendChild(fileInput);
 
-        // Dodaj form u body i pošalji ga
         document.body.appendChild(form);
         form.submit();
 
-        // Očisti form posle slanja
         setTimeout(() => {
             document.body.removeChild(form);
         }, 100);
@@ -1256,7 +1498,6 @@
 
     // ===== BATCH ANALYSIS WITH DELAYS =====
     async function batchAnalyzeAll() {
-        // Clear previous results
         matchResults = {};
 
         const cvData = localStorage.getItem('userCV');
@@ -1276,15 +1517,15 @@
         let failed = 0;
         let startTime = Date.now();
 
-        // Show progress container
         document.getElementById('progressContainer').style.display = 'block';
         document.getElementById('batchAnalyzeBtn').disabled = true;
         document.getElementById('nextBtn').disabled = true;
+        document.getElementById('mobileBatchAnalyzeBtn').disabled = true;
+        document.getElementById('mobileNextBtn').disabled = true;
 
         showNotification(`Starting analysis of ${totalRecruiters} recruiters...`, 'info');
 
         for (let i = 0; i < totalRecruiters; i++) {
-            // Update progress
             const percent = Math.round((i / totalRecruiters) * 100);
             document.getElementById('progressFill').style.width = percent + '%';
             document.getElementById('progressPercent').innerHTML = percent + '%';
@@ -1315,7 +1556,6 @@
 
                 updateNextButton();
 
-                // 1.5 second delay between requests (to avoid overloading the API)
                 if (i < totalRecruiters - 1) {
                     await new Promise(resolve => setTimeout(resolve, 1500));
                 }
@@ -1326,9 +1566,8 @@
             }
         }
 
-        // Finished
         let endTime = Date.now();
-        let totalTime = Math.round((endTime - startTime) / 1000); // in seconds
+        let totalTime = Math.round((endTime - startTime) / 1000);
 
         document.getElementById('progressFill').style.width = '100%';
         document.getElementById('progressPercent').innerHTML = '100%';
@@ -1339,15 +1578,16 @@
         }, 5000);
 
         document.getElementById('batchAnalyzeBtn').disabled = false;
+        document.getElementById('mobileBatchAnalyzeBtn').disabled = false;
 
-        // Only enable Next button if all analyses completed successfully
         if (completed === totalRecruiters) {
             document.getElementById('nextBtn').disabled = false;
+            document.getElementById('mobileNextBtn').disabled = false;
         }
 
         showNotification(`✅ Analysis complete! Click on any row for details.`, 'success');
-        applySort(); // Apply sorting after batch analysis
-        addRowClickListeners(); // Re-add click listeners to rows
+        applySort();
+        addRowClickListeners();
     }
 
     // ===== HELPER FUNCTIONS =====
@@ -1375,14 +1615,16 @@
 
     function updateNextButton() {
         const nextBtn = document.getElementById('nextBtn');
+        const mobileNextBtn = document.getElementById('mobileNextBtn');
         const totalRecruiters = recruitersData ? recruitersData.length : 0;
         const analyzedCount = Object.keys(matchResults).length;
 
-        // Enable Next button only when all recruiters have been analyzed
         if (totalRecruiters > 0 && analyzedCount === totalRecruiters) {
-            nextBtn.disabled = false;
+            if (nextBtn) nextBtn.disabled = false;
+            if (mobileNextBtn) mobileNextBtn.disabled = false;
         } else {
-            nextBtn.disabled = true;
+            if (nextBtn) nextBtn.disabled = true;
+            if (mobileNextBtn) mobileNextBtn.disabled = true;
         }
     }
 
@@ -1400,23 +1642,16 @@
                 const match = matchResults[index];
 
                 results.push({
-                    // Osnovni podaci o kompaniji
                     companyName: recruiter.companyNameForEmails || 'N/A',
                     website: recruiter.website || '',
                     city: recruiter.city || '',
                     country: recruiter.country || '',
-
-                    // Podaci o recruiteru
                     recruiterName: `${recruiter.firstName || ''} ${recruiter.lastName || ''}`.trim() || 'N/A',
                     recruiterTitle: recruiter.title || 'N/A',
                     recruiterEmail: recruiter.email || 'N/A',
                     emailStatus: recruiter.emailStatus || 'N/A',
-
-                    // LinkedIn linkovi
                     recruiterLinkedIn: recruiter.personLinkedinUrl || 'N/A',
                     companyLinkedIn: recruiter.companyLinkedinUrl || 'N/A',
-
-                    // AI Match rezultati
                     MatchScore: match.score || 0,
                     reasoning: match.reasoning || '',
                     companyAnalysis: match.companyAnalysis || '',
@@ -1425,8 +1660,6 @@
                     keyFindings: match.keyFindings || '',
                     strengths: match.strengths || [],
                     weaknesses: match.weaknesses || [],
-
-                    // Vreme analize
                     analyzedAt: new Date().toISOString()
                 });
             }
@@ -1437,22 +1670,14 @@
             return;
         }
 
-        // Sortiranje po MatchScore
         results.sort((a, b) => b.MatchScore - a.MatchScore);
 
         const jsonStr = JSON.stringify(results, null, 2);
-
-        // Debug: ispiši JSON u konzolu da vidiš šta se šalje
         console.log('JSON koji se šalje:', jsonStr);
 
         const blob = new Blob([jsonStr], { type: 'application/json' });
-        const formData = new FormData();
         const file = new File([blob], `match_results_${new Date().toISOString().slice(0, 10)}.json`, { type: 'application/json' });
-        formData.append('jsonFile', file);
 
-        showNotification(`Sending ${results.length} results to email generator...`, 'info');
-
-        // Umesto fetch-a, koristi form submit (pouzdanije)
         const form = document.createElement('form');
         form.method = 'POST';
         form.action = '/EmailGeneration/UploadJson';
@@ -1463,18 +1688,14 @@
         fileInput.type = 'file';
         fileInput.name = 'jsonFile';
 
-        // Postavi fajl u input
         const dataTransfer = new DataTransfer();
         dataTransfer.items.add(file);
         fileInput.files = dataTransfer.files;
 
         form.appendChild(fileInput);
         document.body.appendChild(form);
-
-        // Submituj formu
         form.submit();
 
-        // Očisti posle 2 sekunde
         setTimeout(() => {
             document.body.removeChild(form);
         }, 2000);
@@ -1525,7 +1746,6 @@
         }
         rows.forEach(row => tbody.appendChild(row));
 
-        // Re-add click listeners after sorting
         setTimeout(addRowClickListeners, 100);
     }
 
@@ -1562,63 +1782,63 @@
         }
 
         document.getElementById('matchContent').innerHTML = `
-                        <div style="text-align: center; margin-bottom: 20px;">
-                            <div class="score-circle" style="background: ${scoreColor}; margin: 0 auto;">
-                                ${result.score}/10
-                            </div>
-                            <div style="font-size: 18px; color: #2c3e50; margin-top: 5px;">
-                                Match Score
-                            </div>
+                    <div style="text-align: center; margin-bottom: 20px;">
+                        <div class="score-circle" style="background: ${scoreColor}; margin: 0 auto;">
+                            ${result.score}/10
                         </div>
+                        <div style="font-size: 18px; color: #2c3e50; margin-top: 5px;">
+                            Match Score
+                        </div>
+                    </div>
 
-                        <div style="margin: 20px 0; padding: 15px; background: #f8f9fa; border-radius: 10px;">
-                            <h4 style="color: #2c3e50; margin-bottom: 10px;">📊 Overall Assessment</h4>
-                            <p style="color: #495057; line-height: 1.6;">${result.reasoning || 'No description'}</p>
-                        </div>
+                    <div style="margin: 20px 0; padding: 15px; background: #f8f9fa; border-radius: 10px;">
+                        <h4 style="color: #2c3e50; margin-bottom: 10px;">📊 Overall Assessment</h4>
+                        <p style="color: #495057; line-height: 1.6;">${result.reasoning || 'No description'}</p>
+                    </div>
 
-                        <div class="analysis-grid">
-                            <div class="analysis-item" style="background: #e8f4fd;">
-                                <h5 style="color: #0077b5;">🏢 Company Analysis</h5>
-                                <p>${result.companyAnalysis || 'N/A'}</p>
-                            </div>
-                            <div class="analysis-item" style="background: #f0f7e8;">
-                                <h5 style="color: #28a745;">📍 Location Match</h5>
-                                <p>${result.locationMatch || 'N/A'}</p>
-                            </div>
-                            <div class="analysis-item" style="background: #fff3cd;">
-                                <h5 style="color: #856404;">🔧 Industry Match</h5>
-                                <p>${result.industryMatch || 'N/A'}</p>
-                            </div>
-                            <div class="analysis-item" style="background: #d4edda;">
-                                <h5 style="color: #155724;">💡 Key Finding</h5>
-                                <p>${result.keyFindings || 'N/A'}</p>
-                            </div>
+                    <div class="analysis-grid">
+                        <div class="analysis-item" style="background: #e8f4fd;">
+                            <h5 style="color: #0077b5;">🏢 Company Analysis</h5>
+                            <p>${result.companyAnalysis || 'N/A'}</p>
                         </div>
+                        <div class="analysis-item" style="background: #f0f7e8;">
+                            <h5 style="color: #28a745;">📍 Location Match</h5>
+                            <p>${result.locationMatch || 'N/A'}</p>
+                        </div>
+                        <div class="analysis-item" style="background: #fff3cd;">
+                            <h5 style="color: #856404;">🔧 Industry Match</h5>
+                            <p>${result.industryMatch || 'N/A'}</p>
+                        </div>
+                        <div class="analysis-item" style="background: #d4edda;">
+                            <h5 style="color: #155724;">💡 Key Finding</h5>
+                            <p>${result.keyFindings || 'N/A'}</p>
+                        </div>
+                    </div>
 
-                        <div style="margin: 20px 0;">
-                            <h4 style="color: #2c3e50; margin-bottom: 10px;">💪 Strengths</h4>
-                            <ul class="strengths-list">
-                                ${strengthsHtml}
-                            </ul>
-                        </div>
+                    <div style="margin: 20px 0;">
+                        <h4 style="color: #2c3e50; margin-bottom: 10px;">💪 Strengths</h4>
+                        <ul class="strengths-list">
+                            ${strengthsHtml}
+                        </ul>
+                    </div>
 
-                        <div style="margin: 20px 0;">
-                            <h4 style="color: #2c3e50; margin-bottom: 10px;">📉 Areas for Improvement</h4>
-                            <ul class="weaknesses-list">
-                                ${weaknessesHtml}
-                            </ul>
-                        </div>
+                    <div style="margin: 20px 0;">
+                        <h4 style="color: #2c3e50; margin-bottom: 10px;">📉 Areas for Improvement</h4>
+                        <ul class="weaknesses-list">
+                            ${weaknessesHtml}
+                        </ul>
+                    </div>
 
-                        <div style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 10px;">
-                            <h5 style="color: #2c3e50; margin-bottom: 10px;">📋 Company Details:</h5>
-                            <p style="color: #666; font-size: 13px; line-height: 1.6;">
-                                <strong>${result.recruiter?.companyNameForEmails || 'N/A'}</strong><br>
-                                📍 ${result.recruiter?.city || 'N/A'}, ${result.recruiter?.country || 'N/A'}<br>
-                                👤 ${result.recruiter?.firstName || ''} ${result.recruiter?.lastName || ''} - ${result.recruiter?.title || 'N/A'}<br>
-                                ${result.recruiter?.email ? '📧 ' + result.recruiter.email : ''}
-                            </p>
-                        </div>
-                    `;
+                    <div style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 10px;">
+                        <h5 style="color: #2c3e50; margin-bottom: 10px;">📋 Company Details:</h5>
+                        <p style="color: #666; font-size: 13px; line-height: 1.6;">
+                            <strong>${result.recruiter?.companyNameForEmails || 'N/A'}</strong><br>
+                            📍 ${result.recruiter?.city || 'N/A'}, ${result.recruiter?.country || 'N/A'}<br>
+                            👤 ${result.recruiter?.firstName || ''} ${result.recruiter?.lastName || ''} - ${result.recruiter?.title || 'N/A'}<br>
+                            ${result.recruiter?.email ? '📧 ' + result.recruiter.email : ''}
+                        </p>
+                    </div>
+                `;
     }
 
     function closeModal() {
@@ -1627,18 +1847,20 @@
     }
 
     function showNotification(message, type = 'info') {
-        const notification = document.createElement('div');
-        notification.className = `notification notification-${type}`;
-        notification.textContent = message;
-        document.body.appendChild(notification);
+        const toast = document.getElementById('toast');
+        toast.textContent = message;
+        toast.className = `notification notification-${type}`;
+        toast.style.display = 'block';
 
         setTimeout(() => {
-            notification.style.animation = 'slideOut 0.3s ease';
-            setTimeout(() => notification.remove(), 300);
-        }, 5000);
+            toast.style.animation = 'slideOut 0.3s ease';
+            setTimeout(() => {
+                toast.style.display = 'none';
+                toast.style.animation = '';
+            }, 300);
+        }, 3000);
     }
 
-    // Close modals if clicked outside
     window.onclick = function (event) {
         const matchModal = document.getElementById('matchModal');
         const demoModal = document.getElementById('demoFileModal');
