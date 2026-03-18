@@ -917,11 +917,11 @@
             padding: 12px;
             font-size: 16px;
         }
-        /* IZBRIŠI batch-analyze-btn iz controls-container na mobilnom */
+        /* Sakrij batch-analyze-btn iz controls-container na mobilnom */
         .controls-container .batch-analyze-btn {
             display: none;
         }
-        /* DODAJ analyze all i next dugmad iznad tabele */
+        /* DODAJ analyze all i next dugmad iznad tabele - SAMO ZA MOBILNO */
         .mobile-actions {
             display: flex;
             flex-direction: column;
@@ -1052,6 +1052,13 @@
         }
     }
 
+    /* Desktop: sakrij mobile-actions */
+    @@media (min-width: 769px) {
+        .mobile-actions {
+            display: none !important;
+        }
+    }
+
     @@media (max-width: 480px) {
         .recruiter-table td {
             padding-left: 100px;
@@ -1136,9 +1143,7 @@
                         🔽 Descending
                     </button>
                 </div>
-                <button id="batchAnalyzeBtn" class="batch-analyze-btn" onclick="batchAnalyzeAll()">
-                    Analyze All
-                </button>
+
             </div>
 
             <!-- MOBILE ACTION BUTTONS - pojavljuju se samo na mobilnom -->
@@ -1413,7 +1418,7 @@
             document.getElementById('withEmail').innerText = '0';
         </text>
     }
-                        }
+                            }
 
     function addRowClickListeners() {
         const rows = document.querySelectorAll('#tableBody tr');
@@ -1469,9 +1474,9 @@
         form.enctype = 'multipart/form-data';
 
         const demoContent = `Company Name for Emails,Website,First Name,Last Name,Person Linkedin Url,Title,Email,Email Status,Corporate Phone,# Employees,Company Linkedin Url,Facebook Url,Twitter Url,City,State,Country,Company Address,Company City
-        GitHub,https://github.com,Alex,Chen,http://www.linkedin.com/in/alex-chen-github,Technical Recruiter - Developer Platforms,alex.chen@github.com,Verified,+1 415-735-4488,1200,https://www.linkedin.com/company/github,https://www.facebook.com/GitHub,https://twitter.com/github,Barcelona,Catalonia,Spain,"88 Colin P Kelly Jr St, San Francisco, CA, United States, 94107",San Francisco
-        Goldman Sachs,https://goldmansachs.com,Sofia,Rodriguez,http://www.linkedin.com/in/sofia-rodriguez-gs,Tech Recruiter - Investment Banking Tech,sofia.rodriguez@gs.com,Verified,+1 212-902-1000,48500,https://www.linkedin.com/company/goldman-sachs,https://www.facebook.com/GoldmanSachs,https://twitter.com/GoldmanSachs,Barcelona,Catalonia,Spain,"200 West Street, New York, NY, United States, 10282",New York
-        Zara,https://zara.com,David,Martinez,http://www.linkedin.com/in/david-martinez-inditex,Retail Recruitment Specialist,david.martinez@zara.com,Verified,+34 981 18 54 00,45000,https://www.linkedin.com/company/inditex,https://www.facebook.com/zara,https://twitter.com/ZARA,Barcelona,Catalonia,Spain,"Avenida de la Diputacion, Arteixo, A Coruna, Spain, 15142",Arteixo`;
+            GitHub,https://github.com,Alex,Chen,http://www.linkedin.com/in/alex-chen-github,Technical Recruiter - Developer Platforms,alex.chen@github.com,Verified,+1 415-735-4488,1200,https://www.linkedin.com/company/github,https://www.facebook.com/GitHub,https://twitter.com/github,Barcelona,Catalonia,Spain,"88 Colin P Kelly Jr St, San Francisco, CA, United States, 94107",San Francisco
+            Goldman Sachs,https://goldmansachs.com,Sofia,Rodriguez,http://www.linkedin.com/in/sofia-rodriguez-gs,Tech Recruiter - Investment Banking Tech,sofia.rodriguez@gs.com,Verified,+1 212-902-1000,48500,https://www.linkedin.com/company/goldman-sachs,https://www.facebook.com/GoldmanSachs,https://twitter.com/GoldmanSachs,Barcelona,Catalonia,Spain,"200 West Street, New York, NY, United States, 10282",New York
+            Zara,https://zara.com,David,Martinez,http://www.linkedin.com/in/david-martinez-inditex,Retail Recruitment Specialist,david.martinez@zara.com,Verified,+34 981 18 54 00,45000,https://www.linkedin.com/company/inditex,https://www.facebook.com/zara,https://twitter.com/ZARA,Barcelona,Catalonia,Spain,"Avenida de la Diputacion, Arteixo, A Coruna, Spain, 15142",Arteixo`;
 
         const blob = new Blob([demoContent], { type: 'text/csv' });
         const file = new File([blob], 'demo_recruiters.csv', { type: 'text/csv' });
@@ -1782,63 +1787,63 @@
         }
 
         document.getElementById('matchContent').innerHTML = `
-                    <div style="text-align: center; margin-bottom: 20px;">
-                        <div class="score-circle" style="background: ${scoreColor}; margin: 0 auto;">
-                            ${result.score}/10
+                        <div style="text-align: center; margin-bottom: 20px;">
+                            <div class="score-circle" style="background: ${scoreColor}; margin: 0 auto;">
+                                ${result.score}/10
+                            </div>
+                            <div style="font-size: 18px; color: #2c3e50; margin-top: 5px;">
+                                Match Score
+                            </div>
                         </div>
-                        <div style="font-size: 18px; color: #2c3e50; margin-top: 5px;">
-                            Match Score
-                        </div>
-                    </div>
 
-                    <div style="margin: 20px 0; padding: 15px; background: #f8f9fa; border-radius: 10px;">
-                        <h4 style="color: #2c3e50; margin-bottom: 10px;">📊 Overall Assessment</h4>
-                        <p style="color: #495057; line-height: 1.6;">${result.reasoning || 'No description'}</p>
-                    </div>
-
-                    <div class="analysis-grid">
-                        <div class="analysis-item" style="background: #e8f4fd;">
-                            <h5 style="color: #0077b5;">🏢 Company Analysis</h5>
-                            <p>${result.companyAnalysis || 'N/A'}</p>
+                        <div style="margin: 20px 0; padding: 15px; background: #f8f9fa; border-radius: 10px;">
+                            <h4 style="color: #2c3e50; margin-bottom: 10px;">📊 Overall Assessment</h4>
+                            <p style="color: #495057; line-height: 1.6;">${result.reasoning || 'No description'}</p>
                         </div>
-                        <div class="analysis-item" style="background: #f0f7e8;">
-                            <h5 style="color: #28a745;">📍 Location Match</h5>
-                            <p>${result.locationMatch || 'N/A'}</p>
-                        </div>
-                        <div class="analysis-item" style="background: #fff3cd;">
-                            <h5 style="color: #856404;">🔧 Industry Match</h5>
-                            <p>${result.industryMatch || 'N/A'}</p>
-                        </div>
-                        <div class="analysis-item" style="background: #d4edda;">
-                            <h5 style="color: #155724;">💡 Key Finding</h5>
-                            <p>${result.keyFindings || 'N/A'}</p>
-                        </div>
-                    </div>
 
-                    <div style="margin: 20px 0;">
-                        <h4 style="color: #2c3e50; margin-bottom: 10px;">💪 Strengths</h4>
-                        <ul class="strengths-list">
-                            ${strengthsHtml}
-                        </ul>
-                    </div>
+                        <div class="analysis-grid">
+                            <div class="analysis-item" style="background: #e8f4fd;">
+                                <h5 style="color: #0077b5;">🏢 Company Analysis</h5>
+                                <p>${result.companyAnalysis || 'N/A'}</p>
+                            </div>
+                            <div class="analysis-item" style="background: #f0f7e8;">
+                                <h5 style="color: #28a745;">📍 Location Match</h5>
+                                <p>${result.locationMatch || 'N/A'}</p>
+                            </div>
+                            <div class="analysis-item" style="background: #fff3cd;">
+                                <h5 style="color: #856404;">🔧 Industry Match</h5>
+                                <p>${result.industryMatch || 'N/A'}</p>
+                            </div>
+                            <div class="analysis-item" style="background: #d4edda;">
+                                <h5 style="color: #155724;">💡 Key Finding</h5>
+                                <p>${result.keyFindings || 'N/A'}</p>
+                            </div>
+                        </div>
 
-                    <div style="margin: 20px 0;">
-                        <h4 style="color: #2c3e50; margin-bottom: 10px;">📉 Areas for Improvement</h4>
-                        <ul class="weaknesses-list">
-                            ${weaknessesHtml}
-                        </ul>
-                    </div>
+                        <div style="margin: 20px 0;">
+                            <h4 style="color: #2c3e50; margin-bottom: 10px;">💪 Strengths</h4>
+                            <ul class="strengths-list">
+                                ${strengthsHtml}
+                            </ul>
+                        </div>
 
-                    <div style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 10px;">
-                        <h5 style="color: #2c3e50; margin-bottom: 10px;">📋 Company Details:</h5>
-                        <p style="color: #666; font-size: 13px; line-height: 1.6;">
-                            <strong>${result.recruiter?.companyNameForEmails || 'N/A'}</strong><br>
-                            📍 ${result.recruiter?.city || 'N/A'}, ${result.recruiter?.country || 'N/A'}<br>
-                            👤 ${result.recruiter?.firstName || ''} ${result.recruiter?.lastName || ''} - ${result.recruiter?.title || 'N/A'}<br>
-                            ${result.recruiter?.email ? '📧 ' + result.recruiter.email : ''}
-                        </p>
-                    </div>
-                `;
+                        <div style="margin: 20px 0;">
+                            <h4 style="color: #2c3e50; margin-bottom: 10px;">📉 Areas for Improvement</h4>
+                            <ul class="weaknesses-list">
+                                ${weaknessesHtml}
+                            </ul>
+                        </div>
+
+                        <div style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 10px;">
+                            <h5 style="color: #2c3e50; margin-bottom: 10px;">📋 Company Details:</h5>
+                            <p style="color: #666; font-size: 13px; line-height: 1.6;">
+                                <strong>${result.recruiter?.companyNameForEmails || 'N/A'}</strong><br>
+                                📍 ${result.recruiter?.city || 'N/A'}, ${result.recruiter?.country || 'N/A'}<br>
+                                👤 ${result.recruiter?.firstName || ''} ${result.recruiter?.lastName || ''} - ${result.recruiter?.title || 'N/A'}<br>
+                                ${result.recruiter?.email ? '📧 ' + result.recruiter.email : ''}
+                            </p>
+                        </div>
+                    `;
     }
 
     function closeModal() {
