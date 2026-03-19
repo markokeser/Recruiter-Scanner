@@ -144,13 +144,26 @@ namespace Recruiter_Scanner.Controllers
                         }
                     }
                 }
+                if (recruiters.Count > 10)
+                {
+                    ModelState.AddModelError("", "Not possible to add more than 10 recruiters");
+                    // Vratite isti view sa greškom
+                    model = new RecruiterUploadViewModel
+                    {
+                        ErrorMessage = "Not possible to add more than 10 recruiters",
+                        ShowResults = false,
+                        Recruiters = new List<Recruiter>()
+                    };
+                    return View("Index", model); // Ili naziv vašeg view-a
+                }
 
                 model.Recruiters = recruiters;
                 model.ShowResults = true;
 
                 if (recruiters.Count == 0)
                 {
-                    model.ErrorMessage = "Nema validnih podataka u fajlu.";
+                    model.ErrorMessage = $"Nema validnih podataka u fajlu.";
+                    model.Recruiters = new List<Recruiter>();
                 }
             }
             catch (Exception ex)
