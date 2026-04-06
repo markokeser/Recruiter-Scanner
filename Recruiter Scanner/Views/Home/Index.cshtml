@@ -1,20 +1,379 @@
 ﻿@model RecruiterUploadViewModel
 
 @{
-    ViewData["Title"] = "IT Recruiters Barcelona";
+    ViewData["Title"] = "AI Recruiters Match - Barcelona";
 }
 
 <style>
+    /* ===== BASE STYLES ===== */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
     body {
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        background-color: #f4f6f9;
-        margin: 0;
+        background: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%);
+        min-height: 100vh;
         padding: 20px;
     }
 
     .container {
         max-width: 1400px;
         margin: 0 auto;
+    }
+
+    /* ===== HERO SECTION ===== */
+    .hero-section {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 24px;
+        padding: 50px 40px;
+        margin-bottom: 40px;
+        color: white;
+        text-align: center;
+        box-shadow: 0 20px 40px rgba(102, 126, 234, 0.25);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .hero-section::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+        pointer-events: none;
+    }
+
+    .hero-title {
+        font-size: 2.8rem;
+        font-weight: 800;
+        margin-bottom: 15px;
+        letter-spacing: -0.5px;
+    }
+
+    .hero-subtitle {
+        font-size: 1.2rem;
+        opacity: 0.95;
+        margin-bottom: 30px;
+        max-width: 650px;
+        margin-left: auto;
+        margin-right: auto;
+        line-height: 1.6;
+    }
+
+    .hero-badge {
+        background: rgba(255,255,255,0.2);
+        backdrop-filter: blur(10px);
+        border-radius: 50px;
+        padding: 8px 24px;
+        display: inline-block;
+        margin-bottom: 20px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        letter-spacing: 1px;
+    }
+
+    .hero-buttons {
+        display: flex;
+        gap: 20px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .btn-hero-primary {
+        background: white;
+        color: #667eea;
+        padding: 14px 35px;
+        border: none;
+        border-radius: 50px;
+        cursor: pointer;
+        font-size: 1rem;
+        font-weight: 700;
+        transition: all 0.3s ease;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .btn-hero-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    }
+
+    .btn-hero-secondary {
+        background: rgba(255,255,255,0.2);
+        backdrop-filter: blur(10px);
+        color: white;
+        padding: 14px 35px;
+        border: 2px solid rgba(255,255,255,0.5);
+        border-radius: 50px;
+        text-decoration: none;
+        font-size: 1rem;
+        font-weight: 700;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .btn-hero-secondary:hover {
+        background: white;
+        color: #667eea;
+        border-color: white;
+        transform: translateY(-2px);
+    }
+
+    /* ===== INTRO SECTION (prikazuje se samo kada NEMA podataka) ===== */
+    .intro-section {
+        display: @(Model.ShowResults ? "none" : "block");
+    }
+
+    .info-cards {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 25px;
+        margin-bottom: 50px;
+    }
+
+    .info-card {
+        background: white;
+        border-radius: 20px;
+        padding: 30px 25px;
+        text-align: center;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        transition: all 0.3s ease;
+        border: 1px solid rgba(0,0,0,0.05);
+    }
+
+    .info-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+    }
+
+    .info-icon {
+        font-size: 52px;
+        margin-bottom: 20px;
+    }
+
+    .info-card h3 {
+        color: #2c3e50;
+        margin-bottom: 12px;
+        font-size: 1.3rem;
+    }
+
+    .info-card p {
+        color: #7f8c8d;
+        font-size: 0.9rem;
+        line-height: 1.6;
+        margin-bottom: 15px;
+    }
+
+    .info-link {
+        color: #667eea;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.9rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        transition: gap 0.3s;
+    }
+
+    .info-link:hover {
+        gap: 8px;
+    }
+
+    /* ===== OR DIVIDER ===== */
+    .or-divider {
+        text-align: center;
+        margin: 40px 0;
+        position: relative;
+    }
+
+    .or-divider-line {
+        position: absolute;
+        top: 50%;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, #dee2e6, #dee2e6, transparent);
+        z-index: 0;
+    }
+
+    .or-divider-text {
+        background: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%);
+        display: inline-block;
+        padding: 10px 25px;
+        border-radius: 50px;
+        font-weight: 700;
+        color: #6c757d;
+        position: relative;
+        z-index: 1;
+        font-size: 1rem;
+        letter-spacing: 2px;
+    }
+
+    /* ===== DEMO SECTION ===== */
+    .demo-section {
+        background: white;
+        border-radius: 28px;
+        margin-bottom: 40px;
+        overflow: hidden;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        border: 1px solid rgba(102, 126, 234, 0.2);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .demo-section:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 25px 45px rgba(0,0,0,0.15);
+    }
+
+    .demo-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 25px 30px;
+        text-align: center;
+        color: white;
+    }
+
+    .demo-header h2 {
+        font-size: 1.8rem;
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+    }
+
+    .demo-header p {
+        opacity: 0.9;
+        font-size: 0.95rem;
+    }
+
+    .demo-badge {
+        background: rgba(255,255,255,0.2);
+        border-radius: 50px;
+        padding: 5px 15px;
+        font-size: 0.8rem;
+        display: inline-block;
+        margin-top: 10px;
+    }
+
+    .demo-content {
+        padding: 30px;
+    }
+
+    .demo-preview-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 25px;
+        margin-bottom: 30px;
+    }
+
+    .demo-preview-card {
+        background: #f8f9fa;
+        border-radius: 16px;
+        overflow: hidden;
+        border: 1px solid #e9ecef;
+    }
+
+    .demo-preview-header {
+        background: #e9ecef;
+        padding: 15px 20px;
+        font-weight: 700;
+        color: #2c3e50;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 1rem;
+    }
+
+    .demo-preview-body {
+        padding: 20px;
+        max-height: 350px;
+        overflow-y: auto;
+    }
+
+    .demo-preview-body pre {
+        font-family: 'Courier New', monospace;
+        font-size: 11px;
+        line-height: 1.5;
+        color: #495057;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        margin: 0;
+        background: white;
+        padding: 15px;
+        border-radius: 10px;
+    }
+
+    .demo-recruiter-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .demo-recruiter-table th {
+        background: #e9ecef;
+        padding: 10px 12px;
+        text-align: left;
+        font-weight: 600;
+        color: #2c3e50;
+    }
+
+    .demo-recruiter-table td {
+        padding: 8px 12px;
+        border-bottom: 1px solid #e9ecef;
+    }
+
+    .demo-recruiter-table tr:last-child td {
+        border-bottom: none;
+    }
+
+    .demo-footer {
+        text-align: center;
+        padding-top: 20px;
+        border-top: 1px solid #e9ecef;
+    }
+
+    .btn-demo-large {
+        background: linear-gradient(135deg, #fd7e14 0%, #dc3545 100%);
+        color: white;
+        border: none;
+        padding: 16px 45px;
+        font-size: 1.2rem;
+        font-weight: 700;
+        border-radius: 60px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 10px 25px rgba(253, 126, 20, 0.3);
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .btn-demo-large:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 15px 35px rgba(253, 126, 20, 0.4);
+    }
+
+    .demo-note {
+        margin-top: 15px;
+        font-size: 0.8rem;
+        color: #6c757d;
+    }
+
+    /* ===== DATA SECTION (prikazuje se samo kada IMA podataka) ===== */
+    .data-section {
+        display: @(Model.ShowResults ? "block" : "none");
     }
 
     .header-row {
@@ -27,7 +386,7 @@
         background: white;
         border-radius: 15px;
         padding: 15px 20px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
     }
 
     .left-section {
@@ -51,7 +410,6 @@
         gap: 15px;
         background: transparent;
         padding: 0;
-        box-shadow: none;
         margin-bottom: 0;
     }
 
@@ -60,11 +418,11 @@
         display: inline-block;
     }
 
-        .file-input-wrapper input[type=file] {
-            position: absolute;
-            left: -9999px;
-            opacity: 0;
-        }
+    .file-input-wrapper input[type=file] {
+        position: absolute;
+        left: -9999px;
+        opacity: 0;
+    }
 
     .file-label {
         background: #e9ecef;
@@ -78,10 +436,10 @@
         font-size: 14px;
     }
 
-        .file-label:hover {
-            background: #dee2e6;
-            border-color: #007bff;
-        }
+    .file-label:hover {
+        background: #dee2e6;
+        border-color: #667eea;
+    }
 
     .btn-upload {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -92,15 +450,14 @@
         cursor: pointer;
         font-size: 14px;
         font-weight: 600;
-        letter-spacing: 0.5px;
         transition: transform 0.2s, box-shadow 0.2s;
         box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
     }
 
-        .btn-upload:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
-        }
+    .btn-upload:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+    }
 
     .btn-demo {
         background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
@@ -111,18 +468,14 @@
         cursor: pointer;
         font-size: 14px;
         font-weight: 600;
-        letter-spacing: 0.5px;
         transition: transform 0.2s, box-shadow 0.2s;
         box-shadow: 0 5px 15px rgba(108, 117, 125, 0.4);
-        text-decoration: none;
-        display: inline-block;
     }
 
-        .btn-demo:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(108, 117, 125, 0.6);
-            color: white;
-        }
+    .btn-demo:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(108, 117, 125, 0.6);
+    }
 
     .btn-ai-setup {
         background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
@@ -139,11 +492,11 @@
         font-size: 14px;
     }
 
-        .btn-ai-setup:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(40, 167, 69, 0.4);
-            color: white;
-        }
+    .btn-ai-setup:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(40, 167, 69, 0.4);
+        color: white;
+    }
 
     .stats-container {
         display: grid;
@@ -154,17 +507,17 @@
 
     .stat-card {
         background: white;
-        border-radius: 12px;
+        border-radius: 16px;
         padding: 20px;
         text-align: center;
         box-shadow: 0 5px 15px rgba(0,0,0,0.08);
         transition: transform 0.2s;
     }
 
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-        }
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    }
 
     .stat-value {
         font-size: 36px;
@@ -175,14 +528,14 @@
 
     .stat-label {
         color: #7f8c8d;
-        font-size: 14px;
+        font-size: 13px;
         text-transform: uppercase;
         letter-spacing: 1px;
     }
 
     .controls-container {
         background: white;
-        border-radius: 12px;
+        border-radius: 16px;
         padding: 20px;
         margin: 20px 0;
         box-shadow: 0 5px 15px rgba(0,0,0,0.08);
@@ -203,7 +556,7 @@
     .sort-select {
         padding: 10px 15px;
         border: 2px solid #e9ecef;
-        border-radius: 8px;
+        border-radius: 10px;
         font-size: 14px;
         color: #495057;
         background: white;
@@ -211,20 +564,14 @@
         transition: border-color 0.3s;
     }
 
-        .sort-select:hover {
-            border-color: #667eea;
-        }
-
-        .sort-select:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
+    .sort-select:hover {
+        border-color: #667eea;
+    }
 
     .sort-order-btn {
         background: #f8f9fa;
         border: 2px solid #e9ecef;
-        border-radius: 8px;
+        border-radius: 10px;
         padding: 10px 15px;
         cursor: pointer;
         transition: all 0.3s;
@@ -233,10 +580,10 @@
         gap: 5px;
     }
 
-        .sort-order-btn:hover {
-            background: #e9ecef;
-            border-color: #667eea;
-        }
+    .sort-order-btn:hover {
+        background: #e9ecef;
+        border-color: #667eea;
+    }
 
     .batch-analyze-btn {
         background: linear-gradient(135deg, #fd7e14 0%, #dc3545 100%);
@@ -256,20 +603,20 @@
         min-width: 200px;
     }
 
-        .batch-analyze-btn:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(253, 126, 20, 0.4);
-        }
+    .batch-analyze-btn:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(253, 126, 20, 0.4);
+    }
 
-        .batch-analyze-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-        }
+    .batch-analyze-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none;
+    }
 
     .progress-container {
         background: white;
-        border-radius: 12px;
+        border-radius: 16px;
         padding: 20px;
         margin: 20px 0;
         box-shadow: 0 5px 15px rgba(0,0,0,0.08);
@@ -300,7 +647,7 @@
 
     .table-wrapper {
         background: white;
-        border-radius: 15px;
+        border-radius: 20px;
         padding: 20px;
         box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         overflow-x: auto;
@@ -312,35 +659,31 @@
         font-size: 14px;
     }
 
-        .recruiter-table th {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 15px 10px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            font-size: 12px;
-            white-space: nowrap;
-        }
+    .recruiter-table th {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 15px 10px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-size: 12px;
+        white-space: nowrap;
+    }
 
-        .recruiter-table td {
-            padding: 12px 10px;
-            border-bottom: 1px solid #e9ecef;
-            color: #495057;
-        }
+    .recruiter-table td {
+        padding: 12px 10px;
+        border-bottom: 1px solid #e9ecef;
+        color: #495057;
+    }
 
-        .recruiter-table tbody tr {
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
+    .recruiter-table tbody tr {
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
 
-            .recruiter-table tbody tr:hover {
-                background-color: #f0f0f0 !important;
-            }
-
-            .recruiter-table tbody tr td:last-child {
-                cursor: default;
-            }
+    .recruiter-table tbody tr:hover {
+        background-color: #f8f9fa;
+    }
 
     .score-badge {
         display: inline-block;
@@ -378,7 +721,6 @@
         border-radius: 50px;
         font-size: 11px;
         font-weight: 600;
-        letter-spacing: 0.5px;
     }
 
     .badge-verified {
@@ -418,13 +760,8 @@
         white-space: nowrap;
     }
 
-        .company-website:hover {
-            text-decoration: underline;
-        }
-
-    .action-cell {
-        min-width: 120px;
-        cursor: default;
+    .company-website:hover {
+        text-decoration: underline;
     }
 
     .linkedin-link {
@@ -435,18 +772,15 @@
         gap: 5px;
         padding: 8px 12px;
         background: #e8f4fd;
-        border-radius: 5px;
+        border-radius: 8px;
         font-size: 12px;
-        width: 100%;
-        box-sizing: border-box;
         transition: all 0.2s;
     }
 
-        .linkedin-link:hover {
-            background: #0077b5;
-            color: white;
-            transform: scale(1.02);
-        }
+    .linkedin-link:hover {
+        background: #0077b5;
+        color: white;
+    }
 
     .email-link {
         color: #2c3e50;
@@ -454,34 +788,63 @@
         font-size: 12px;
     }
 
-        .email-link:hover {
-            color: #667eea;
-            text-decoration: underline;
-        }
+    .email-link:hover {
+        color: #667eea;
+        text-decoration: underline;
+    }
 
     .location {
         font-size: 12px;
+    }
+
+    .cv-badge {
+        background: #28a745;
+        color: white;
+        padding: 3px 8px;
+        border-radius: 3px;
+        font-size: 11px;
+        margin-left: 10px;
+    }
+
+    .bottom-actions {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 20px;
+        gap: 15px;
+    }
+
+    .btn-next {
+        background: linear-gradient(135deg, #fd7e14 0%, #dc3545 100%);
+        color: white;
+        padding: 12px 35px;
+        border: none;
+        border-radius: 50px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: transform 0.2s;
+        font-size: 16px;
+        min-width: 200px;
+    }
+
+    .btn-next:hover:not(:disabled) {
+        transform: translateY(-2px);
+    }
+
+    .btn-next:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
     }
 
     .error-message {
         background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
         color: white;
         padding: 15px 20px;
-        border-radius: 10px;
+        border-radius: 12px;
         margin: 20px 0;
         text-align: center;
     }
 
-    .success-message {
-        background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
-        color: #1e4620;
-        padding: 15px 20px;
-        border-radius: 10px;
-        margin: 20px 0;
-        text-align: center;
-    }
-
-    /* Modal Styling */
+    /* Modal */
     .modal {
         display: none;
         position: fixed;
@@ -489,7 +852,8 @@
         left: 0;
         width: 100%;
         height: 100%;
-        background: rgba(0,0,0,0.5);
+        background: rgba(0,0,0,0.6);
+        backdrop-filter: blur(5px);
         z-index: 1000;
         justify-content: center;
         align-items: center;
@@ -497,36 +861,30 @@
 
     .modal-content {
         background: white;
-        border-radius: 15px;
+        border-radius: 24px;
         width: 90%;
         max-width: 1000px;
         max-height: 90vh;
         overflow-y: auto;
-        padding: 25px;
+        padding: 30px;
         position: relative;
         animation: modalSlideIn 0.3s ease;
     }
 
     .modal-close {
         position: absolute;
-        top: 10px;
-        right: 15px;
+        top: 15px;
+        right: 20px;
         background: none;
         border: none;
-        font-size: 24px;
+        font-size: 28px;
         cursor: pointer;
         color: #999;
         transition: color 0.2s;
     }
 
-        .modal-close:hover {
-            color: #333;
-        }
-
-    .modal h3 {
-        color: #2c3e50;
-        margin-bottom: 20px;
-        text-align: center;
+    .modal-close:hover {
+        color: #333;
     }
 
     .modal-actions {
@@ -544,29 +902,27 @@
         border-radius: 50px;
         font-weight: 600;
         cursor: pointer;
-        transition: transform 0.2s, box-shadow 0.2s;
+        transition: transform 0.2s;
         font-size: 14px;
     }
 
     .modal-btn-primary {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: white;
-        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
     }
 
-        .modal-btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
-        }
+    .modal-btn-primary:hover {
+        transform: translateY(-2px);
+    }
 
     .modal-btn-secondary {
         background: #e9ecef;
         color: #495057;
     }
 
-        .modal-btn-secondary:hover {
-            background: #dee2e6;
-        }
+    .modal-btn-secondary:hover {
+        background: #dee2e6;
+    }
 
     .demo-file-preview {
         background: #f8f9fa;
@@ -606,28 +962,20 @@
         font-size: 13px;
     }
 
-        .demo-file-table th {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 10px 8px;
-            font-weight: 600;
-            text-align: left;
-            font-size: 12px;
-        }
+    .demo-file-table th {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 10px 8px;
+        font-weight: 600;
+        text-align: left;
+        font-size: 12px;
+    }
 
-        .demo-file-table td {
-            padding: 8px;
-            border-bottom: 1px solid #e9ecef;
-            color: #495057;
-        }
-
-        .demo-file-table tr:last-child td {
-            border-bottom: none;
-        }
-
-        .demo-file-table tr:hover {
-            background-color: #e9ecef;
-        }
+    .demo-file-table td {
+        padding: 8px;
+        border-bottom: 1px solid #e9ecef;
+        color: #495057;
+    }
 
     .loading-spinner {
         display: none;
@@ -667,20 +1015,14 @@
 
     .analysis-item {
         padding: 15px;
-        border-radius: 10px;
+        border-radius: 12px;
         background: #f8f9fa;
     }
 
-        .analysis-item h5 {
-            margin-bottom: 8px;
-            font-size: 14px;
-        }
-
-        .analysis-item p {
-            color: #495057;
-            font-size: 13px;
-            line-height: 1.5;
-        }
+    .analysis-item h5 {
+        margin-bottom: 8px;
+        font-size: 14px;
+    }
 
     .strengths-list, .weaknesses-list {
         list-style: none;
@@ -688,79 +1030,34 @@
         margin: 10px 0;
     }
 
-        .strengths-list li {
-            padding: 8px 12px;
-            margin-bottom: 5px;
-            background: #d4edda;
-            border-radius: 5px;
-            color: #155724;
-            font-size: 13px;
-        }
-
-        .weaknesses-list li {
-            padding: 8px 12px;
-            margin-bottom: 5px;
-            background: #f8d7da;
-            border-radius: 5px;
-            color: #721c24;
-            font-size: 13px;
-        }
-
-    @@keyframes spin {
-        0% {
-            transform: rotate(0deg);
-        }
-
-        100% {
-            transform: rotate(360deg);
-        }
+    .strengths-list li {
+        padding: 8px 12px;
+        margin-bottom: 5px;
+        background: #d4edda;
+        border-radius: 8px;
+        color: #155724;
+        font-size: 13px;
     }
 
-    @@keyframes modalSlideIn {
-        from {
-            transform: translateY(-50px);
-            opacity: 0;
-        }
-
-        to {
-            transform: translateY(0);
-            opacity: 1;
-        }
-    }
-
-    @@keyframes slideIn {
-        from {
-            transform: translateX(100%);
-            opacity: 0;
-        }
-
-        to {
-            transform: translateX(0);
-            opacity: 1;
-        }
-    }
-
-    @@keyframes slideOut {
-        from {
-            transform: translateX(0);
-            opacity: 1;
-        }
-
-        to {
-            transform: translateX(100%);
-            opacity: 0;
-        }
+    .weaknesses-list li {
+        padding: 8px 12px;
+        margin-bottom: 5px;
+        background: #f8d7da;
+        border-radius: 8px;
+        color: #721c24;
+        font-size: 13px;
     }
 
     .notification {
         position: fixed;
         top: 20px;
         right: 20px;
-        padding: 15px 20px;
-        border-radius: 5px;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        z-index: 1000;
+        padding: 15px 25px;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        z-index: 1100;
         animation: slideIn 0.3s ease;
+        font-weight: 500;
     }
 
     .notification-warning {
@@ -778,357 +1075,334 @@
         color: white;
     }
 
-    .cv-badge {
-        background: #28a745;
-        color: white;
-        padding: 3px 8px;
-        border-radius: 3px;
-        font-size: 11px;
-        margin-left: 10px;
+    .mobile-actions {
+        display: none;
     }
 
-    .bottom-actions {
-        display: flex;
-        justify-content: flex-end;
-        align-items: center;
-        margin-top: 20px;
-        gap: 15px;
-    }
-
-    .btn-next {
-        background: linear-gradient(135deg, #fd7e14 0%, #dc3545 100%);
-        color: white;
-        padding: 12px 35px;
-        border: none;
-        border-radius: 50px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: transform 0.2s, box-shadow 0.2s;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        box-shadow: 0 5px 15px rgba(253, 126, 20, 0.3);
-        font-size: 16px;
-        min-width: 200px;
-    }
-
-        .btn-next:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(253, 126, 20, 0.4);
+    @@keyframes spin {
+        100% {
+            transform: rotate(360deg);
         }
+    }
 
-        .btn-next:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
+    @@keyframes modalSlideIn {
+        from {
+            transform: translateY(-30px);
+            opacity: 0;
         }
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
 
-    /* ===== MOBILNA OPTIMIZACIJA - SAMO ZA MOBILNE UREĐAJE ===== */
+    @@keyframes slideIn {
+        from {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+
+    @@keyframes slideOut {
+        from {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        to {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+    }
+
+    @@media (max-width: 900px) {
+        .info-cards {
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+        .demo-preview-grid {
+            grid-template-columns: 1fr;
+        }
+        .hero-title {
+            font-size: 2rem;
+        }
+    }
+
     @@media (max-width: 768px) {
         body {
             padding: 10px;
         }
-
+        .hero-section {
+            padding: 30px 20px;
+        }
+        .hero-title {
+            font-size: 1.6rem;
+        }
+        .hero-subtitle {
+            font-size: 0.9rem;
+        }
         .header-row {
             flex-direction: column;
             align-items: stretch;
-            padding: 15px;
         }
-
-        .left-section {
+        .left-section, .right-section {
             width: 100%;
+            margin-left: 0;
         }
-
         .upload-container {
             flex-direction: column;
             width: 100%;
         }
-
-        .file-input-wrapper {
-            width: 100%;
-        }
-
-        .file-label {
+        .file-input-wrapper, .file-label, .btn-upload, .btn-demo, .btn-ai-setup {
             width: 100%;
             text-align: center;
-            padding: 15px;
-            font-size: 16px;
         }
-
-        .btn-upload, .btn-demo {
-            width: 100%;
-            text-align: center;
-            padding: 12px;
-            font-size: 16px;
-        }
-
-        .right-section {
-            width: 100%;
-            margin-left: 0;
-        }
-
-        .btn-ai-setup {
-            width: 100%;
-            justify-content: center;
-            padding: 12px;
-            font-size: 16px;
-        }
-
         .stats-container {
             grid-template-columns: 1fr 1fr;
             gap: 10px;
-            margin: 20px 0;
         }
-
-        .stat-card {
-            padding: 15px;
-        }
-
-        .stat-value {
-            font-size: 28px;
-        }
-
-        .stat-label {
-            font-size: 12px;
-        }
-
         .controls-container {
             flex-direction: column;
-            align-items: stretch;
-            padding: 15px;
         }
-
         .sort-controls {
             width: 100%;
             flex-direction: column;
-            gap: 10px;
         }
-
-        .sort-select {
+        .sort-select, .sort-order-btn {
             width: 100%;
-            padding: 12px;
-            font-size: 16px;
         }
-
-        .sort-order-btn {
-            width: 100%;
-            justify-content: center;
-            padding: 12px;
-            font-size: 16px;
-        }
-        /* Sakrij batch-analyze-btn iz controls-container na mobilnom */
         .controls-container .batch-analyze-btn {
             display: none;
         }
-        /* DODAJ analyze all i next dugmad iznad tabele - SAMO ZA MOBILNO */
         .mobile-actions {
             display: flex;
             flex-direction: column;
             gap: 10px;
-            margin: 15px 0 20px 0;
+            margin: 15px 0;
+        }
+        .mobile-actions .batch-analyze-btn, .mobile-actions .btn-next {
             width: 100%;
         }
-
-            .mobile-actions .btn {
-                width: 100%;
-                padding: 15px;
-                font-size: 16px;
-                min-width: auto;
-            }
-        /* Sakrij originalne bottom-actions na mobilnom */
         .bottom-actions {
             display: none;
         }
-
         .table-wrapper {
             padding: 10px;
             background: transparent;
             box-shadow: none;
             overflow-x: visible;
         }
-
-        .recruiter-table,
-        .recruiter-table thead,
-        .recruiter-table tbody,
-        .recruiter-table th,
-        .recruiter-table td,
-        .recruiter-table tr {
+        .recruiter-table, .recruiter-table thead, .recruiter-table tbody, .recruiter-table tr, .recruiter-table td {
             display: block;
         }
-
-            .recruiter-table thead {
-                display: none;
-            }
-
-            .recruiter-table tbody tr {
-                margin-bottom: 20px;
-                padding: 15px;
-                background: white;
-                border-radius: 12px;
-                box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-            }
-
-            .recruiter-table td {
-                border: none;
-                padding: 8px 0;
-                position: relative;
-                padding-left: 120px;
-                min-height: 30px;
-                border-bottom: 1px solid #f0f0f0;
-            }
-
-                .recruiter-table td:last-child {
-                    border-bottom: none;
-                    padding-left: 0;
-                    padding-top: 15px;
-                }
-
-                .recruiter-table td:before {
-                    content: attr(data-label);
-                    position: absolute;
-                    left: 0;
-                    width: 110px;
-                    font-weight: 600;
-                    color: #2c3e50;
-                    font-size: 12px;
-                }
-
-        .company-info {
-            max-width: none;
+        .recruiter-table thead {
+            display: none;
         }
-
-        .company-website {
-            max-width: none;
+        .recruiter-table tbody tr {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        .recruiter-table td {
+            border: none;
+            padding: 8px 0;
+            position: relative;
+            padding-left: 120px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .recruiter-table td:last-child {
+            border-bottom: none;
+            padding-left: 0;
+            padding-top: 15px;
+        }
+        .recruiter-table td:before {
+            content: attr(data-label);
+            position: absolute;
+            left: 0;
+            width: 110px;
+            font-weight: 600;
+            color: #2c3e50;
             font-size: 12px;
-            white-space: normal;
         }
-
         .linkedin-link {
             width: 100%;
             justify-content: center;
-            padding: 12px;
-            font-size: 14px;
         }
-
-        .email-link {
-            font-size: 14px;
-            word-break: break-all;
+        .analysis-grid {
+            grid-template-columns: 1fr;
         }
-
-        .score-badge {
-            font-size: 14px;
-            padding: 5px 12px;
-        }
-
-        .badge {
-            font-size: 12px;
-            padding: 5px 12px;
-        }
-
         .modal-content {
             width: 95%;
             padding: 20px;
         }
-
-        .analysis-grid {
-            grid-template-columns: 1fr;
-        }
-
         .modal-actions {
             flex-direction: column;
         }
-
         .modal-btn {
             width: 100%;
         }
-
-        .notification {
-            left: 20px;
-            right: 20px;
-            top: auto;
-            bottom: 20px;
-            text-align: center;
-        }
     }
 
-    /* Desktop: sakrij mobile-actions */
     @@media (min-width: 769px) {
         .mobile-actions {
             display: none !important;
         }
     }
-
-    @@media (max-width: 480px) {
-        .recruiter-table td {
-            padding-left: 100px;
-            font-size: 13px;
-        }
-
-            .recruiter-table td:before {
-                width: 90px;
-                font-size: 11px;
-            }
-
-        .stats-container {
-            grid-template-columns: 1fr;
-        }
-    }
 </style>
 
 <div class="container">
-    <!-- Header row sa svim dugmadima u jednoj liniji -->
-    <div class="header-row">
-        <div class="left-section">
-            <div class="upload-container">
-                <form asp-action="Upload" method="post" enctype="multipart/form-data" id="uploadForm" style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
-                    <div class="file-input-wrapper">
-                        <input type="file" id="csvFile" name="csvFile" accept=".csv,.json" required />
-                        <label for="csvFile" class="file-label" id="fileLabel">📁 Choose CSV file</label>
-                    </div>
-                    <button type="submit" class="btn-upload">Upload CSV file</button>
-                </form>
-                <button onclick="showDemoFileModal()" class="btn-demo">Use Demo file</button>
+    <!-- Hero Section -->
+    <div class="hero-section">
+        <div class="hero-badge">🚀 AI-Powered Recruitment Tool</div>
+        <h1 class="hero-title">Find Your Perfect Tech Talent in Barcelona</h1>
+        <p class="hero-subtitle">
+            Upload your own CSV file or try our demo to see how AI analyzes and matches candidates based on your CV.
+        </p>
+        <div class="hero-buttons">
+            <button onclick="triggerFileUpload()" class="btn-hero-primary">
+                📁 Upload Your CSV
+            </button>
+            <a href="/Home/MatchForm" class="btn-hero-secondary">
+                ✏️ Enter Your CV
+            </a>
+        </div>
+        <form asp-action="Upload" method="post" enctype="multipart/form-data" id="heroUploadForm" style="display: none;">
+            <input type="file" id="heroCsvFile" name="csvFile" accept=".csv,.json" />
+        </form>
+    </div>
+
+    <!-- INTRO SECTION - prikazuje se samo kada NEMA podataka -->
+    <div class="intro-section">
+        <div class="info-cards">
+            <div class="info-card">
+                <div class="info-icon">1️⃣</div>
+                <h3>Enter Your CV</h3>
+                <p>Paste your CV or upload a PDF. Our AI analyzes your skills, experience, and preferences.</p>
+                <a href="/Home/MatchForm" class="info-link">Setup Match →</a>
+            </div>
+            <div class="info-card">
+                <div class="info-icon">2️⃣</div>
+                <h3>Upload Recruiters</h3>
+                <p>Upload a CSV file with recruiter data including company, name, email, and LinkedIn profiles.</p>
+                <button onclick="triggerFileUpload()" style="background: none; border: none; cursor: pointer; color: #667eea; font-weight: 600; display: inline-flex; align-items: center; gap: 5px;">Upload File →</button>
+            </div>
+            <div class="info-card">
+                <div class="info-icon">3️⃣</div>
+                <h3>Get AI Scores</h3>
+                <p>Our AI matches your CV with each recruiter, giving you a score (0-10) and detailed analysis.</p>
+                <span class="info-link" style="cursor: default;">Analyze & Match</span>
             </div>
         </div>
 
-        <div class="right-section">
-            <a href="/Home/MatchForm" class="btn-ai-setup">
-                🎯 AI Match Setup <span id="cvStatus" class="cv-badge" style="display: none;">✓ CV Saved</span>
-            </a>
+        <div class="or-divider">
+            <div class="or-divider-line"></div>
+            <span class="or-divider-text">OR</span>
+        </div>
+
+        <!-- Demo Section -->
+        <div class="demo-section">
+            <div class="demo-header">
+                <h2>
+                    <span>🎯</span> Try Demo Data
+                    <span>✨</span>
+                </h2>
+                <p>Experience the full power of AI matching with pre-loaded data</p>
+                <div class="demo-badge">⚡ 3 Recruiters + Sample CV</div>
+            </div>
+
+            <div class="demo-content">
+                <div class="demo-preview-grid">
+                    <div class="demo-preview-card">
+                        <div class="demo-preview-header">
+                            <span>📄</span> Sample CV Preview
+                            <span style="font-size: 11px; margin-left: auto;">⬇️ Scroll</span>
+                        </div>
+                        <div class="demo-preview-body">
+                            <pre id="demoCvPreview">SOFTWARE ENGINEER - FULL STACK DEVELOPER
+
+PERSONAL INFORMATION
+Location: Barcelona, Spain (EU Citizen)
+Languages: English (Fluent), Serbian (Native), Spanish (Learning)
+
+PROFESSIONAL SUMMARY
+Full Stack Developer with 5+ years of experience building scalable web applications and AI integrations.
+
+TECHNICAL SKILLS
+• Backend: C# / .NET Core, Java, Node.js, Python
+• Frontend: JavaScript, TypeScript, React, Vue.js
+• Databases: SQL Server, PostgreSQL, MongoDB
+• Cloud & DevOps: Azure, AWS, Docker, Kubernetes
+• AI & Tools: OpenAI API, LangChain, Prompt Engineering
+
+WORK EXPERIENCE
+• Senior Full Stack Developer (2022-Present) - Leading team of 4 developers
+• Full Stack Developer (2020-2022) - Fintech web applications
+• Backend Developer (2018-2020) - RESTful APIs, database optimization
+
+EDUCATION
+• Master's in Computer Science - University of Barcelona
+• Bachelor's in Software Engineering - Faculty of Technical Sciences</pre>
+                        </div>
+                    </div>
+
+                    <div class="demo-preview-card">
+                        <div class="demo-preview-header">
+                            <span>👥</span> Sample Recruiters
+                            <span style="font-size: 11px; margin-left: auto;">3 Companies</span>
+                        </div>
+                        <div class="demo-preview-body">
+                            <table class="demo-recruiter-table">
+                                <thead>
+                                    <tr><th>Company</th><th>Recruiter</th><th>Position</th><th>Location</th></tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td><strong>GitHub</strong></td><td>Alex Chen</td><td>Technical Recruiter</td><td>Barcelona</td></tr>
+                                    <tr><td><strong>Goldman Sachs</strong></td><td>Sofia Rodriguez</td><td>Tech Recruiter</td><td>Barcelona</td></tr>
+                                    <tr><td><strong>Zara</strong></td><td>David Martinez</td><td>Retail Recruitment</td><td>Barcelona</td></tr>
+                                </tbody>
+                            </table>
+                            <div style="margin-top: 15px; padding: 10px; background: #e8f4fd; border-radius: 8px; font-size: 12px;">
+                                ✅ All have verified emails and LinkedIn profiles
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="demo-footer">
+                    <button class="btn-demo-large" onclick="uploadDemoFile()">
+                        🚀 Load Demo Data
+                        <span>→</span>
+                    </button>
+                    <div class="demo-note">
+                        💡 One click loads everything - then click "Analyze All" to see AI matching in action!
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
-    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
-    {
-        <div class="error-message">
-            ⚠️ @Model.ErrorMessage
-        </div>
-    }
+    <!-- DATA SECTION - prikazuje se samo kada IMA podataka -->
+    <div class="data-section">
+        
 
-    <!-- Stats Container - Uvek vidljiv, prikazuje 0 dok se ne učita fajl -->
-    <div class="stats-container">
-        <div class="stat-card">
-            <div class="stat-value" id="totalRecruiters">0</div>
-            <div class="stat-label">Total Recruiters</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-value" id="verifiedEmails">0</div>
-            <div class="stat-label">Verified Emails</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-value" id="withLinkedin">0</div>
-            <div class="stat-label">With LinkedIn</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-value" id="withEmail">0</div>
-            <div class="stat-label">With Email</div>
-        </div>
-    </div>
+        @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+        {
+            <div class="error-message">⚠️ @Model.ErrorMessage</div>
+        }
 
-    @if (Model.ShowResults)
-    {
-        if (Model.Recruiters.Any())
+        <div class="stats-container">
+            <div class="stat-card"><div class="stat-value" id="totalRecruiters">0</div><div class="stat-label">Total Recruiters</div></div>
+            <div class="stat-card"><div class="stat-value" id="verifiedEmails">0</div><div class="stat-label">Verified Emails</div></div>
+            <div class="stat-card"><div class="stat-value" id="withLinkedin">0</div><div class="stat-label">With LinkedIn</div></div>
+            <div class="stat-card"><div class="stat-value" id="withEmail">0</div><div class="stat-label">With Email</div></div>
+        </div>
+
+        @if (Model.ShowResults && Model.Recruiters.Any())
         {
             <div class="controls-container">
                 <div class="sort-controls">
@@ -1139,21 +1413,13 @@
                         <option value="location">Location</option>
                         <option value="emailStatus">Email Status</option>
                     </select>
-                    <button id="sortOrderBtn" class="sort-order-btn" onclick="toggleSortOrder()">
-                        🔽 Descending
-                    </button>
+                    <button id="sortOrderBtn" class="sort-order-btn" onclick="toggleSortOrder()">🔽 Descending</button>
                 </div>
-
             </div>
 
-            <!-- MOBILE ACTION BUTTONS - pojavljuju se samo na mobilnom -->
             <div class="mobile-actions">
-                <button id="mobileBatchAnalyzeBtn" class="batch-analyze-btn" onclick="batchAnalyzeAll()">
-                    Analyze All
-                </button>
-                <button id="mobileNextBtn" class="btn-next" onclick="goToNextStep()" disabled>
-                    Next
-                </button>
+                <button id="mobileBatchAnalyzeBtn" class="batch-analyze-btn" onclick="batchAnalyzeAll()">Analyze All</button>
+                <button id="mobileNextBtn" class="btn-next" onclick="goToNextStep()" disabled>Next</button>
             </div>
 
             <div id="progressContainer" class="progress-container">
@@ -1161,26 +1427,14 @@
                     <span style="font-weight: 600;">Analysis in progress...</span>
                     <span id="progressPercent">0%</span>
                 </div>
-                <div class="progress-bar">
-                    <div id="progressFill" class="progress-fill" style="width: 0%;"></div>
-                </div>
+                <div class="progress-bar"><div id="progressFill" class="progress-fill" style="width: 0%;"></div></div>
                 <div id="progressText" class="progress-text">Preparing...</div>
             </div>
 
             <div class="table-wrapper">
                 <table class="recruiter-table" id="recruiterTable">
                     <thead>
-                        <tr>
-                            <th>Company</th>
-                            <th>Full Name</th>
-                            <th>Position</th>
-                            <th>Email</th>
-                            <th>Status</th>
-                            <th>Phone</th>
-                            <th>Location</th>
-                            <th>AI Score</th>
-                            <th>Actions</th>
-                        </tr>
+                        <tr><th>Company</th><th>Full Name</th><th>Position</th><th>Email</th><th>Status</th><th>Phone</th><th>Location</th><th>AI Score</th><th>Actions</th></tr>
                     </thead>
                     <tbody id="tableBody">
                         @{
@@ -1194,26 +1448,16 @@
                                         <span class="company-name">@recruiter.CompanyNameForEmails</span>
                                         @if (!string.IsNullOrEmpty(recruiter.Website) && recruiter.Website != "https://")
                                         {
-                                            <a href="@recruiter.Website" target="_blank" class="company-website" title="@recruiter.Website">
-                                                🌐 @recruiter.Website.Replace("https://", "").Replace("http://", "")
-                                            </a>
+                                            <a href="@recruiter.Website" target="_blank" class="company-website">🌐 @recruiter.Website.Replace("https://", "").Replace("http://", "")</a>
                                         }
                                     </div>
                                 </td>
-                                <td data-label="Name">
-                                    <strong>@recruiter.FirstName @recruiter.LastName</strong>
-                                </td>
-                                <td data-label="Position">
-                                    <div style="max-width: 200px; word-wrap: break-word;">
-                                        @recruiter.Title
-                                    </div>
-                                </td>
+                                <td data-label="Name"><strong>@recruiter.FirstName @recruiter.LastName</strong></td>
+                                <td data-label="Position"><div style="max-width: 200px; word-wrap: break-word;">@recruiter.Title</div></td>
                                 <td data-label="Email">
                                     @if (!string.IsNullOrEmpty(recruiter.Email))
                                     {
-                                        <a href="mailto:@recruiter.Email" class="email-link" title="@recruiter.Email">
-                                            @recruiter.Email
-                                        </a>
+                                        <a href="mailto:@recruiter.Email" class="email-link">@recruiter.Email</a>
                                     }
                                     else
                                     {
@@ -1224,14 +1468,6 @@
                                     @if (recruiter.EmailStatus?.ToLower() == "verified")
                                     {
                                         <span class="badge badge-verified">✓ Verified</span>
-                                    }
-                                    else if (recruiter.EmailStatus?.ToLower() == "unavailable")
-                                    {
-                                        <span class="badge badge-unavailable">✗ Unavailable</span>
-                                    }
-                                    else if (recruiter.EmailStatus?.ToLower() == "extrapolated")
-                                    {
-                                        <span class="badge badge-extrapolated">⟲ Extrapolated</span>
                                     }
                                     else if (!string.IsNullOrEmpty(recruiter.EmailStatus))
                                     {
@@ -1250,26 +1486,15 @@
                                 </td>
                                 <td data-label="Location">
                                     <div class="location">
-                                        @if (!string.IsNullOrEmpty(recruiter.City))
-                                        {
-                                            @recruiter.City
-                                        }
-                                        @if (!string.IsNullOrEmpty(recruiter.Country))
-                                        {
-                                            <br />
-                                            <small style="color: #999;">@recruiter.Country</small>
-                                        }
+                                        @if (!string.IsNullOrEmpty(recruiter.City)) { @recruiter.City }
+                                        @if (!string.IsNullOrEmpty(recruiter.Country)) { <br /><small style="color: #999;">@recruiter.Country</small> }
                                     </div>
                                 </td>
-                                <td class="score-cell" data-score="0" data-label="Score">
-                                    <span class="score-badge score-pending">⏳ N/A</span>
-                                </td>
+                                <td class="score-cell" data-score="0" data-label="Score"><span class="score-badge score-pending">⏳ N/A</span></td>
                                 <td class="action-cell" data-label="Actions">
                                     @if (!string.IsNullOrEmpty(recruiter.PersonLinkedinUrl) && recruiter.PersonLinkedinUrl != "http://")
                                     {
-                                        <a href="@recruiter.PersonLinkedinUrl" target="_blank" class="linkedin-link">
-                                            🔗 LinkedIn
-                                        </a>
+                                        <a href="@recruiter.PersonLinkedinUrl" target="_blank" class="linkedin-link">🔗 LinkedIn</a>
                                     }
                                 </td>
                             </tr>
@@ -1279,35 +1504,24 @@
                 </table>
             </div>
 
-            <!-- Bottom actions with Batch Analyze and Next button (samo za desktop) -->
             <div class="bottom-actions">
-                <button id="batchAnalyzeBtn" class="batch-analyze-btn" onclick="batchAnalyzeAll()">
-                    Analyze All
-                </button>
-                <button id="nextBtn" class="btn-next" onclick="goToNextStep()" disabled>
-                    Next
-                </button>
+                <button id="batchAnalyzeBtn" class="batch-analyze-btn" onclick="batchAnalyzeAll()">Analyze All</button>
+                <button id="nextBtn" class="btn-next" onclick="goToNextStep()" disabled>Next</button>
             </div>
         }
-        else
+        else if (Model.ShowResults && !Model.Recruiters.Any())
         {
-            <div class="error-message">
-                No data in the file. Check the CSV file format.
-            </div>
+            <div class="error-message">No data in the file. Click the "Load Demo Data" button above to see how it works!</div>
         }
-    }
+    </div>
 </div>
 
 <!-- Modal for AI results -->
 <div id="matchModal" class="modal">
     <div class="modal-content">
         <button class="modal-close" onclick="closeModal()">&times;</button>
-        <h3>🤖 AI Match Analysis</h3>
-
-        <div id="loadingSpinner" class="loading-spinner">
-            <div class="spinner"></div>
-        </div>
-
+        <h3 style="text-align: center; margin-bottom: 20px;">🤖 AI Match Analysis</h3>
+        <div id="loadingSpinner" class="loading-spinner"><div class="spinner"></div></div>
         <div id="matchContent"></div>
     </div>
 </div>
@@ -1317,54 +1531,20 @@
     <div class="modal-content">
         <button class="modal-close" onclick="closeDemoModal()">&times;</button>
         <h3>📄 Demo File Preview</h3>
-
         <div class="demo-file-preview">
             <div class="demo-file-header">
                 <span class="demo-file-title">demo_recruiters.csv</span>
                 <span class="demo-file-badge">3 recruiters</span>
             </div>
-
             <table class="demo-file-table">
-                <thead>
-                    <tr>
-                        <th>Company</th>
-                        <th>Name</th>
-                        <th>Position</th>
-                        <th>Email</th>
-                        <th>Location</th>
-                    </tr>
-                </thead>
+                <thead><tr><th>Company</th><th>Name</th><th>Position</th><th>Email</th><th>Location</th></tr></thead>
                 <tbody>
-                    <tr>
-                        <td>GitHub</td>
-                        <td>Alex Chen</td>
-                        <td>Technical Recruiter - Developer Platforms</td>
-                        <td>alex.chen@github.com</td>
-                        <td>Barcelona, Spain</td>
-                    </tr>
-                    <tr>
-                        <td>Goldman Sachs</td>
-                        <td>Sofia Rodriguez</td>
-                        <td>Tech Recruiter - Investment Banking Tech</td>
-                        <td>sofia.rodriguez@gs.com</td>
-                        <td>Barcelona, Spain</td>
-                    </tr>
-                    <tr>
-                        <td>Zara</td>
-                        <td>David Martinez</td>
-                        <td>Retail Recruitment Specialist</td>
-                        <td>david.martinez@zara.com</td>
-                        <td>Barcelona, Spain</td>
-                    </tr>
+                    <tr><td>GitHub</td><td>Alex Chen</td><td>Technical Recruiter</td><td>alex.chen@github.com</td><td>Barcelona, Spain</td></tr>
+                    <tr><td>Goldman Sachs</td><td>Sofia Rodriguez</td><td>Tech Recruiter</td><td>sofia.rodriguez@gs.com</td><td>Barcelona, Spain</td></tr>
+                    <tr><td>Zara</td><td>David Martinez</td><td>Retail Recruitment</td><td>david.martinez@zara.com</td><td>Barcelona, Spain</td></tr>
                 </tbody>
             </table>
-
-            <div style="margin-top: 15px; padding: 10px; background: #e8f4fd; border-radius: 5px; font-size: 13px; color: #2c3e50;">
-                <strong>📊 Summary:</strong> 3 recruiters from Barcelona area with verified emails and LinkedIn profiles.
-                All are from well-known tech/finance/retail companies.
-            </div>
         </div>
-
         <div class="modal-actions">
             <button class="modal-btn modal-btn-secondary" onclick="closeDemoModal()">Cancel</button>
             <button class="modal-btn modal-btn-primary" onclick="uploadDemoFile()">📤 Upload Demo File</button>
@@ -1375,78 +1555,59 @@
 <div id="toast" class="notification" style="display: none;"></div>
 
 <script>
-    // Store for saving results (in memory only, not localStorage)
     let matchResults = {};
     let currentSortOrder = 'desc';
     let currentSortField = 'score';
-    let isAnalyzing = false;
+    let recruitersData = @Html.Raw(Model != null && Model.Recruiters != null ? Json.Serialize(Model.Recruiters) : "[]");
 
-    // Check if CV exists in local storage (this is okay to keep - it's user's CV)
-    document.addEventListener('DOMContentLoaded', function () {
-        const savedCV = localStorage.getItem('userCV');
-        const cvStatus = document.getElementById('cvStatus');
-        const nextBtn = document.getElementById('nextBtn');
-        const mobileNextBtn = document.getElementById('mobileNextBtn');
+    const DEMO_CV_FULL = `SOFTWARE ENGINEER - FULL STACK DEVELOPER
 
-        if (savedCV) {
-            cvStatus.style.display = 'inline-block';
-        } else {
-            cvStatus.style.display = 'none';
+PERSONAL INFORMATION
+Location: Barcelona, Spain (EU Citizen)
+Languages: English (Fluent), Serbian (Native), Spanish (Learning)
+
+PROFESSIONAL SUMMARY
+Full Stack Developer with 5+ years of experience building scalable web applications and AI integrations.
+
+TECHNICAL SKILLS
+• Backend: C# / .NET Core, Java, Node.js, Python
+• Frontend: JavaScript, TypeScript, React, Vue.js
+• Databases: SQL Server, PostgreSQL, MongoDB
+• Cloud & DevOps: Azure, AWS, Docker, Kubernetes
+• AI & Tools: OpenAI API, LangChain, Prompt Engineering
+
+WORK EXPERIENCE
+• Senior Full Stack Developer (2022-Present) - Leading team of 4 developers
+• Full Stack Developer (2020-2022) - Fintech web applications
+• Backend Developer (2018-2020) - RESTful APIs, database optimization
+
+EDUCATION
+• Master's in Computer Science - University of Barcelona
+• Bachelor's in Software Engineering - Faculty of Technical Sciences`;
+
+    const DEMO_CSV_CONTENT = `Company Name for Emails,Website,First Name,Last Name,Person Linkedin Url,Title,Email,Email Status,Corporate Phone,# Employees,Company Linkedin Url,Facebook Url,Twitter Url,City,State,Country,Company Address,Company City
+GitHub,https://github.com,Alex,Chen,http://www.linkedin.com/in/alex-chen-github,Technical Recruiter - Developer Platforms,alex.chen@github.com,Verified,+1 415-735-4488,1200,https://www.linkedin.com/company/github,https://www.facebook.com/GitHub,https://twitter.com/github,Barcelona,Catalonia,Spain,"88 Colin P Kelly Jr St, San Francisco, CA, United States, 94107",San Francisco
+Goldman Sachs,https://goldmansachs.com,Sofia,Rodriguez,http://www.linkedin.com/in/sofia-rodriguez-gs,Tech Recruiter - Investment Banking Tech,sofia.rodriguez@gs.com,Verified,+1 212-902-1000,48500,https://www.linkedin.com/company/goldman-sachs,https://www.facebook.com/GoldmanSachs,https://twitter.com/GoldmanSachs,Barcelona,Catalonia,Spain,"200 West Street, New York, NY, United States, 10282",New York
+Zara,https://zara.com,David,Martinez,http://www.linkedin.com/in/david-martinez-inditex,Retail Recruitment Specialist,david.martinez@zara.com,Verified,+34 981 18 54 00,45000,https://www.linkedin.com/company/inditex,https://www.facebook.com/zara,https://twitter.com/ZARA,Barcelona,Catalonia,Spain,"Avenida de la Diputacion, Arteixo, A Coruna, Spain, 15142",Arteixo`;
+
+    function triggerFileUpload() {
+        document.getElementById('heroCsvFile').click();
+    }
+
+    document.getElementById('heroCsvFile')?.addEventListener('change', function(e) {
+        if (e.target.files[0]?.name) {
+            document.getElementById('heroUploadForm').submit();
         }
-
-        updateStatsFromModel();
-        updateNextButton();
-        addRowClickListeners();
     });
 
-    function updateStatsFromModel() {
-    @if (Model.ShowResults && Model.Recruiters.Any())
-    {
-        <text>
-                document.getElementById('totalRecruiters').innerText = '@Model.Recruiters.Count';
-            document.getElementById('verifiedEmails').innerText = '@Model.Recruiters.Count(r => r.EmailStatus?.ToLower() == "verified")';
-            document.getElementById('withLinkedin').innerText = '@Model.Recruiters.Count(r => !string.IsNullOrEmpty(r.PersonLinkedinUrl) && r.PersonLinkedinUrl != "http://")';
-            document.getElementById('withEmail').innerText = '@Model.Recruiters.Count(r => !string.IsNullOrEmpty(r.Email))';
-        </text>
-    }
-    else
-    {
-        <text>
-                document.getElementById('totalRecruiters').innerText = '0';
-            document.getElementById('verifiedEmails').innerText = '0';
-            document.getElementById('withLinkedin').innerText = '0';
-            document.getElementById('withEmail').innerText = '0';
-        </text>
-    }
-                            }
-
-    function addRowClickListeners() {
-        const rows = document.querySelectorAll('#tableBody tr');
-        rows.forEach(row => {
-            row.addEventListener('click', function (e) {
-                if (e.target.tagName === 'A' || e.target.closest('a')) {
-                    return;
-                }
-
-                const index = this.getAttribute('data-index');
-                if (index && matchResults[index]) {
-                    displayMatchResult(matchResults[index]);
-                    document.getElementById('matchModal').style.display = 'flex';
-                } else if (index) {
-                    showNotification('First run batch analysis to get AI results', 'warning');
-                }
-            });
-        });
-    }
-
-    // Display selected file name - BEZ AUTOMATSKOG SUBMITA
-    document.getElementById('csvFile')?.addEventListener('change', function (e) {
+    document.getElementById('csvFile')?.addEventListener('change', function(e) {
         var fileName = e.target.files[0]?.name;
         var label = document.getElementById('fileLabel');
         if (fileName) {
             label.innerHTML = '📄 ' + fileName;
             label.style.background = '#d4edda';
             label.style.borderColor = '#28a745';
+            document.getElementById('uploadForm').submit();
         } else {
             label.innerHTML = '📁 Choose CSV file';
             label.style.background = '#e9ecef';
@@ -1454,7 +1615,6 @@
         }
     });
 
-    // Demo file functions
     function showDemoFileModal() {
         document.getElementById('demoFileModal').style.display = 'flex';
     }
@@ -1465,7 +1625,9 @@
 
     function uploadDemoFile() {
         closeDemoModal();
-        showNotification('Loading demo file...', 'info');
+        showNotification('Loading demo CV and recruiters...', 'info');
+        localStorage.setItem('userCV', DEMO_CV_FULL);
+        showNotification('✅ Demo CV loaded!', 'success');
 
         const form = document.createElement('form');
         form.method = 'POST';
@@ -1473,14 +1635,8 @@
         form.style.display = 'none';
         form.enctype = 'multipart/form-data';
 
-        const demoContent = `Company Name for Emails,Website,First Name,Last Name,Person Linkedin Url,Title,Email,Email Status,Corporate Phone,# Employees,Company Linkedin Url,Facebook Url,Twitter Url,City,State,Country,Company Address,Company City
-            GitHub,https://github.com,Alex,Chen,http://www.linkedin.com/in/alex-chen-github,Technical Recruiter - Developer Platforms,alex.chen@github.com,Verified,+1 415-735-4488,1200,https://www.linkedin.com/company/github,https://www.facebook.com/GitHub,https://twitter.com/github,Barcelona,Catalonia,Spain,"88 Colin P Kelly Jr St, San Francisco, CA, United States, 94107",San Francisco
-            Goldman Sachs,https://goldmansachs.com,Sofia,Rodriguez,http://www.linkedin.com/in/sofia-rodriguez-gs,Tech Recruiter - Investment Banking Tech,sofia.rodriguez@gs.com,Verified,+1 212-902-1000,48500,https://www.linkedin.com/company/goldman-sachs,https://www.facebook.com/GoldmanSachs,https://twitter.com/GoldmanSachs,Barcelona,Catalonia,Spain,"200 West Street, New York, NY, United States, 10282",New York
-            Zara,https://zara.com,David,Martinez,http://www.linkedin.com/in/david-martinez-inditex,Retail Recruitment Specialist,david.martinez@zara.com,Verified,+34 981 18 54 00,45000,https://www.linkedin.com/company/inditex,https://www.facebook.com/zara,https://twitter.com/ZARA,Barcelona,Catalonia,Spain,"Avenida de la Diputacion, Arteixo, A Coruna, Spain, 15142",Arteixo`;
-
-        const blob = new Blob([demoContent], { type: 'text/csv' });
+        const blob = new Blob([DEMO_CSV_CONTENT], { type: 'text/csv' });
         const file = new File([blob], 'demo_recruiters.csv', { type: 'text/csv' });
-
         const dataTransfer = new DataTransfer();
         dataTransfer.items.add(file);
 
@@ -1492,126 +1648,117 @@
 
         document.body.appendChild(form);
         form.submit();
-
-        setTimeout(() => {
-            document.body.removeChild(form);
-        }, 100);
+        setTimeout(() => { document.body.removeChild(form); }, 2000);
     }
 
-    // Recruiter data from model
-    let recruitersData = @Html.Raw(Model != null && Model.Recruiters != null ? Json.Serialize(Model.Recruiters) : "[]");
+    function updateStatsFromModel() {
+    @if (Model.ShowResults && Model.Recruiters.Any())
+    {
+        <text>
+        document.getElementById('totalRecruiters').innerText = '@Model.Recruiters.Count';
+        document.getElementById('verifiedEmails').innerText = '@Model.Recruiters.Count(r => r.EmailStatus?.ToLower() == "verified")';
+        document.getElementById('withLinkedin').innerText = '@Model.Recruiters.Count(r => !string.IsNullOrEmpty(r.PersonLinkedinUrl) && r.PersonLinkedinUrl != "http://")';
+        document.getElementById('withEmail').innerText = '@Model.Recruiters.Count(r => !string.IsNullOrEmpty(r.Email))';
+        </text>
+    }
+    else
+    {
+        <text>
+        document.getElementById('totalRecruiters').innerText = '0';
+        document.getElementById('verifiedEmails').innerText = '0';
+        document.getElementById('withLinkedin').innerText = '0';
+        document.getElementById('withEmail').innerText = '0';
+        </text>
+    }
+    }
 
-    // ===== BATCH ANALYSIS WITH DELAYS =====
+    function addRowClickListeners() {
+        const rows = document.querySelectorAll('#tableBody tr');
+        rows.forEach(row => {
+            row.removeEventListener('click', row.clickHandler);
+            row.clickHandler = function(e) {
+                if (e.target.tagName === 'A' || e.target.closest('a')) return;
+                const index = this.getAttribute('data-index');
+                if (index && matchResults[index]) {
+                    displayMatchResult(matchResults[index]);
+                    document.getElementById('matchModal').style.display = 'flex';
+                } else if (index) {
+                    showNotification('First run batch analysis to get AI results', 'warning');
+                }
+            };
+            row.addEventListener('click', row.clickHandler);
+        });
+    }
+
     async function batchAnalyzeAll() {
         matchResults = {};
-
         const cvData = localStorage.getItem('userCV');
+        if (!cvData) { showNotification('Please enter your CV first.', 'warning'); return; }
+        if (!recruitersData || recruitersData.length === 0) { showNotification('No recruiter data available.', 'warning'); return; }
 
-        if (!cvData) {
-            showNotification('Please enter your CV first.', 'warning');
-            return;
-        }
-
-        if (!recruitersData || recruitersData.length === 0) {
-            showNotification('No recruiter data available.', 'warning');
-            return;
-        }
-
-        const totalRecruiters = recruitersData.length;
-        let completed = 0;
-        let failed = 0;
-        let startTime = Date.now();
-
+        const total = recruitersData.length;
+        let completed = 0, failed = 0, startTime = Date.now();
         document.getElementById('progressContainer').style.display = 'block';
-        document.getElementById('batchAnalyzeBtn').disabled = true;
-        document.getElementById('nextBtn').disabled = true;
-        document.getElementById('mobileBatchAnalyzeBtn').disabled = true;
-        document.getElementById('mobileNextBtn').disabled = true;
+        const batchBtn = document.getElementById('batchAnalyzeBtn'), mobileBatchBtn = document.getElementById('mobileBatchAnalyzeBtn');
+        const nextBtn = document.getElementById('nextBtn'), mobileNextBtn = document.getElementById('mobileNextBtn');
+        if (batchBtn) batchBtn.disabled = true;
+        if (mobileBatchBtn) mobileBatchBtn.disabled = true;
+        if (nextBtn) nextBtn.disabled = true;
+        if (mobileNextBtn) mobileNextBtn.disabled = true;
+        showNotification(`Starting analysis of ${total} recruiters...`, 'info');
 
-        showNotification(`Starting analysis of ${totalRecruiters} recruiters...`, 'info');
-
-        for (let i = 0; i < totalRecruiters; i++) {
-            const percent = Math.round((i / totalRecruiters) * 100);
-            document.getElementById('progressFill').style.width = percent + '%';
-            document.getElementById('progressPercent').innerHTML = percent + '%';
-            document.getElementById('progressText').innerHTML = `Analyzing ${i + 1}/${totalRecruiters}: ${recruitersData[i]?.companyNameForEmails || 'N/A'}`;
+        for (let i = 0; i < total; i++) {
+            const percent = Math.round((i / total) * 100);
+            const pf = document.getElementById('progressFill'), pp = document.getElementById('progressPercent'), pt = document.getElementById('progressText');
+            if (pf) pf.style.width = percent + '%';
+            if (pp) pp.innerHTML = percent + '%';
+            if (pt) pt.innerHTML = `Analyzing ${i + 1}/${total}: ${recruitersData[i]?.companyNameForEmails || 'N/A'}`;
 
             try {
                 const response = await fetch('/Home/AnalyzeMatch', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        recruiterIndex: i,
-                        recruiter: recruitersData[i],
-                        cvData: cvData
-                    })
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ recruiterIndex: i, recruiter: recruitersData[i], cvData: cvData })
                 });
-
                 const data = await response.json();
-
                 if (data.success) {
                     matchResults[i] = data.data;
                     updateScoreInTable(i, data.data.score);
                     completed++;
-                } else {
-                    failed++;
-                }
-
+                } else { failed++; }
                 updateNextButton();
-
-                if (i < totalRecruiters - 1) {
-                    await new Promise(resolve => setTimeout(resolve, 1500));
-                }
-
-            } catch (error) {
-                console.error('Error analyzing:', error);
-                failed++;
-            }
+                if (i < total - 1) await new Promise(resolve => setTimeout(resolve, 1500));
+            } catch (error) { console.error('Error:', error); failed++; }
         }
 
-        let endTime = Date.now();
-        let totalTime = Math.round((endTime - startTime) / 1000);
-
-        document.getElementById('progressFill').style.width = '100%';
-        document.getElementById('progressPercent').innerHTML = '100%';
-        document.getElementById('progressText').innerHTML = `Analysis completed in ${totalTime} seconds. Successful: ${completed}, Failed: ${failed}`;
-
-        setTimeout(() => {
-            document.getElementById('progressContainer').style.display = 'none';
-        }, 5000);
-
-        document.getElementById('batchAnalyzeBtn').disabled = false;
-        document.getElementById('mobileBatchAnalyzeBtn').disabled = false;
-
-        if (completed === totalRecruiters) {
-            document.getElementById('nextBtn').disabled = false;
-            document.getElementById('mobileNextBtn').disabled = false;
+        let totalTime = Math.round((Date.now() - startTime) / 1000);
+        const pf = document.getElementById('progressFill'), pp = document.getElementById('progressPercent'), pt = document.getElementById('progressText');
+        if (pf) pf.style.width = '100%';
+        if (pp) pp.innerHTML = '100%';
+        if (pt) pt.innerHTML = `Analysis completed in ${totalTime}s. Success: ${completed}, Failed: ${failed}`;
+        setTimeout(() => { const pc = document.getElementById('progressContainer'); if (pc) pc.style.display = 'none'; }, 5000);
+        if (batchBtn) batchBtn.disabled = false;
+        if (mobileBatchBtn) mobileBatchBtn.disabled = false;
+        if (completed === total) {
+            if (nextBtn) nextBtn.disabled = false;
+            if (mobileNextBtn) mobileNextBtn.disabled = false;
         }
-
         showNotification(`✅ Analysis complete! Click on any row for details.`, 'success');
         applySort();
         addRowClickListeners();
     }
 
-    // ===== HELPER FUNCTIONS =====
     function updateScoreInTable(index, score) {
         const row = document.querySelector(`tr[data-index="${index}"]`);
         if (row) {
             const scoreCell = row.querySelector('.score-cell');
             const scoreSpan = scoreCell.querySelector('.score-badge');
-
-            let scoreClass = 'score-pending';
-            let scoreText = '⏳ N/A';
-
+            let scoreClass = 'score-pending', scoreText = '⏳ N/A';
             if (score) {
                 if (score >= 8) scoreClass = 'score-high';
                 else if (score >= 5) scoreClass = 'score-medium';
                 else scoreClass = 'score-low';
                 scoreText = `${score}/10`;
             }
-
             scoreSpan.className = `score-badge ${scoreClass}`;
             scoreSpan.innerHTML = scoreText;
             scoreCell.setAttribute('data-score', score || 0);
@@ -1619,12 +1766,10 @@
     }
 
     function updateNextButton() {
-        const nextBtn = document.getElementById('nextBtn');
-        const mobileNextBtn = document.getElementById('mobileNextBtn');
-        const totalRecruiters = recruitersData ? recruitersData.length : 0;
-        const analyzedCount = Object.keys(matchResults).length;
-
-        if (totalRecruiters > 0 && analyzedCount === totalRecruiters) {
+        const nextBtn = document.getElementById('nextBtn'), mobileNextBtn = document.getElementById('mobileNextBtn');
+        const total = recruitersData ? recruitersData.length : 0;
+        const analyzed = Object.keys(matchResults).length;
+        if (total > 0 && analyzed === total) {
             if (nextBtn) nextBtn.disabled = false;
             if (mobileNextBtn) mobileNextBtn.disabled = false;
         } else {
@@ -1635,246 +1780,109 @@
 
     function goToNextStep() {
         const results = [];
-
-        if (Object.keys(matchResults).length === 0) {
-            showNotification('No results to process. Please analyze at least one recruiter first.', 'warning');
-            return;
-        }
-
+        if (Object.keys(matchResults).length === 0) { showNotification('No results to process.', 'warning'); return; }
         for (let index in matchResults) {
             if (matchResults[index] && matchResults[index].score) {
                 const recruiter = recruitersData[index] || {};
                 const match = matchResults[index];
-
                 results.push({
-                    companyName: recruiter.companyNameForEmails || 'N/A',
-                    website: recruiter.website || '',
-                    city: recruiter.city || '',
-                    country: recruiter.country || '',
+                    companyName: recruiter.companyNameForEmails || 'N/A', website: recruiter.website || '',
+                    city: recruiter.city || '', country: recruiter.country || '',
                     recruiterName: `${recruiter.firstName || ''} ${recruiter.lastName || ''}`.trim() || 'N/A',
-                    recruiterTitle: recruiter.title || 'N/A',
-                    recruiterEmail: recruiter.email || 'N/A',
-                    emailStatus: recruiter.emailStatus || 'N/A',
-                    recruiterLinkedIn: recruiter.personLinkedinUrl || 'N/A',
-                    companyLinkedIn: recruiter.companyLinkedinUrl || 'N/A',
-                    MatchScore: match.score || 0,
-                    reasoning: match.reasoning || '',
-                    companyAnalysis: match.companyAnalysis || '',
-                    locationMatch: match.locationMatch || '',
-                    industryMatch: match.industryMatch || '',
-                    keyFindings: match.keyFindings || '',
-                    strengths: match.strengths || [],
-                    weaknesses: match.weaknesses || [],
-                    analyzedAt: new Date().toISOString()
+                    recruiterTitle: recruiter.title || 'N/A', recruiterEmail: recruiter.email || 'N/A',
+                    emailStatus: recruiter.emailStatus || 'N/A', recruiterLinkedIn: recruiter.personLinkedinUrl || 'N/A',
+                    companyLinkedIn: recruiter.companyLinkedinUrl || 'N/A', MatchScore: match.score || 0,
+                    reasoning: match.reasoning || '', companyAnalysis: match.companyAnalysis || '',
+                    locationMatch: match.locationMatch || '', industryMatch: match.industryMatch || '',
+                    keyFindings: match.keyFindings || '', strengths: match.strengths || [],
+                    weaknesses: match.weaknesses || [], analyzedAt: new Date().toISOString()
                 });
             }
         }
-
-        if (results.length === 0) {
-            showNotification('No valid results to process.', 'warning');
-            return;
-        }
-
+        if (results.length === 0) { showNotification('No valid results.', 'warning'); return; }
         results.sort((a, b) => b.MatchScore - a.MatchScore);
-
         const jsonStr = JSON.stringify(results, null, 2);
-        console.log('JSON koji se šalje:', jsonStr);
-
         const blob = new Blob([jsonStr], { type: 'application/json' });
         const file = new File([blob], `match_results_${new Date().toISOString().slice(0, 10)}.json`, { type: 'application/json' });
-
         const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = '/EmailGeneration/UploadJson';
-        form.enctype = 'multipart/form-data';
-        form.style.display = 'none';
-
-        const fileInput = document.createElement('input');
-        fileInput.type = 'file';
-        fileInput.name = 'jsonFile';
-
-        const dataTransfer = new DataTransfer();
-        dataTransfer.items.add(file);
-        fileInput.files = dataTransfer.files;
-
-        form.appendChild(fileInput);
-        document.body.appendChild(form);
-        form.submit();
-
-        setTimeout(() => {
-            document.body.removeChild(form);
-        }, 2000);
+        form.method = 'POST'; form.action = '/EmailGeneration/UploadJson'; form.enctype = 'multipart/form-data'; form.style.display = 'none';
+        const fileInput = document.createElement('input'); fileInput.type = 'file'; fileInput.name = 'jsonFile';
+        const dataTransfer = new DataTransfer(); dataTransfer.items.add(file); fileInput.files = dataTransfer.files;
+        form.appendChild(fileInput); document.body.appendChild(form); form.submit();
+        setTimeout(() => document.body.removeChild(form), 2000);
     }
 
     function applySort() {
         const sortField = document.getElementById('sortSelect').value;
-        const sortOrder = currentSortOrder;
         const tbody = document.getElementById('tableBody');
-
         if (!tbody) return;
-
         const rows = Array.from(tbody.querySelectorAll('tr'));
-
         rows.sort((a, b) => {
             let aVal, bVal;
-
             switch (sortField) {
-                case 'score':
-                    aVal = parseFloat(a.querySelector('.score-cell')?.getAttribute('data-score') || '0');
-                    bVal = parseFloat(b.querySelector('.score-cell')?.getAttribute('data-score') || '0');
-                    break;
-                case 'company':
-                    aVal = a.getAttribute('data-company') || '';
-                    bVal = b.getAttribute('data-company') || '';
-                    break;
-                case 'location':
-                    aVal = a.getAttribute('data-location') || '';
-                    bVal = b.getAttribute('data-location') || '';
-                    break;
-                case 'emailStatus':
-                    aVal = a.getAttribute('data-emailstatus') || '';
-                    bVal = b.getAttribute('data-emailstatus') || '';
-                    break;
-                default:
-                    return 0;
+                case 'score': aVal = parseFloat(a.querySelector('.score-cell')?.getAttribute('data-score') || '0'); bVal = parseFloat(b.querySelector('.score-cell')?.getAttribute('data-score') || '0'); break;
+                case 'company': aVal = a.getAttribute('data-company') || ''; bVal = b.getAttribute('data-company') || ''; break;
+                case 'location': aVal = a.getAttribute('data-location') || ''; bVal = b.getAttribute('data-location') || ''; break;
+                case 'emailStatus': aVal = a.getAttribute('data-emailstatus') || ''; bVal = b.getAttribute('data-emailstatus') || ''; break;
+                default: return 0;
             }
-
-            if (sortOrder === 'desc') {
-                return aVal > bVal ? -1 : aVal < bVal ? 1 : 0;
-            } else {
-                return aVal < bVal ? -1 : aVal > bVal ? 1 : 0;
-            }
+            if (currentSortOrder === 'desc') return aVal > bVal ? -1 : aVal < bVal ? 1 : 0;
+            else return aVal < bVal ? -1 : aVal > bVal ? 1 : 0;
         });
-
-        while (tbody.firstChild) {
-            tbody.removeChild(tbody.firstChild);
-        }
+        while (tbody.firstChild) tbody.removeChild(tbody.firstChild);
         rows.forEach(row => tbody.appendChild(row));
-
         setTimeout(addRowClickListeners, 100);
     }
 
     function toggleSortOrder() {
         const btn = document.getElementById('sortOrderBtn');
-        if (currentSortOrder === 'desc') {
-            currentSortOrder = 'asc';
-            btn.innerHTML = '🔼 Ascending';
-        } else {
-            currentSortOrder = 'desc';
-            btn.innerHTML = '🔽 Descending';
-        }
+        if (currentSortOrder === 'desc') { currentSortOrder = 'asc'; btn.innerHTML = '🔼 Ascending'; }
+        else { currentSortOrder = 'desc'; btn.innerHTML = '🔽 Descending'; }
         applySort();
     }
 
     function displayMatchResult(result) {
-        let scoreColor;
-        if (result.score >= 8) scoreColor = '#28a745';
-        else if (result.score >= 5) scoreColor = '#ffc107';
-        else scoreColor = '#dc3545';
-
-        let strengthsHtml = '';
-        if (result.strengths && result.strengths.length > 0) {
-            strengthsHtml = result.strengths.map(s => `<li>✅ ${s}</li>`).join('');
-        } else {
-            strengthsHtml = '<li style="color: #999; padding: 8px;">No specific strengths mentioned</li>';
-        }
-
-        let weaknessesHtml = '';
-        if (result.weaknesses && result.weaknesses.length > 0) {
-            weaknessesHtml = result.weaknesses.map(w => `<li>⚠️ ${w}</li>`).join('');
-        } else {
-            weaknessesHtml = '<li style="color: #999; padding: 8px;">No specific weaknesses mentioned</li>';
-        }
-
+        let scoreColor = result.score >= 8 ? '#28a745' : (result.score >= 5 ? '#ffc107' : '#dc3545');
+        let strengthsHtml = result.strengths?.length ? result.strengths.map(s => `<li>✅ ${s}</li>`).join('') : '<li style="color: #999;">No specific strengths mentioned</li>';
+        let weaknessesHtml = result.weaknesses?.length ? result.weaknesses.map(w => `<li>⚠️ ${w}</li>`).join('') : '<li style="color: #999;">No specific weaknesses mentioned</li>';
         document.getElementById('matchContent').innerHTML = `
-                        <div style="text-align: center; margin-bottom: 20px;">
-                            <div class="score-circle" style="background: ${scoreColor}; margin: 0 auto;">
-                                ${result.score}/10
-                            </div>
-                            <div style="font-size: 18px; color: #2c3e50; margin-top: 5px;">
-                                Match Score
-                            </div>
-                        </div>
-
-                        <div style="margin: 20px 0; padding: 15px; background: #f8f9fa; border-radius: 10px;">
-                            <h4 style="color: #2c3e50; margin-bottom: 10px;">📊 Overall Assessment</h4>
-                            <p style="color: #495057; line-height: 1.6;">${result.reasoning || 'No description'}</p>
-                        </div>
-
-                        <div class="analysis-grid">
-                            <div class="analysis-item" style="background: #e8f4fd;">
-                                <h5 style="color: #0077b5;">🏢 Company Analysis</h5>
-                                <p>${result.companyAnalysis || 'N/A'}</p>
-                            </div>
-                            <div class="analysis-item" style="background: #f0f7e8;">
-                                <h5 style="color: #28a745;">📍 Location Match</h5>
-                                <p>${result.locationMatch || 'N/A'}</p>
-                            </div>
-                            <div class="analysis-item" style="background: #fff3cd;">
-                                <h5 style="color: #856404;">🔧 Industry Match</h5>
-                                <p>${result.industryMatch || 'N/A'}</p>
-                            </div>
-                            <div class="analysis-item" style="background: #d4edda;">
-                                <h5 style="color: #155724;">💡 Key Finding</h5>
-                                <p>${result.keyFindings || 'N/A'}</p>
-                            </div>
-                        </div>
-
-                        <div style="margin: 20px 0;">
-                            <h4 style="color: #2c3e50; margin-bottom: 10px;">💪 Strengths</h4>
-                            <ul class="strengths-list">
-                                ${strengthsHtml}
-                            </ul>
-                        </div>
-
-                        <div style="margin: 20px 0;">
-                            <h4 style="color: #2c3e50; margin-bottom: 10px;">📉 Areas for Improvement</h4>
-                            <ul class="weaknesses-list">
-                                ${weaknessesHtml}
-                            </ul>
-                        </div>
-
-                        <div style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 10px;">
-                            <h5 style="color: #2c3e50; margin-bottom: 10px;">📋 Company Details:</h5>
-                            <p style="color: #666; font-size: 13px; line-height: 1.6;">
-                                <strong>${result.recruiter?.companyNameForEmails || 'N/A'}</strong><br>
-                                📍 ${result.recruiter?.city || 'N/A'}, ${result.recruiter?.country || 'N/A'}<br>
-                                👤 ${result.recruiter?.firstName || ''} ${result.recruiter?.lastName || ''} - ${result.recruiter?.title || 'N/A'}<br>
-                                ${result.recruiter?.email ? '📧 ' + result.recruiter.email : ''}
-                            </p>
-                        </div>
-                    `;
+            <div style="text-align: center; margin-bottom: 20px;"><div class="score-circle" style="background: ${scoreColor};">${result.score}/10</div><div style="font-size: 18px;">Match Score</div></div>
+            <div style="margin: 20px 0; padding: 15px; background: #f8f9fa; border-radius: 12px;"><h4>📊 Overall Assessment</h4><p>${result.reasoning || 'No description'}</p></div>
+            <div class="analysis-grid">
+                <div class="analysis-item" style="background: #e8f4fd;"><h5>🏢 Company Analysis</h5><p>${result.companyAnalysis || 'N/A'}</p></div>
+                <div class="analysis-item" style="background: #f0f7e8;"><h5>📍 Location Match</h5><p>${result.locationMatch || 'N/A'}</p></div>
+                <div class="analysis-item" style="background: #fff3cd;"><h5>🔧 Industry Match</h5><p>${result.industryMatch || 'N/A'}</p></div>
+                <div class="analysis-item" style="background: #d4edda;"><h5>💡 Key Finding</h5><p>${result.keyFindings || 'N/A'}</p></div>
+            </div>
+            <div><h4>💪 Strengths</h4><ul class="strengths-list">${strengthsHtml}</ul></div>
+            <div><h4>📉 Areas for Improvement</h4><ul class="weaknesses-list">${weaknessesHtml}</ul></div>
+        `;
     }
 
-    function closeModal() {
-        document.getElementById('matchModal').style.display = 'none';
-        document.getElementById('matchContent').innerHTML = '';
-    }
+    function closeModal() { document.getElementById('matchModal').style.display = 'none'; document.getElementById('matchContent').innerHTML = ''; }
 
-    function showNotification(message, type = 'info') {
+    function showNotification(message, type) {
         const toast = document.getElementById('toast');
         toast.textContent = message;
         toast.className = `notification notification-${type}`;
         toast.style.display = 'block';
-
         setTimeout(() => {
             toast.style.animation = 'slideOut 0.3s ease';
-            setTimeout(() => {
-                toast.style.display = 'none';
-                toast.style.animation = '';
-            }, 300);
+            setTimeout(() => { toast.style.display = 'none'; toast.style.animation = ''; }, 300);
         }, 3000);
     }
 
-    window.onclick = function (event) {
-        const matchModal = document.getElementById('matchModal');
-        const demoModal = document.getElementById('demoFileModal');
+    document.addEventListener('DOMContentLoaded', function() {
+        const savedCV = localStorage.getItem('userCV');
+        const cvStatus = document.getElementById('cvStatus');
+        if (savedCV && cvStatus) cvStatus.style.display = 'inline-block';
+        updateStatsFromModel();
+        updateNextButton();
+        addRowClickListeners();
+    });
 
-        if (event.target == matchModal) {
-            closeModal();
-        }
-        if (event.target == demoModal) {
-            closeDemoModal();
-        }
+    window.onclick = function(event) {
+        if (event.target == document.getElementById('matchModal')) closeModal();
+        if (event.target == document.getElementById('demoFileModal')) closeDemoModal();
     }
 </script>
