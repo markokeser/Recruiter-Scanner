@@ -7,9 +7,7 @@ namespace Recruiter_Scanner.Controllers
 {
     public class EmailGenerationController : Controller
     {
-        private const string CvFileName = "Marko Keser CV.pdf";
-
-        // Used when the client doesn't send a CV (e.g. direct API calls).
+        // Used when the client doesn't send a CV.
         private const string FallbackCv = @"Marko Keser - Backend Developer
 Location: Barcelona, Spain
 
@@ -34,16 +32,13 @@ Certifications: English C1, C# Advanced, Salesforce Developer I";
 
         private static readonly JsonSerializerOptions JsonOptions = new() { PropertyNameCaseInsensitive = true };
 
-        private readonly IWebHostEnvironment _env;
         private readonly IEmailGenerationService _emailService;
         private readonly ILogger<EmailGenerationController> _logger;
 
         public EmailGenerationController(
-            IWebHostEnvironment env,
             IEmailGenerationService emailService,
             ILogger<EmailGenerationController> logger)
         {
-            _env = env;
             _emailService = emailService;
             _logger = logger;
         }
@@ -85,7 +80,6 @@ Certifications: English C1, C# Advanced, Salesforce Developer I";
                     return RedirectToAction(nameof(Index));
                 }
 
-                TempData["Success"] = $"Loaded {matches.Count} recruiter{(matches.Count == 1 ? "" : "s")}.";
                 return View("Index", new EmailGeneratorViewModel { Matches = matches });
             }
             catch (JsonException ex)
@@ -105,83 +99,6 @@ Certifications: English C1, C# Advanced, Salesforce Developer I";
         [HttpPost]
         public Task<IActionResult> GenerateLinkedInMessage([FromBody] GenerateEmailRequest request) =>
             GenerateMessage(request, _emailService.GenerateLinkedInMessage);
-
-        // POST: /EmailGeneration/GenerateBatch
-        [HttpPost]
-        public async Task<IActionResult> GenerateBatch([FromBody] List<MatchData> matches)
-        {
-            if (matches == null || matches.Count == 0)
-                return BadRequest(new { error = "No matches provided" });
-
-            var results = new List<object>();
-
-            foreach (var match in matches)
-            {
-                try
-                {
-                    var email = await _emailService.GenerateEmail(ToRecruiter(match), FallbackCv, ToMatchResponse(match));
-                    results.Add(new { companyName = match.CompanyName, success = true, subject = email.Subject, body = email.Body, tone = email.Tone });
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "Batch email generation failed for {Company}", match.CompanyName);
-                    results.Add(new { companyName = match.CompanyName, success = false, error = ex.Message });
-                }
-            }
-
-            return Ok(new { success = true, results });
-        }
-
-        // POST: /EmailGeneration/SendEmail
-        [HttpPost]
-        public async Task<IActionResult> SendEmail([FromBody] SendEmailRequest request)
-        {
-            if (request == null || string.IsNullOrEmpty(request.To) ||
-                string.IsNullOrEmpty(request.Subject) || string.IsNullOrEmpty(request.Body))
-            {
-                return BadRequest(new { success = false, error = "Missing required fields" });
-            }
-
-            var cvPath = Path.Combine(_env.WebRootPath, "cv", CvFileName);
-            var sent = await _emailService.SendEmailWithAttachmentAsync(request.To, request.Subject, request.Body, cvPath);
-
-            if (!sent)
-                return StatusCode(500, new { success = false, error = "Failed to send email" });
-
-            _logger.LogInformation("Email sent to {To} for {Recruiter}", request.To, request.RecruiterName);
-            return Ok(new { success = true, message = "Email successfully sent with CV attachment" });
-        }
-
-        // GET: /EmailGeneration/GetSampleJson
-        [HttpGet]
-        public IActionResult GetSampleJson()
-        {
-            var sample = new List<MatchData>
-            {
-                new MatchData
-                {
-                    CompanyName = "Example Company",
-                    Website = "https://example.com",
-                    City = "Barcelona",
-                    Country = "Spain",
-                    RecruiterName = "Ana Example",
-                    RecruiterTitle = "IT Recruiter",
-                    RecruiterEmail = "ana@example.com",
-                    EmailStatus = "Verified",
-                    RecruiterLinkedIn = "https://www.linkedin.com/in/ana-example",
-                    MatchScore = 8,
-                    Reasoning = "Why this recruiter is a good match...",
-                    CompanyAnalysis = "The company does IT consulting...",
-                    LocationMatch = "Barcelona - ideal",
-                    IndustryMatch = "IT industry - good match",
-                    KeyFindings = "Good potential",
-                    Strengths = new List<string> { ".NET Core experience", "SQL optimisation" },
-                    Weaknesses = new List<string> { "Less cloud experience" }
-                }
-            };
-
-            return Json(sample);
-        }
 
         private async Task<IActionResult> GenerateMessage(
             GenerateEmailRequest request,

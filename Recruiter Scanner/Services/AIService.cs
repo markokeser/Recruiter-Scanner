@@ -1,24 +1,14 @@
 using Recruiter_Scanner.Models;
-using System.Text;
-using System.Text.RegularExpressions;
-using UglyToad.PdfPig;
-using UglyToad.PdfPig.DocumentLayoutAnalysis.TextExtractor;
 
 namespace Recruiter_Scanner.Services
 {
     public interface IAIService
     {
         Task<AIMatchResponse> AnalyzeMatch(Recruiter recruiter, string cvData);
-        Task<string> ExtractCVFromPDF(Stream pdfStream, string? fileName = null);
     }
 
     public class OpenAIService : OpenAIServiceBase, IAIService
     {
-        private const string CvParserSystemPrompt = @"You are an expert CV parser and technical recruiter. 
-Your job is to extract information from raw CV text and format it into a clean, structured format.
-You understand CV formats from different countries and can identify key sections like personal info, work experience, education, skills, etc.
-You output ONLY the formatted CV text, no explanations or additional comments.";
-
         private const string MatchSystemPrompt = @"You are an expert technical recruiter with 15+ years of experience in IT recruitment, specializing in .NET and backend developer roles. 
 You have perfect knowledge of the tech industry in Barcelona and Spain.
 You are extremely analytical, honest, and provide actionable insights.
@@ -32,20 +22,6 @@ You never exaggerate or give false hope - if it's not a good match, you say so c
         }
 
         /// <summary>
-        /// Extracts text from a PDF and uses AI to format it into a structured CV.
-        /// </summary>
-        public async Task<string> ExtractCVFromPDF(Stream pdfStream, string? fileName = null)
-        {
-            var rawText = ExtractTextFromPdf(pdfStream);
-
-            if (string.IsNullOrWhiteSpace(rawText))
-                throw new InvalidOperationException("No text could be extracted from the PDF (is it a scanned image?).");
-
-            // Low temperature for consistent formatting.
-            return await CompleteAsync(CvParserSystemPrompt, BuildCVExtractionPrompt(rawText, fileName), temperature: 0.1, maxTokens: 2000);
-        }
-
-        /// <summary>
         /// Scores how well the candidate's CV matches a recruiter/company (1-10) with reasoning.
         /// </summary>
         public async Task<AIMatchResponse> AnalyzeMatch(Recruiter recruiter, string cvData)
@@ -53,111 +29,6 @@ You never exaggerate or give false hope - if it's not a good match, you say so c
             var result = await CompleteJsonAsync<AIMatchResponse>(MatchSystemPrompt, BuildMatchPrompt(recruiter, cvData), temperature: 0.2, maxTokens: 1000);
             result.Recruiter = recruiter;
             return result;
-        }
-
-        /// <summary>
-        /// Extracts raw text from a PDF, keeping line breaks so the AI can recognise sections.
-        /// </summary>
-        private static string ExtractTextFromPdf(Stream pdfStream)
-        {
-            using var pdf = PdfDocument.Open(pdfStream);
-            var builder = new StringBuilder();
-
-            foreach (var page in pdf.GetPages())
-            {
-                var pageText = ContentOrderTextExtractor.GetText(page);
-                pageText = Regex.Replace(pageText, @"[ \t]+", " ");      // collapse horizontal whitespace
-                pageText = Regex.Replace(pageText, @"(\r?\n){3,}", "\n\n"); // at most one blank line
-
-                builder.AppendLine(pageText.Trim());
-                builder.AppendLine();
-            }
-
-            return builder.ToString().Trim();
-        }
-
-        /// <summary>
-        /// Build prompt for CV extraction and formatting
-        /// </summary>
-        private static string BuildCVExtractionPrompt(string rawText, string? fileName)
-        {
-            return $@"Here is the raw text extracted from a CV file{(fileName != null ? $" (filename: {fileName})" : "")}:
-
-{rawText}
-
-Please extract and format this CV information into the following clean, structured format. 
-Use the exact structure below, filling in what you can find from the raw text.
-If information is missing, omit that section rather than making it up.
-
-SOFTWARE ENGINEER - [Most Relevant Title Based on Experience]
-
-PERSONAL INFORMATION
-Name: [Full Name]
-Website: [Website/LinkedIn/GitHub if available, otherwise omit]
-Location: [City, Country]
-Languages: [Languages with proficiency levels, e.g., English (Fluent), Spanish (Native)]
-
-PROFESSIONAL SUMMARY
-[2-3 sentence summary of experience, expertise, and career highlights based on the CV]
-
-TECHNICAL SKILLS
-• Frontend: [List frontend technologies, frameworks, libraries]
-• Backend: [List backend technologies, languages, frameworks]
-• Databases: [List databases and data technologies]
-• DevOps: [List DevOps tools, cloud platforms, CI/CD]
-• Tools: [List development tools, IDEs, project management tools]
-• Testing: [List testing frameworks and methodologies]
-
-WORK EXPERIENCE
-
-[COMPANY NAME] ([Start Year] - [End Year/Present])
-[Job Title]
-• [Achievement/Responsibility 1 with quantifiable results]
-• [Achievement/Responsibility 2 with quantifiable results]
-• [Achievement/Responsibility 3 with quantifiable results]
-
-[Repeat for each position, most recent first]
-
-OPEN SOURCE CONTRIBUTIONS
-• [List significant open source contributions with details]
-
-EDUCATION
-
-[DEGREE] ([Start Year] - [End Year])
-[Institution Name]
-• [Thesis/Focus if relevant]
-• [GPA if impressive]
-
-[Repeat for each degree]
-
-CERTIFICATIONS
-• [Certification Name] ([Year])
-• [Certification Name] ([Year])
-
-PROJECTS
-
-[PROJECT NAME]
-• [Project description and technologies used]
-• [Key achievements or metrics]
-• [Links if available]
-
-[Repeat for significant projects]
-
-LANGUAGES
-• [Language] ([Proficiency])
-• [Language] ([Proficiency])
-
-Important formatting rules:
-1. Use ALL CAPS for section headers (PERSONAL INFORMATION, TECHNICAL SKILLS, etc.)
-2. Use bullet points with • for lists
-3. Keep the format clean and consistent
-4. Extract quantifiable achievements where possible (e.g., ""Increased performance by 40%"")
-5. If you find the person's name in the CV, use it. Otherwise, leave it blank
-6. Be accurate - only include information that's actually in the CV
-7. If you can't determine the exact job title, use the most appropriate one based on experience
-8. For WORK EXPERIENCE, list in reverse chronological order (most recent first)
-
-Output ONLY the formatted CV, no additional text or explanations.";
         }
 
         private static string BuildMatchPrompt(Recruiter recruiter, string cvData)

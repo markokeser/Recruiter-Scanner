@@ -1,4 +1,4 @@
-// Outreach studio (step 3): recruiter cards + AI-generated emails / LinkedIn messages.
+// Email step: recruiter cards + AI-generated emails / LinkedIn messages.
 (() => {
     const { icon, escapeHtml, safeUrl, displayUrl, scoreTier, scoreVerdict, scoreRing, avatar, toast, openModal, copyText, cv } = RS;
 
@@ -19,10 +19,6 @@
     const grid = document.getElementById('recruitersGrid');
     if (!grid) return;
 
-    const filters = ['searchInput', 'scoreFilter', 'locationFilter', 'linkedinFilter'].map(id => document.getElementById(id));
-    filters[0].addEventListener('input', render);
-    filters.slice(1).forEach(el => el.addEventListener('change', render));
-
     grid.addEventListener('click', e => {
         const button = e.target.closest('[data-action]');
         if (!button) return;
@@ -35,34 +31,8 @@
     render();
 
     // ---------- Rendering ----------
-    function filtered() {
-        const [search, score, location, linkedin] = filters.map(el => el.value.toLowerCase());
-
-        return recruiters.filter(rec => {
-            const haystack = [rec.companyName, rec.recruiterName, rec.city, rec.recruiterTitle].join(' ').toLowerCase();
-            const value = rec.matchScore || 0;
-            const inBarcelona = (rec.city || '').toLowerCase().includes('barcelona');
-
-            return haystack.includes(search)
-                && (score === 'all' || scoreTier(value) === score)
-                && (location === 'all' || (location === 'barcelona') === inBarcelona)
-                && (linkedin === 'all' || (linkedin === 'haslinkedin') === !!rec.linkedin);
-        });
-    }
-
     function render() {
-        const list = filtered();
-        if (!list.length) {
-            grid.innerHTML = `
-                <div class="card empty-state" style="grid-column:1/-1;padding:48px 24px">
-                    <div class="icon-tile">${icon('search')}</div>
-                    <h3 class="h3">Nothing matches these filters</h3>
-                    <p class="muted" style="margin-bottom:0">Try a different search or reset the filters.</p>
-                </div>`;
-            return;
-        }
-        grid.innerHTML = list.map(card).join('');
-        updateCounters();
+        grid.innerHTML = recruiters.map(card).join('');
     }
 
     function card(rec) {
@@ -125,12 +95,6 @@
                     </button>
                 </div>
             </article>`;
-    }
-
-    function updateCounters() {
-        const values = [...drafts.values()];
-        document.getElementById('generatedCount').textContent = values.filter(d => d.email).length;
-        document.getElementById('linkedinGeneratedCount').textContent = values.filter(d => d.linkedin).length;
     }
 
     function setCardBusy(id, busy) {
