@@ -1,6 +1,4 @@
 using Recruiter_Scanner.Models;
-using System.Net;
-using System.Net.Mail;
 
 namespace Recruiter_Scanner.Services
 {
@@ -8,7 +6,6 @@ namespace Recruiter_Scanner.Services
     {
         Task<EmailContent> GenerateEmail(Recruiter recruiter, string cvData, AIMatchResponse matchAnalysis);
         Task<EmailContent> GenerateLinkedInMessage(Recruiter recruiter, string cvData, AIMatchResponse matchAnalysis);
-        Task<bool> SendEmailWithAttachmentAsync(string to, string subject, string body, string attachmentPath);
     }
 
     public class OpenAIEmailService : OpenAIServiceBase, IEmailGenerationService
@@ -25,14 +22,9 @@ You know how to be concise, respectful, and engaging on LinkedIn's platform.
 Messages should be friendly, professional, and optimized for LinkedIn's character limits.
 You write in a natural tone that gets responses without being pushy.";
 
-        private readonly IConfiguration _configuration;
-        private readonly ILogger<OpenAIEmailService> _logger;
-
-        public OpenAIEmailService(HttpClient httpClient, IConfiguration configuration, ILogger<OpenAIEmailService> logger)
+        public OpenAIEmailService(HttpClient httpClient, IConfiguration configuration)
             : base(httpClient, configuration)
         {
-            _configuration = configuration;
-            _logger = logger;
         }
 
         public Task<EmailContent> GenerateEmail(Recruiter recruiter, string cvData, AIMatchResponse matchAnalysis) =>
@@ -41,51 +33,6 @@ You write in a natural tone that gets responses without being pushy.";
         // LinkedIn messages are shorter, hence the lower token budget.
         public Task<EmailContent> GenerateLinkedInMessage(Recruiter recruiter, string cvData, AIMatchResponse matchAnalysis) =>
             CompleteJsonAsync<EmailContent>(LinkedInSystemPrompt, BuildLinkedInPrompt(recruiter, matchAnalysis), temperature: 0.7, maxTokens: 500);
-
-        public async Task<bool> SendEmailWithAttachmentAsync(string to, string subject, string body, string attachmentPath)
-        {
-            var smtpServer = _configuration["Email:SmtpServer"];
-            var fromEmail = _configuration["Email:FromEmail"];
-
-            if (string.IsNullOrWhiteSpace(smtpServer) || string.IsNullOrWhiteSpace(fromEmail))
-            {
-                _logger.LogWarning("SMTP is not configured (Email:SmtpServer / Email:FromEmail); email to {To} was not sent", to);
-                return false;
-            }
-
-            try
-            {
-                using var message = new MailMessage
-                {
-                    From = new MailAddress(fromEmail, _configuration["Email:FromName"] ?? "Marko Keser"),
-                    Subject = subject,
-                    Body = body,
-                    IsBodyHtml = false
-                };
-                message.To.Add(to);
-
-                if (File.Exists(attachmentPath))
-                    message.Attachments.Add(new Attachment(attachmentPath));
-                else
-                    _logger.LogWarning("CV attachment not found at {Path}", attachmentPath);
-
-                using var client = new SmtpClient(smtpServer, int.Parse(_configuration["Email:SmtpPort"] ?? "587"))
-                {
-                    EnableSsl = true,
-                    DeliveryMethod = SmtpDeliveryMethod.Network,
-                    Credentials = new NetworkCredential(_configuration["Email:Username"], _configuration["Email:Password"])
-                };
-
-                await client.SendMailAsync(message);
-                _logger.LogInformation("Email sent to {To}", to);
-                return true;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error sending email to {To}", to);
-                return false;
-            }
-        }
 
         private static string BuildEmailPrompt(Recruiter recruiter, string cvData, AIMatchResponse matchAnalysis)
         {

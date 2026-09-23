@@ -1,10 +1,3 @@
-@{
-    var controller = ViewContext.RouteData.Values["controller"]?.ToString();
-    var action = ViewContext.RouteData.Values["action"]?.ToString();
-    var isCvStep = controller == "Home" && action == "MatchForm";
-    var isMatchStep = controller == "Home" && !isCvStep;
-    var isOutreachStep = controller == "EmailGeneration";
-}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -20,7 +13,7 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
 <body>
-    <div class="bg-aurora" aria-hidden="true"><div class="bg-grid"></div></div>
+    <div class="bg-aurora" aria-hidden="true"></div>
 
     <header class="nav">
         <div class="shell">
@@ -29,17 +22,6 @@
                 <span class="brand-text">Recruiter Scanner</span>
             </a>
 
-            <nav class="steps-nav" aria-label="Workflow steps">
-                <a asp-controller="Home" asp-action="MatchForm" class="@(isCvStep ? "active" : "")">
-                    <span class="step-num">1</span><span class="step-text">Your CV</span>
-                </a>
-                <a asp-controller="Home" asp-action="Index" class="@(isMatchStep ? "active" : "")">
-                    <span class="step-num">2</span><span class="step-text">AI Match</span>
-                </a>
-                <a asp-controller="EmailGeneration" asp-action="Index" class="@(isOutreachStep ? "active" : "")">
-                    <span class="step-num">3</span><span class="step-text">Outreach</span>
-                </a>
-            </nav>
 
             <div class="nav-cta">
                 <a class="btn btn-ghost btn-sm" href="https://github.com/markokeser" target="_blank" rel="noopener">
@@ -57,11 +39,10 @@
 
     <footer class="footer">
         <div class="shell">
-            <span>Designed &amp; built by <a href="https://github.com/markokeser" target="_blank" rel="noopener">Marko Keser</a> · ASP.NET Core 8 · OpenAI</span>
+            <span>Built by <a href="https://github.com/markokeser" target="_blank" rel="noopener">Marko Keser</a> · ASP.NET Core 8 · OpenAI</span>
             <div class="footer-links">
                 <a href="https://github.com/markokeser" target="_blank" rel="noopener"><i data-icon="github"></i>GitHub</a>
                 <a href="~/cv/Marko%20Keser%20CV.pdf" target="_blank"><i data-icon="file"></i>My CV</a>
-                <a asp-controller="Home" asp-action="Privacy">Privacy</a>
             </div>
         </div>
     </footer>

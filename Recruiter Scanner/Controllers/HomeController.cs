@@ -26,16 +26,10 @@ namespace Recruiter_Scanner.Controllers
             _env = env;
         }
 
-        // GET: /
+        // GET: / — starts with the demo recruiters, unanalyzed.
         public IActionResult Index()
         {
-            return View(new RecruiterUploadViewModel());
-        }
-
-        // GET: /Home/MatchForm
-        public IActionResult MatchForm()
-        {
-            return View();
+            return View(new RecruiterUploadViewModel { Recruiters = LoadDemoRecruiters() });
         }
 
         // POST: /Home/Upload
@@ -67,32 +61,7 @@ namespace Recruiter_Scanner.Controllers
             if (recruiters.Count > MaxRecruitersPerUpload)
                 return UploadError($"The file contains {recruiters.Count} recruiters — the limit is {MaxRecruitersPerUpload} per run.");
 
-            return View("Index", new RecruiterUploadViewModel
-            {
-                Recruiters = recruiters,
-                ShowResults = true
-            });
-        }
-
-        // GET: /Home/UseDemoFile
-        public IActionResult UseDemoFile()
-        {
-            var demoFilePath = Path.Combine(_env.WebRootPath, "demo", "demo_recruiters.csv");
-
-            if (!System.IO.File.Exists(demoFilePath))
-            {
-                TempData["ErrorMessage"] = "Demo file not found.";
-                return RedirectToAction(nameof(Index));
-            }
-
-            var bytes = System.IO.File.ReadAllBytes(demoFilePath);
-            var demoFile = new FormFile(new MemoryStream(bytes), 0, bytes.Length, "csvFile", "demo_recruiters.csv")
-            {
-                Headers = new HeaderDictionary(),
-                ContentType = "text/csv"
-            };
-
-            return Upload(demoFile);
+            return View("Index", new RecruiterUploadViewModel { Recruiters = recruiters });
         }
 
         // POST: /Home/AnalyzeMatch
@@ -114,67 +83,22 @@ namespace Recruiter_Scanner.Controllers
             }
         }
 
-        // POST: /Home/BatchAnalyze
-        [HttpPost]
-        public async Task<IActionResult> BatchAnalyze([FromBody] BatchAnalyzeRequest request)
-        {
-            if (request?.Recruiters == null || string.IsNullOrWhiteSpace(request.CVData))
-                return Json(new { success = false, message = "Invalid request data" });
-
-            try
-            {
-                var results = new List<AIMatchResponse>();
-                foreach (var recruiter in request.Recruiters.Take(MaxRecruitersPerUpload))
-                {
-                    results.Add(await _aiService.AnalyzeMatch(recruiter, request.CVData));
-                }
-
-                return Json(new { success = true, data = results });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Batch analysis failed");
-                return Json(new { success = false, message = ex.Message });
-            }
-        }
-
-        // POST: /Home/ExtractCVFromPDF
-        [HttpPost]
-        public async Task<IActionResult> ExtractCVFromPDF(IFormFile pdfFile)
-        {
-            if (pdfFile == null || pdfFile.Length == 0)
-                return Json(new { success = false, message = "No file uploaded" });
-
-            if (Path.GetExtension(pdfFile.FileName).ToLowerInvariant() != ".pdf")
-                return Json(new { success = false, message = "Please upload a PDF file" });
-
-            try
-            {
-                using var stream = pdfFile.OpenReadStream();
-                var formattedCv = await _aiService.ExtractCVFromPDF(stream, pdfFile.FileName);
-                return Json(new { success = true, data = formattedCv });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "CV extraction failed for {FileName}", pdfFile.FileName);
-                return Json(new { success = false, message = ex.Message });
-            }
-        }
-
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
+        // On a bad upload, show the error above the demo list.
         private IActionResult UploadError(string message)
         {
-            return View("Index", new RecruiterUploadViewModel { ErrorMessage = message });
+            return View("Index", new RecruiterUploadViewModel { Recruiters = LoadDemoRecruiters(), ErrorMessage = message });
+        }
+
+        private List<Recruiter> LoadDemoRecruiters()
+        {
+            using var stream = System.IO.File.OpenRead(Path.Combine(_env.WebRootPath, "demo", "demo_recruiters.csv"));
+            return ParseCsv(stream);
         }
 
         /// <summary>
@@ -226,12 +150,6 @@ namespace Recruiter_Scanner.Controllers
                     CompanyLinkedinUrl = item.linkedinCompany ?? string.Empty
                 };
             }).ToList();
-        }
-
-        public class BatchAnalyzeRequest
-        {
-            public List<Recruiter> Recruiters { get; set; } = new();
-            public string CVData { get; set; } = string.Empty;
         }
     }
 }

@@ -1,30 +1,19 @@
 @model Recruiter_Scanner.Models.EmailGeneratorViewModel
 @{
-    ViewData["Title"] = "Outreach studio";
+    ViewData["Title"] = "Emails";
     var hasMatches = Model.Matches.Any();
 }
 
 <section class="page-head">
     <div>
-        <span class="eyebrow plain">Step 3 of 3</span>
-        <h1 class="h1">Outreach studio</h1>
-        <p class="muted">Generate a personalised email or LinkedIn message for each recruiter, tweak it, then copy and send.</p>
+        <h1 class="h1">Emails</h1>
+        <p class="muted">Generate an email or LinkedIn message for each recruiter, edit it, then copy and send.</p>
     </div>
     <div class="page-actions">
-        <a asp-controller="Home" asp-action="Index" class="btn btn-ghost"><i data-icon="arrowLeft"></i>Back to matches</a>
-        <form asp-action="UploadJson" method="post" enctype="multipart/form-data" id="jsonUploadForm">
-            <input type="file" name="jsonFile" id="jsonFile" accept=".json,application/json" hidden />
-            <button type="button" class="btn" onclick="document.getElementById('jsonFile').click()">
-                <i data-icon="upload"></i>Import results JSON
-            </button>
-        </form>
+        <a asp-controller="Home" asp-action="Index" class="btn btn-ghost"><i data-icon="arrowLeft"></i>Back</a>
     </div>
 </section>
 
-@if (TempData["Success"] != null)
-{
-    <div class="alert alert-success" role="status"><i data-icon="check"></i><div>@TempData["Success"]</div></div>
-}
 @if (TempData["Error"] != null)
 {
     <div class="alert alert-danger" role="alert"><i data-icon="alert"></i><div>@TempData["Error"]</div></div>
@@ -32,49 +21,15 @@
 
 @if (hasMatches)
 {
-    <div class="stat-grid">
-        <div class="stat"><div class="icon-tile"><i data-icon="users"></i></div><div><div class="stat-value">@Model.Matches.Count</div><div class="stat-label">Recruiters</div></div></div>
-        <div class="stat"><div class="icon-tile"><i data-icon="chart"></i></div><div><div class="stat-value">@Model.Matches.Average(m => m.MatchScore ?? 0).ToString("0.0")</div><div class="stat-label">Average score</div></div></div>
-        <div class="stat"><div class="icon-tile"><i data-icon="target"></i></div><div><div class="stat-value">@Model.Matches.Count(m => m.MatchScore >= 8)</div><div class="stat-label">Strong matches</div></div></div>
-        <div class="stat"><div class="icon-tile"><i data-icon="mail"></i></div><div><div class="stat-value" id="generatedCount">0</div><div class="stat-label">Emails drafted</div></div></div>
-        <div class="stat"><div class="icon-tile"><i data-icon="linkedin"></i></div><div><div class="stat-value" id="linkedinGeneratedCount">0</div><div class="stat-label">LinkedIn drafted</div></div></div>
-    </div>
-
-    <div class="toolbar">
-        <div class="input-icon">
-            <i data-icon="search"></i>
-            <input type="search" class="input" id="searchInput" placeholder="Search companies, recruiters, cities…" aria-label="Search" />
-        </div>
-        <select class="select" id="scoreFilter" aria-label="Filter by score">
-            <option value="all">All scores</option>
-            <option value="high">Strong (8–10)</option>
-            <option value="medium">Medium (5–7)</option>
-            <option value="low">Low (0–4)</option>
-        </select>
-        <select class="select" id="locationFilter" aria-label="Filter by location">
-            <option value="all">All locations</option>
-            <option value="barcelona">Barcelona</option>
-            <option value="other">Other</option>
-        </select>
-        <select class="select" id="linkedinFilter" aria-label="Filter by LinkedIn">
-            <option value="all">Any LinkedIn</option>
-            <option value="hasLinkedIn">Has LinkedIn</option>
-            <option value="noLinkedIn">No LinkedIn</option>
-        </select>
-    </div>
-
     <div id="recruitersGrid" class="recruiters-grid"></div>
 }
 else
 {
     <div class="card empty-state">
         <div class="icon-tile"><i data-icon="send"></i></div>
-        <h2 class="h3">No matches loaded yet</h2>
-        <p class="muted">Analyze recruiters in step 2 and click <strong>Continue to outreach</strong>, or import a results JSON exported earlier.</p>
-        <div class="row" style="justify-content:center">
-            <a asp-controller="Home" asp-action="Index" class="btn btn-primary"><i data-icon="target"></i>Go to AI match</a>
-            <a asp-action="GetSampleJson" class="btn btn-ghost" target="_blank"><i data-icon="download"></i>Sample JSON</a>
-        </div>
+        <h2 class="h3">No recruiters yet</h2>
+        <p class="muted">Analyze the recruiters first, then click <strong>Continue</strong>.</p>
+        <a asp-controller="Home" asp-action="Index" class="btn btn-primary"><i data-icon="sparkles"></i>Go to recruiters</a>
     </div>
 }
 
@@ -133,10 +88,5 @@ else
 
 @section Scripts {
     <script id="matchesData" type="application/json">@Html.Raw(Json.Serialize(Model.Matches))</script>
-    <script>
-        document.getElementById('jsonFile').addEventListener('change', e => {
-            if (e.target.files[0]) document.getElementById('jsonUploadForm').submit();
-        });
-    </script>
     <script src="~/js/outreach.js" asp-append-version="true"></script>
 }

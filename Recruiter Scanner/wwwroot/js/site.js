@@ -202,34 +202,6 @@ window.RS = (() => {
         form.submit();
     }
 
-    // Wires a .dropzone element (click + drag & drop) to a file input (its own by default).
-    function initDropzone(zone, onFile, input = zone?.querySelector('input[type=file]')) {
-        if (!zone || !input) return;
-
-        zone.addEventListener('click', e => {
-            if (e.target !== input) input.click();
-        });
-        zone.addEventListener('keydown', e => {
-            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); input.click(); }
-        });
-        input.addEventListener('change', () => {
-            if (input.files[0]) onFile(input.files[0]);
-        });
-
-        ['dragenter', 'dragover'].forEach(evt => zone.addEventListener(evt, e => {
-            e.preventDefault();
-            zone.classList.add('is-dragover');
-        }));
-        ['dragleave', 'drop'].forEach(evt => zone.addEventListener(evt, e => {
-            e.preventDefault();
-            zone.classList.remove('is-dragover');
-        }));
-        zone.addEventListener('drop', e => {
-            const file = e.dataTransfer?.files?.[0];
-            if (file) onFile(file);
-        });
-    }
-
     // ---------- CV storage ----------
     const cv = {
         get: () => localStorage.getItem(CV_STORAGE_KEY) || '',
@@ -240,26 +212,8 @@ window.RS = (() => {
     // Scripts are loaded at the end of <body>, so the page markup is already parsed here.
     hydrateIcons();
 
-    // ---------- Reveal on scroll ----------
-    document.addEventListener('DOMContentLoaded', () => {
-        const targets = document.querySelectorAll('.reveal');
-        if (!('IntersectionObserver' in window)) {
-            targets.forEach(el => el.classList.add('is-visible'));
-            return;
-        }
-        const observer = new IntersectionObserver(entries => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('is-visible');
-                    observer.unobserve(entry.target);
-                }
-            });
-        }, { threshold: 0.12 });
-        targets.forEach(el => observer.observe(el));
-    });
-
     return {
         icon, hydrateIcons, escapeHtml, safeUrl, displayUrl, scoreTier, scoreVerdict, scoreRing, avatar,
-        toast, openModal, closeModal, copyText, submitFile, initDropzone, cv
+        toast, openModal, closeModal, copyText, submitFile, cv
     };
 })();

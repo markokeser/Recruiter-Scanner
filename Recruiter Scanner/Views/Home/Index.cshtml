@@ -1,362 +1,95 @@
 @model RecruiterUploadViewModel
 @{
-    ViewData["Title"] = "AI recruiter matching";
-    var hasResults = Model.ShowResults && Model.Recruiters.Any();
-    var errorMessage = Model.ErrorMessage ?? TempData["ErrorMessage"] as string;
+    ViewData["Title"] = "Recruiters";
 
     static bool HasLink(string? url) => !string.IsNullOrWhiteSpace(url) && url != "http://" && url != "https://";
     static string DisplayUrl(string url) => url.Replace("https://", "").Replace("http://", "").Replace("www.", "").TrimEnd('/');
 }
 
-@if (!string.IsNullOrEmpty(errorMessage))
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
 {
     <div class="alert alert-danger" role="alert">
         <i data-icon="alert"></i>
-        <div>@errorMessage</div>
+        <div>@Model.ErrorMessage</div>
     </div>
 }
 
-<form asp-action="Upload" method="post" enctype="multipart/form-data" id="uploadForm" hidden>
-    <input type="file" id="recruiterFile" name="csvFile" accept=".csv,.json" />
-</form>
-
-@if (!hasResults)
-{
-    <!-- ============ HERO ============ -->
-    <section class="hero">
-        <div class="hero-copy">
-            <span class="eyebrow"><span class="pulse-dot"></span>AI-powered job outreach</span>
-            <h1 class="display">Stop cold-emailing <span class="text-gradient">blindly.</span></h1>
-            <p class="lead">
-                Recruiter Scanner scores every recruiter against your CV with GPT, explains why each one is
-                (or isn't) worth your time, and drafts a personalised email or LinkedIn message in seconds.
-            </p>
-            <div class="hero-actions">
-                <a class="btn btn-primary btn-lg" asp-action="UseDemoFile" data-demo-link>
-                    <i data-icon="play"></i>Try the live demo
-                </a>
-                <button type="button" class="btn btn-lg" data-upload-trigger>
-                    <i data-icon="upload"></i>Upload recruiters
-                </button>
-            </div>
-            <ul class="hero-meta">
-                <li><i data-icon="check"></i>No sign-up</li>
-                <li><i data-icon="check"></i>CSV, JSON &amp; PDF CV</li>
-                <li><i data-icon="check"></i>Your CV never leaves your browser storage</li>
-            </ul>
-        </div>
-
-        <div class="hero-visual" aria-hidden="true">
-            <div class="hero-glow"></div>
-
-            <div class="float-card float-mini float-mini-1">
-                <div class="avatar" style="--hue:210">G</div>
-                <div style="flex:1;min-width:0">
-                    <div class="cell-main">Goldman Sachs</div>
-                    <div class="cell-sub">Tech Recruiter</div>
-                </div>
-                <span class="score-pill score-medium">7<small>/10</small></span>
-            </div>
-
-            <div class="float-card float-main">
-                <div class="row" style="flex-wrap:nowrap;gap:16px">
-                    <div class="avatar avatar-lg" style="--hue:265">G</div>
-                    <div style="flex:1;min-width:0">
-                        <div class="cell-main" style="font-size:17px">GitHub</div>
-                        <div class="cell-sub">Alex Chen · Technical Recruiter</div>
-                    </div>
-                    <div data-score-ring="9" data-size="84" data-stroke="8"></div>
-                </div>
-                <hr class="divider" style="margin:18px 0" />
-                <p class="small muted" style="margin-bottom:14px">
-                    Remote-first company building tools for developers — an active GitHub profile and
-                    production .NET work are direct proof of value here.
-                </p>
-                <div class="tag-list">
-                    <span class="tag tag-good"><i data-icon="check"></i>Strong C# / .NET stack</span>
-                    <span class="tag tag-good"><i data-icon="check"></i>Hires globally</span>
-                    <span class="tag tag-bad"><i data-icon="alert"></i>High competition</span>
-                </div>
-            </div>
-
-            <div class="float-card float-mini float-mini-2">
-                <div class="avatar" style="--hue:20">Z</div>
-                <div style="flex:1;min-width:0">
-                    <div class="cell-main">Zara</div>
-                    <div class="cell-sub">Retail Recruitment</div>
-                </div>
-                <span class="score-pill score-low">4<small>/10</small></span>
-            </div>
-
-            <div class="float-card float-typing">
-                <div class="row small" style="margin-bottom:8px;gap:8px">
-                    <span class="badge badge-violet"><i data-icon="sparkles"></i>Drafting email</span>
-                </div>
-                <div class="typing-line"><span id="typingText"></span><span class="typing-caret"></span></div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ============ HOW IT WORKS ============ -->
-    <section class="section">
-        <div class="section-head reveal">
-            <span class="eyebrow plain">How it works</span>
-            <h2 class="h2">From a spreadsheet of names to a <span class="text-gradient">shortlist</span> in three steps</h2>
-        </div>
-
-        <div class="steps-grid">
-            <article class="card step-card reveal">
-                <span class="step-index">01</span>
-                <div class="icon-tile"><i data-icon="file"></i></div>
-                <h3>Add your CV</h3>
-                <p>Paste it or drop a PDF — AI extracts and structures your experience, skills and projects.</p>
-                <a class="link-arrow" asp-action="MatchForm">Set up CV <i data-icon="arrowRight"></i></a>
-            </article>
-            <article class="card step-card reveal" style="transition-delay:.08s">
-                <span class="step-index">02</span>
-                <div class="icon-tile"><i data-icon="target"></i></div>
-                <h3>Score every recruiter</h3>
-                <p>Upload an Apollo-style CSV or JSON. Each company gets a 0–10 fit score with strengths, risks and reasoning.</p>
-                <button type="button" class="link-arrow" data-upload-trigger>Upload file <i data-icon="arrowRight"></i></button>
-            </article>
-            <article class="card step-card reveal" style="transition-delay:.16s">
-                <span class="step-index">03</span>
-                <div class="icon-tile"><i data-icon="send"></i></div>
-                <h3>Send tailored outreach</h3>
-                <p>Generate a short, specific email or LinkedIn note per recruiter, edit it, copy it and send.</p>
-                <a class="link-arrow" asp-controller="EmailGeneration" asp-action="Index">Open studio <i data-icon="arrowRight"></i></a>
-            </article>
-        </div>
-    </section>
-
-    <!-- ============ DEMO ============ -->
-    <section class="section" id="demo">
-        <div class="section-head reveal">
-            <span class="eyebrow plain">Live demo</span>
-            <h2 class="h2">See it work on sample data</h2>
-            <p class="muted">One click loads a sample CV and three recruiters. Then hit <strong>Analyze all</strong>.</p>
-        </div>
-
-        <div class="card card-glow reveal">
-            <div class="demo-grid">
-                <div class="code-panel">
-                    <div class="code-panel-head">
-                        <div class="window-dots"><span></span><span></span><span></span></div>
-                        sample_cv.txt
-                    </div>
-                    <pre id="demoCvPreview"></pre>
-                </div>
-
-                <div class="code-panel">
-                    <div class="code-panel-head">
-                        <div class="window-dots"><span></span><span></span><span></span></div>
-                        demo_recruiters.csv
-                    </div>
-                    <div class="table-scroll">
-                        <table class="mini-table">
-                            <thead>
-                                <tr><th>Company</th><th>Recruiter</th><th>Role</th></tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td><div class="cell-flex"><div class="avatar" style="--hue:265;width:30px;height:30px;font-size:13px;border-radius:9px">G</div><strong>GitHub</strong></div></td>
-                                    <td>Alex Chen</td>
-                                    <td class="muted">Technical Recruiter</td>
-                                </tr>
-                                <tr>
-                                    <td><div class="cell-flex"><div class="avatar" style="--hue:210;width:30px;height:30px;font-size:13px;border-radius:9px">G</div><strong>Goldman Sachs</strong></div></td>
-                                    <td>Sofia Rodriguez</td>
-                                    <td class="muted">Tech Recruiter</td>
-                                </tr>
-                                <tr>
-                                    <td><div class="cell-flex"><div class="avatar" style="--hue:20;width:30px;height:30px;font-size:13px;border-radius:9px">Z</div><strong>Zara</strong></div></td>
-                                    <td>David Martinez</td>
-                                    <td class="muted">Retail Recruitment</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div style="padding:14px 16px;border-top:1px solid var(--border)">
-                        <span class="badge badge-success"><i data-icon="check"></i>Verified emails &amp; LinkedIn profiles</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="demo-cta">
-                <p class="muted small">
-                    <i data-icon="info" style="display:inline-block;width:15px;height:15px;vertical-align:-3px;margin-right:6px"></i>
-                    Loading the demo replaces the CV saved in this browser with the sample CV.
-                </p>
-                <a class="btn btn-primary btn-lg" asp-action="UseDemoFile" data-demo-link>
-                    <i data-icon="zap"></i>Load demo data
-                </a>
-            </div>
-        </div>
-    </section>
-
-    <!-- ============ BRING YOUR OWN ============ -->
-    <section class="section">
-        <div class="split">
-            <div class="card reveal">
-                <div class="card-title"><div class="icon-tile"><i data-icon="upload"></i></div>Bring your own recruiter list</div>
-                <div class="dropzone" id="recruiterDropzone" role="button" tabindex="0">
-                    <i data-icon="database" style="width:30px;height:30px;color:#a5b4fc"></i>
-                    <span class="dropzone-title">Drop a CSV or JSON file here</span>
-                    <span class="dropzone-hint">or click to browse · max 10 recruiters per run</span>
-                </div>
-                <p class="small dim" style="margin-top:14px">
-                    Uses the Apollo export column names.
-                    <a href="~/demo/demo_recruiters.csv" download>Download a sample CSV</a>
-                </p>
-            </div>
-
-            <div class="card reveal" style="transition-delay:.08s">
-                <div class="card-title"><div class="icon-tile"><i data-icon="cpu"></i></div>Under the hood</div>
-                <p class="muted small" style="margin-bottom:18px">
-                    A server-rendered ASP.NET Core MVC app with typed <span class="mono">HttpClient</span> services talking to the
-                    OpenAI Chat Completions API in JSON mode, plus a lightweight vanilla-JS front end.
-                </p>
-                <div class="tag-list">
-                    <span class="chip">C# · .NET 8</span>
-                    <span class="chip">ASP.NET Core MVC</span>
-                    <span class="chip">OpenAI GPT-4o-mini</span>
-                    <span class="chip">PdfPig</span>
-                    <span class="chip">CsvHelper</span>
-                    <span class="chip">Docker</span>
-                    <span class="chip">Vanilla JS</span>
-                </div>
-            </div>
-        </div>
-    </section>
-}
-else
-{
-    var verified = Model.Recruiters.Count(r => string.Equals(r.EmailStatus, "verified", StringComparison.OrdinalIgnoreCase));
-    var withLinkedIn = Model.Recruiters.Count(r => HasLink(r.PersonLinkedinUrl));
-    var withEmail = Model.Recruiters.Count(r => !string.IsNullOrWhiteSpace(r.Email));
-
-    <section class="page-head">
-        <div>
-            <span class="eyebrow plain">Step 2 of 3</span>
-            <h1 class="h1">Recruiter matches</h1>
-            <p class="muted">Run the AI analysis to score each recruiter against your CV, then open any row for the full breakdown.</p>
-        </div>
-        <div class="page-actions">
-            <a id="cvChip" class="chip" asp-action="MatchForm"></a>
-            <button type="button" class="btn btn-ghost" data-upload-trigger><i data-icon="upload"></i>New file</button>
-        </div>
-    </section>
-
-    <div class="stat-grid">
-        <div class="stat"><div class="icon-tile"><i data-icon="users"></i></div><div><div class="stat-value">@Model.Recruiters.Count</div><div class="stat-label">Recruiters</div></div></div>
-        <div class="stat"><div class="icon-tile"><i data-icon="shield"></i></div><div><div class="stat-value">@verified</div><div class="stat-label">Verified emails</div></div></div>
-        <div class="stat"><div class="icon-tile"><i data-icon="linkedin"></i></div><div><div class="stat-value">@withLinkedIn</div><div class="stat-label">LinkedIn profiles</div></div></div>
-        <div class="stat"><div class="icon-tile"><i data-icon="chart"></i></div><div><div class="stat-value" id="avgScore">–</div><div class="stat-label">Average AI score</div></div></div>
+<section class="page-head">
+    <div>
+        <h1 class="h1">Recruiters</h1>
+        <p class="muted">Analyze the recruiters against the demo CV, then continue to write emails.</p>
     </div>
-
-    <div class="toolbar">
-        <select id="sortSelect" class="select" aria-label="Sort by">
-            <option value="score">Sort by AI score</option>
-            <option value="company">Sort by company</option>
-            <option value="location">Sort by location</option>
-            <option value="emailStatus">Sort by email status</option>
-        </select>
-        <button type="button" id="sortOrderBtn" class="btn btn-ghost" data-order="desc">
-            <i data-icon="sortDesc"></i><span>Descending</span>
-        </button>
-        <div class="spacer"></div>
-        <button type="button" id="analyzeBtn" class="btn btn-primary"><i data-icon="sparkles"></i>Analyze all</button>
-        <button type="button" id="nextBtn" class="btn" disabled>Continue to outreach<i data-icon="arrowRight"></i></button>
+    <div class="page-actions">
+        <form asp-action="Upload" method="post" enctype="multipart/form-data" id="uploadForm">
+            <input type="file" id="recruiterFile" name="csvFile" accept=".csv,.json" hidden />
+            <button type="button" class="btn btn-ghost" id="uploadBtn"><i data-icon="upload"></i>Upload CSV</button>
+        </form>
+        <button type="button" id="analyzeBtn" class="btn btn-primary"><i data-icon="sparkles"></i>Analyze</button>
+        <button type="button" id="nextBtn" class="btn" disabled>Continue<i data-icon="arrowRight"></i></button>
     </div>
+</section>
 
-    <div id="progressPanel" class="card progress-panel" hidden>
-        <div class="row">
-            <strong id="progressText">Preparing…</strong>
-            <span class="mono muted" id="progressPercent">0%</span>
-        </div>
-        <div class="progress"><div id="progressFill" class="progress-fill"></div></div>
+<div id="progressPanel" class="card progress-panel" hidden>
+    <div class="row">
+        <strong id="progressText">Preparing…</strong>
+        <span class="mono muted" id="progressPercent">0%</span>
     </div>
+    <div class="progress"><div id="progressFill" class="progress-fill"></div></div>
+</div>
 
-    <div class="card table-card">
-        <div class="table-scroll">
-            <table class="data-table">
-                <thead>
-                    <tr>
-                        <th>Company</th>
-                        <th>Recruiter</th>
-                        <th>Contact</th>
-                        <th>Location</th>
-                        <th>AI score</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody id="tableBody">
-                    @for (var i = 0; i < Model.Recruiters.Count; i++)
-                    {
-                        var r = Model.Recruiters[i];
-                        var isVerified = string.Equals(r.EmailStatus, "verified", StringComparison.OrdinalIgnoreCase);
-                        <tr data-index="@i" data-company="@r.CompanyNameForEmails" data-location="@r.City" data-emailstatus="@r.EmailStatus" data-score="0">
-                            <td data-label="Company">
-                                <div class="cell-flex">
-                                    <div class="avatar" data-avatar="@r.CompanyNameForEmails"></div>
-                                    <div style="min-width:0">
-                                        <span class="cell-main truncate">@r.CompanyNameForEmails</span>
-                                        @if (HasLink(r.Website))
-                                        {
-                                            <a href="@r.Website" target="_blank" rel="noopener" class="cell-sub truncate">@DisplayUrl(r.Website!)</a>
-                                        }
-                                    </div>
-                                </div>
-                            </td>
-                            <td data-label="Recruiter">
-                                <div class="cell-main">@r.FirstName @r.LastName</div>
-                                <div class="cell-sub truncate">@r.Title</div>
-                            </td>
-                            <td data-label="Contact">
-                                @if (!string.IsNullOrWhiteSpace(r.Email))
-                                {
-                                    <a href="mailto:@r.Email" class="truncate small">@r.Email</a>
-                                }
-                                else
-                                {
-                                    <span class="dim">No email</span>
-                                }
-                                @if (isVerified)
-                                {
-                                    <span class="badge badge-success" style="margin-top:4px"><i data-icon="check"></i>Verified</span>
-                                }
-                                else if (!string.IsNullOrWhiteSpace(r.EmailStatus))
-                                {
-                                    <span class="badge" style="margin-top:4px">@r.EmailStatus</span>
-                                }
-                            </td>
-                            <td data-label="Location">
-                                <div>@r.City</div>
-                                <div class="cell-sub">@r.Country</div>
-                            </td>
-                            <td data-label="AI score" class="score-cell">
-                                <span class="score-pill score-pending">Not analyzed</span>
-                            </td>
-                            <td data-label="Links">
-                                <div class="row" style="flex-wrap:nowrap;gap:6px;justify-content:flex-end">
-                                    @if (HasLink(r.PersonLinkedinUrl))
+<div class="card table-card">
+    <div class="table-scroll">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Company</th>
+                    <th>Recruiter</th>
+                    <th>Email</th>
+                    <th>Location</th>
+                    <th>AI score</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                @for (var i = 0; i < Model.Recruiters.Count; i++)
+                {
+                    var r = Model.Recruiters[i];
+                    <tr data-index="@i">
+                        <td data-label="Company">
+                            <div class="cell-flex">
+                                <div class="avatar" data-avatar="@r.CompanyNameForEmails"></div>
+                                <div style="min-width:0">
+                                    <span class="cell-main truncate">@r.CompanyNameForEmails</span>
+                                    @if (HasLink(r.Website))
                                     {
-                                        <a href="@r.PersonLinkedinUrl" target="_blank" rel="noopener" class="btn btn-linkedin btn-icon btn-sm" title="LinkedIn profile" aria-label="LinkedIn profile">
-                                            <i data-icon="linkedin"></i>
-                                        </a>
+                                        <a href="@r.Website" target="_blank" rel="noopener" class="cell-sub truncate">@DisplayUrl(r.Website!)</a>
                                     }
-                                    <button type="button" class="btn btn-ghost btn-icon btn-sm" data-view title="View analysis" aria-label="View analysis">
-                                        <i data-icon="eye"></i>
-                                    </button>
                                 </div>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
+                            </div>
+                        </td>
+                        <td data-label="Recruiter">
+                            <div class="cell-main">@r.FirstName @r.LastName</div>
+                            <div class="cell-sub truncate">@r.Title</div>
+                        </td>
+                        <td data-label="Email">
+                            @if (!string.IsNullOrWhiteSpace(r.Email))
+                            {
+                                <a href="mailto:@r.Email" class="truncate small">@r.Email</a>
+                            }
+                            else
+                            {
+                                <span class="dim">—</span>
+                            }
+                        </td>
+                        <td data-label="Location">@r.City</td>
+                        <td data-label="AI score" class="score-cell">
+                            <span class="score-pill score-pending">Not analyzed</span>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
     </div>
-}
+</div>
 
 <!-- Match analysis modal -->
 <div id="matchModal" class="overlay" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="matchModalTitle">
@@ -374,6 +107,6 @@ else
 </div>
 
 @section Scripts {
-    <script id="recruitersData" type="application/json">@Html.Raw(Json.Serialize(Model.Recruiters ?? new List<Recruiter>()))</script>
+    <script id="recruitersData" type="application/json">@Html.Raw(Json.Serialize(Model.Recruiters))</script>
     <script src="~/js/home.js" asp-append-version="true"></script>
 }
