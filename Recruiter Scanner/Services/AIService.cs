@@ -1,148 +1,85 @@
-﻿using Recruiter_Scanner.Models;
-using System.Text.Json;
+using Recruiter_Scanner.Models;
 using System.Text;
-using Microsoft.Extensions.Options;
 using System.Text.RegularExpressions;
 using UglyToad.PdfPig;
-using UglyToad.PdfPig.Content;
+using UglyToad.PdfPig.DocumentLayoutAnalysis.TextExtractor;
 
 namespace Recruiter_Scanner.Services
 {
     public interface IAIService
     {
         Task<AIMatchResponse> AnalyzeMatch(Recruiter recruiter, string cvData);
-        Task<string> ExtractCVFromPDF(Stream pdfStream, string fileName = null);
+        Task<string> ExtractCVFromPDF(Stream pdfStream, string? fileName = null);
     }
 
-    public class OpenAIService : IAIService
+    public class OpenAIService : OpenAIServiceBase, IAIService
     {
-        private readonly HttpClient _httpClient;
-        private readonly IConfiguration _configuration;
-        private readonly string _apiKey;
-        private readonly string _apiUrl = "https://api.openai.com/v1/chat/completions";
-        private readonly string _model = "gpt-4o-mini";
-
-        public OpenAIService(HttpClient httpClient, IConfiguration configuration)
-        {
-            _httpClient = httpClient;
-            _configuration = configuration;
-            _apiKey = Environment.GetEnvironmentVariable("AI_PASS");
-            _model = configuration["OpenAI:Model"] ?? "gpt-4o-mini";
-        }
-
-        /// <summary>
-        /// Extract text from PDF and use AI to format it into structured CV format
-        /// </summary>
-        /// <param name="pdfStream">Stream containing the PDF file</param>
-        /// <param name="fileName">Original filename (optional, for logging)</param>
-        /// <returns>Formatted CV text in the specified structure</returns>
-        public async Task<string> ExtractCVFromPDF(Stream pdfStream, string fileName = null)
-        {
-            try
-            {
-                // Step 1: Extract raw text from PDF
-                string rawText = ExtractTextFromPdf(pdfStream);
-
-                if (string.IsNullOrWhiteSpace(rawText))
-                {
-                    throw new Exception("No text could be extracted from the PDF");
-                }
-
-                // Step 2: Use AI to format the CV
-                var prompt = BuildCVExtractionPrompt(rawText, fileName);
-
-                var requestBody = new
-                {
-                    model = _model,
-                    messages = new[]
-                    {
-                        new {
-                            role = "system",
-                            content = @"You are an expert CV parser and technical recruiter. 
+        private const string CvParserSystemPrompt = @"You are an expert CV parser and technical recruiter. 
 Your job is to extract information from raw CV text and format it into a clean, structured format.
 You understand CV formats from different countries and can identify key sections like personal info, work experience, education, skills, etc.
-You output ONLY the formatted CV text, no explanations or additional comments."
-                        },
-                        new { role = "user", content = prompt }
-                    },
-                    temperature = 0.1,  // Low temperature for consistent formatting
-                    max_tokens = 2000
-                };
+You output ONLY the formatted CV text, no explanations or additional comments.";
 
-                var requestJson = JsonSerializer.Serialize(requestBody);
-                var requestContent = new StringContent(requestJson, Encoding.UTF8, "application/json");
+        private const string MatchSystemPrompt = @"You are an expert technical recruiter with 15+ years of experience in IT recruitment, specializing in .NET and backend developer roles. 
+You have perfect knowledge of the tech industry in Barcelona and Spain.
+You are extremely analytical, honest, and provide actionable insights.
+Your job is to help a .NET backend developer find the best matches from a list of companies and recruiters.
+You analyze each opportunity thoroughly and give practical advice on how to approach it.
+You never exaggerate or give false hope - if it's not a good match, you say so clearly and explain why.";
 
-                _httpClient.DefaultRequestHeaders.Clear();
-                _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {_apiKey}");
-
-                var response = await _httpClient.PostAsync(_apiUrl, requestContent);
-
-                if (!response.IsSuccessStatusCode)
-                {
-                    var errorContent = await response.Content.ReadAsStringAsync();
-                    throw new Exception($"API Error: {response.StatusCode} - {errorContent}");
-                }
-
-                var responseJson = await response.Content.ReadAsStringAsync();
-                using var doc = JsonDocument.Parse(responseJson);
-                var root = doc.RootElement;
-
-                if (root.TryGetProperty("choices", out var choices) &&
-                    choices.GetArrayLength() > 0)
-                {
-                    var firstChoice = choices[0];
-                    if (firstChoice.TryGetProperty("message", out var message) &&
-                        message.TryGetProperty("content", out var content))
-                    {
-                        return content.GetString();
-                    }
-                }
-
-                throw new Exception("Unexpected API response format");
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"Error extracting CV from PDF: {ex.Message}", ex);
-            }
+        public OpenAIService(HttpClient httpClient, IConfiguration configuration)
+            : base(httpClient, configuration)
+        {
         }
 
         /// <summary>
-        /// Extract raw text from PDF using PdfPig library
+        /// Extracts text from a PDF and uses AI to format it into a structured CV.
         /// </summary>
-        private string ExtractTextFromPdf(Stream pdfStream)
+        public async Task<string> ExtractCVFromPDF(Stream pdfStream, string? fileName = null)
         {
-            try
+            var rawText = ExtractTextFromPdf(pdfStream);
+
+            if (string.IsNullOrWhiteSpace(rawText))
+                throw new InvalidOperationException("No text could be extracted from the PDF (is it a scanned image?).");
+
+            // Low temperature for consistent formatting.
+            return await CompleteAsync(CvParserSystemPrompt, BuildCVExtractionPrompt(rawText, fileName), temperature: 0.1, maxTokens: 2000);
+        }
+
+        /// <summary>
+        /// Scores how well the candidate's CV matches a recruiter/company (1-10) with reasoning.
+        /// </summary>
+        public async Task<AIMatchResponse> AnalyzeMatch(Recruiter recruiter, string cvData)
+        {
+            var result = await CompleteJsonAsync<AIMatchResponse>(MatchSystemPrompt, BuildMatchPrompt(recruiter, cvData), temperature: 0.2, maxTokens: 1000);
+            result.Recruiter = recruiter;
+            return result;
+        }
+
+        /// <summary>
+        /// Extracts raw text from a PDF, keeping line breaks so the AI can recognise sections.
+        /// </summary>
+        private static string ExtractTextFromPdf(Stream pdfStream)
+        {
+            using var pdf = PdfDocument.Open(pdfStream);
+            var builder = new StringBuilder();
+
+            foreach (var page in pdf.GetPages())
             {
-                using (var pdf = PdfDocument.Open(pdfStream))
-                {
-                    var stringBuilder = new StringBuilder();
+                var pageText = ContentOrderTextExtractor.GetText(page);
+                pageText = Regex.Replace(pageText, @"[ \t]+", " ");      // collapse horizontal whitespace
+                pageText = Regex.Replace(pageText, @"(\r?\n){3,}", "\n\n"); // at most one blank line
 
-                    foreach (var page in pdf.GetPages())
-                    {
-                        // Extract text from the page
-                        string pageText = page.Text;
-
-                        // Clean up the text a bit
-                        pageText = Regex.Replace(pageText, @"\s+", " "); // Replace multiple spaces with single space
-                        pageText = Regex.Replace(pageText, @"(\r\n|\n|\r)", "\n"); // Normalize line endings
-
-                        stringBuilder.AppendLine(pageText);
-                        stringBuilder.AppendLine(); // Add empty line between pages
-                    }
-
-                    return stringBuilder.ToString().Trim();
-                }
+                builder.AppendLine(pageText.Trim());
+                builder.AppendLine();
             }
-            catch (Exception ex)
-            {
-                throw new Exception($"Failed to extract text from PDF: {ex.Message}", ex);
-            }
+
+            return builder.ToString().Trim();
         }
 
         /// <summary>
         /// Build prompt for CV extraction and formatting
         /// </summary>
-        private string BuildCVExtractionPrompt(string rawText, string fileName)
+        private static string BuildCVExtractionPrompt(string rawText, string? fileName)
         {
             return $@"Here is the raw text extracted from a CV file{(fileName != null ? $" (filename: {fileName})" : "")}:
 
@@ -223,189 +160,7 @@ Important formatting rules:
 Output ONLY the formatted CV, no additional text or explanations.";
         }
 
-        public async Task<AIMatchResponse> AnalyzeMatch(Recruiter recruiter, string cvData)
-        {
-            try
-            {
-                var prompt = BuildPrompt(recruiter, cvData);
-
-                var requestBody = new
-                {
-                    model = _model,
-                    messages = new[]
-                    {
-                        new {
-                            role = "system",
-                            content = @"You are an expert technical recruiter with 15+ years of experience in IT recruitment, specializing in .NET and backend developer roles. 
-You have perfect knowledge of the tech industry in Barcelona and Spain.
-You are extremely analytical, honest, and provide actionable insights.
-Your job is to help a .NET backend developer find the best matches from a list of companies and recruiters.
-You analyze each opportunity thoroughly and give practical advice on how to approach it.
-You never exaggerate or give false hope - if it's not a good match, you say so clearly and explain why."
-                        },
-                        new { role = "user", content = prompt }
-                    },
-                    temperature = 0.2,
-                    max_tokens = 1000,
-                    response_format = new { type = "json_object" }
-                };
-
-                var requestJson = JsonSerializer.Serialize(requestBody);
-                var requestContent = new StringContent(requestJson, Encoding.UTF8, "application/json");
-
-                _httpClient.DefaultRequestHeaders.Clear();
-                _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {_apiKey}");
-
-                var response = await _httpClient.PostAsync(_apiUrl, requestContent);
-
-                if (!response.IsSuccessStatusCode)
-                {
-                    var errorContent = await response.Content.ReadAsStringAsync();
-                    throw new Exception($"API Error: {response.StatusCode} - {errorContent}");
-                }
-
-                var responseJson = await response.Content.ReadAsStringAsync();
-                using var doc = JsonDocument.Parse(responseJson);
-                var root = doc.RootElement;
-
-                if (root.TryGetProperty("choices", out var choices) &&
-                    choices.GetArrayLength() > 0)
-                {
-                    var firstChoice = choices[0];
-                    if (firstChoice.TryGetProperty("message", out var message) &&
-                        message.TryGetProperty("content", out var content))
-                    {
-                        var aiContent = root.GetProperty("choices")[0].GetProperty("message").GetProperty("content").GetString();
-
-                        // ==== OČISTI JSON (ukloni prazne linije i viškove zareza) ====
-                        // Ukloni prazne linije
-                        var lines = aiContent.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries);
-                        string cleanedJson = string.Join("\n", lines);
-
-                        // Ukloni viškove zareza (npr. "score": 6,    ,"reasoning":...)
-                        cleanedJson = System.Text.RegularExpressions.Regex.Replace(cleanedJson, @",\s*,", ",");
-                        cleanedJson = System.Text.RegularExpressions.Regex.Replace(cleanedJson, @"\{\s*,", "{");
-                        cleanedJson = System.Text.RegularExpressions.Regex.Replace(cleanedJson, @",\s*\}", "}");
-
-                        // Sada parsiraj očišćeni JSON
-                        var options = new JsonSerializerOptions
-                        {
-                            PropertyNameCaseInsensitive = true
-                        };
-
-                        var aiResult = JsonSerializer.Deserialize<AIMatchResponse>(cleanedJson, options);
-
-                        if (aiResult != null)
-                        {
-                            aiResult.Recruiter = recruiter;
-                            return aiResult;
-                        }
-
-                        throw new Exception("Failed to parse AI response");
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                return new AIMatchResponse
-                {
-                    Score = 0,
-                    Reasoning = $"Error: {ex.Message}",
-                    Recruiter = recruiter,
-                    Strengths = new List<string>(),
-                    Weaknesses = new List<string>()
-                };
-            }
-
-            return new AIMatchResponse
-            {
-                Score = 0,
-                Reasoning = $"Error: ",
-                Recruiter = recruiter,
-                Strengths = new List<string>(),
-                Weaknesses = new List<string>()
-            };
-        }
-
-        private string CleanJson(string json)
-        {
-            if (string.IsNullOrEmpty(json))
-                return json;
-
-            // 1. Ukloni prazne linije
-            var lines = json.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries);
-            json = string.Join("\n", lines);
-
-            // 2. Ukloni viškove zareza (npr. "score": 6,    ,"reasoning":...)
-            // Ovo je komplikovanije, ali ćemo probati jednostavnije:
-
-            // Zameni ",   ," sa ","
-            json = System.Text.RegularExpressions.Regex.Replace(json, @",\s*,", ",");
-
-            // Zameni "{\s*," sa "{"
-            json = System.Text.RegularExpressions.Regex.Replace(json, @"\{\s*,", "{");
-
-            // Zameni ",\s*}" sa "}"
-            json = System.Text.RegularExpressions.Regex.Replace(json, @",\s*\}", "}");
-
-            return json;
-        }
-
-        private AIMatchResponse ParseAIResponse(string responseJson, Recruiter recruiter)
-        {
-            try
-            {
-                using var doc = JsonDocument.Parse(responseJson);
-                var root = doc.RootElement;
-
-                // OpenAI response format
-                if (root.TryGetProperty("choices", out var choices) &&
-                    choices.GetArrayLength() > 0)
-                {
-                    var firstChoice = choices[0];
-                    if (firstChoice.TryGetProperty("message", out var message) &&
-                        message.TryGetProperty("content", out var content))
-                    {
-                        var aiContent = content.GetString();
-
-                        // Pokušaj parsirati JSON iz AI odgovora
-                        try
-                        {
-                            var aiResponse = JsonSerializer.Deserialize<AIMatchResponse>(aiContent);
-                            if (aiResponse != null)
-                            {
-                                aiResponse.Recruiter = recruiter;
-                                return aiResponse;
-                            }
-                        }
-                        catch
-                        {
-                            // Ako ne može da parsira JSON, vrati tekstualni odgovor
-                            return new AIMatchResponse
-                            {
-                                Score = 5,
-                                Reasoning = aiContent,
-                                Recruiter = recruiter,
-                                CompanyAnalysis = "See reasoning",
-                                LocationMatch = "See reasoning",
-                                IndustryMatch = "See reasoning",
-                                KeyFindings = "See reasoning",
-                                Strengths = new List<string>(),
-                                Weaknesses = new List<string>()
-                            };
-                        }
-                    }
-                }
-
-                throw new Exception("Unexpected API response format");
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"Error parsing AI response: {ex.Message}");
-            }
-        }
-
-        private string BuildPrompt(Recruiter recruiter, string cvData)
+        private static string BuildMatchPrompt(Recruiter recruiter, string cvData)
         {
             return $@"You are an expert technical recruiter and career advisor with deep knowledge of the IT industry, especially .NET ecosystem and backend development.
 

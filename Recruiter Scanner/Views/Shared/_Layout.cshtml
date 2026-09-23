@@ -1,24 +1,73 @@
-﻿<!DOCTYPE html>
+@{
+    var controller = ViewContext.RouteData.Values["controller"]?.ToString();
+    var action = ViewContext.RouteData.Values["action"]?.ToString();
+    var isCvStep = controller == "Home" && action == "MatchForm";
+    var isMatchStep = controller == "Home" && !isCvStep;
+    var isOutreachStep = controller == "EmailGeneration";
+}
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Recruiter_Scanner</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <meta name="description" content="Recruiter Scanner scores recruiters against your CV with AI and drafts personalised outreach emails and LinkedIn messages." />
+    <meta name="theme-color" content="#070913" />
+    <title>@ViewData["Title"] · Recruiter Scanner</title>
+    <link rel="icon" href="~/favicon.ico" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/Recruiter_Scanner.styles.css" asp-append-version="true" />
 </head>
 <body>
-    
-    <div class="container">
-        <main role="main" class="pb-3">
+    <div class="bg-aurora" aria-hidden="true"><div class="bg-grid"></div></div>
+
+    <header class="nav">
+        <div class="shell">
+            <a class="brand" asp-controller="Home" asp-action="Index" aria-label="Recruiter Scanner home">
+                <span class="brand-mark"><i data-icon="radar"></i></span>
+                <span class="brand-text">Recruiter Scanner</span>
+            </a>
+
+            <nav class="steps-nav" aria-label="Workflow steps">
+                <a asp-controller="Home" asp-action="MatchForm" class="@(isCvStep ? "active" : "")">
+                    <span class="step-num">1</span><span class="step-text">Your CV</span>
+                </a>
+                <a asp-controller="Home" asp-action="Index" class="@(isMatchStep ? "active" : "")">
+                    <span class="step-num">2</span><span class="step-text">AI Match</span>
+                </a>
+                <a asp-controller="EmailGeneration" asp-action="Index" class="@(isOutreachStep ? "active" : "")">
+                    <span class="step-num">3</span><span class="step-text">Outreach</span>
+                </a>
+            </nav>
+
+            <div class="nav-cta">
+                <a class="btn btn-ghost btn-sm" href="https://github.com/markokeser" target="_blank" rel="noopener">
+                    <i data-icon="github"></i><span class="btn-text">GitHub</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main class="main" role="main">
+        <div class="shell">
             @RenderBody()
-        </main>
-    </div>
+        </div>
+    </main>
 
+    <footer class="footer">
+        <div class="shell">
+            <span>Designed &amp; built by <a href="https://github.com/markokeser" target="_blank" rel="noopener">Marko Keser</a> · ASP.NET Core 8 · OpenAI</span>
+            <div class="footer-links">
+                <a href="https://github.com/markokeser" target="_blank" rel="noopener"><i data-icon="github"></i>GitHub</a>
+                <a href="~/cv/Marko%20Keser%20CV.pdf" target="_blank"><i data-icon="file"></i>My CV</a>
+                <a asp-controller="Home" asp-action="Privacy">Privacy</a>
+            </div>
+        </div>
+    </footer>
 
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <div id="toasts" class="toasts" aria-live="polite"></div>
+
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
