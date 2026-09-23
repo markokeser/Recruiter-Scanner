@@ -17,7 +17,7 @@
 <section class="page-head">
     <div>
         <h1 class="h1">Recruiters</h1>
-        <p class="muted">Analyze the recruiters against the demo CV, then continue to write emails.</p>
+        <p class="muted">Analyze the recruiters against the demo CV (Marko Keser), then continue to write emails.</p>
     </div>
     <div class="page-actions">
         <form asp-action="Upload" method="post" enctype="multipart/form-data" id="uploadForm">
@@ -108,5 +108,6 @@
 
 @section Scripts {
     <script id="recruitersData" type="application/json">@Html.Raw(Json.Serialize(Model.Recruiters))</script>
+    <script id="demoCvData" type="application/json">@Html.Raw(Json.Serialize(Model.DemoCv))</script>
     <script src="~/js/home.js" asp-append-version="true"></script>
 }

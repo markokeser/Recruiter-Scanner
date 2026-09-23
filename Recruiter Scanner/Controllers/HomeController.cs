@@ -18,18 +18,20 @@ namespace Recruiter_Scanner.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly IAIService _aiService;
         private readonly IWebHostEnvironment _env;
+        private readonly DemoCvProvider _demoCv;
 
-        public HomeController(ILogger<HomeController> logger, IAIService aiService, IWebHostEnvironment env)
+        public HomeController(ILogger<HomeController> logger, IAIService aiService, IWebHostEnvironment env, DemoCvProvider demoCv)
         {
             _logger = logger;
             _aiService = aiService;
             _env = env;
+            _demoCv = demoCv;
         }
 
         // GET: / — starts with the demo recruiters, unanalyzed.
         public IActionResult Index()
         {
-            return View(new RecruiterUploadViewModel { Recruiters = LoadDemoRecruiters() });
+            return View(new RecruiterUploadViewModel { Recruiters = LoadDemoRecruiters(), DemoCv = _demoCv.Text });
         }
 
         // POST: /Home/Upload
@@ -61,7 +63,7 @@ namespace Recruiter_Scanner.Controllers
             if (recruiters.Count > MaxRecruitersPerUpload)
                 return UploadError($"The file contains {recruiters.Count} recruiters — the limit is {MaxRecruitersPerUpload} per run.");
 
-            return View("Index", new RecruiterUploadViewModel { Recruiters = recruiters });
+            return View("Index", new RecruiterUploadViewModel { Recruiters = recruiters, DemoCv = _demoCv.Text });
         }
 
         // POST: /Home/AnalyzeMatch
@@ -92,7 +94,7 @@ namespace Recruiter_Scanner.Controllers
         // On a bad upload, show the error above the demo list.
         private IActionResult UploadError(string message)
         {
-            return View("Index", new RecruiterUploadViewModel { Recruiters = LoadDemoRecruiters(), ErrorMessage = message });
+            return View("Index", new RecruiterUploadViewModel { Recruiters = LoadDemoRecruiters(), DemoCv = _demoCv.Text, ErrorMessage = message });
         }
 
         private List<Recruiter> LoadDemoRecruiters()

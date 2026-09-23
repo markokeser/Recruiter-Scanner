@@ -7,39 +7,19 @@ namespace Recruiter_Scanner.Controllers
 {
     public class EmailGenerationController : Controller
     {
-        // Used when the client doesn't send a CV.
-        private const string FallbackCv = @"Marko Keser - Backend Developer
-Location: Barcelona, Spain
-
-Experience:
-- Backend/Math Developer at Wicked Games (Feb 2025 - Oct 2025)
-- .NET Developer at Quadro Consulting (Jan 2024 - Jan 2025)
-- Intern at AG4.0 (Sep 2023 - Dec 2023)
-
-Technical Skills:
-- C#, ASP.NET Core, .NET 8+, Entity Framework
-- SQL Server, MySQL, Complex SQL queries, optimization
-- REST APIs, Authentication (RBAC, claims)
-- Microsoft Azure basics, Railway deployment
-- OpenAI API integrations
-
-Projects:
-- Restaurant Management System (production app with real-time data)
-- Live: zubac-matine-production.up.railway.app
-
-GitHub: github.com/markokeser
-Certifications: English C1, C# Advanced, Salesforce Developer I";
-
         private static readonly JsonSerializerOptions JsonOptions = new() { PropertyNameCaseInsensitive = true };
 
         private readonly IEmailGenerationService _emailService;
+        private readonly DemoCvProvider _demoCv;
         private readonly ILogger<EmailGenerationController> _logger;
 
         public EmailGenerationController(
             IEmailGenerationService emailService,
+            DemoCvProvider demoCv,
             ILogger<EmailGenerationController> logger)
         {
             _emailService = emailService;
+            _demoCv = demoCv;
             _logger = logger;
         }
 
@@ -109,7 +89,7 @@ Certifications: English C1, C# Advanced, Salesforce Developer I";
 
             try
             {
-                var cvData = string.IsNullOrWhiteSpace(request.CvData) ? FallbackCv : request.CvData;
+                var cvData = string.IsNullOrWhiteSpace(request.CvData) ? _demoCv.Text : request.CvData;
                 var content = await generate(ToRecruiter(request.MatchData), cvData, ToMatchResponse(request.MatchData));
 
                 return Ok(new

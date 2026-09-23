@@ -1,0 +1,53 @@
+Marko Keser
+Backend Developer | C# / .NET · Java · SQL
+Belgrade, Serbia | +381 63 218 039 | markokeser.dev@gmail.com
+linkedin.com/in/kesermarko | github.com/markokeser | kesermarko.com
+
+SUMMARY
+Backend developer with 2+ years of experience building and maintaining applications in C#/.NET and Java across enterprise software, iGaming and Salesforce. Supported a U.S. client's production C# web application, designed math models and game logic for online slot games, and built two ASP.NET Core projects: a restaurant management system used at live events and an AI-powered recruiter matching tool built on the OpenAI API. Open to on-site, hybrid and remote roles.
+
+SKILLS
+Languages: C#, Java, SQL, JavaScript, HTML, CSS
+Frameworks & APIs: ASP.NET Core MVC (.NET 8), RESTful APIs, React, Authentication & Authorization (RBAC, claims-based)
+Databases & Tools: MySQL, Microsoft SQL Server, Git, GitHub, Docker, Postman, Railway
+AI & Platforms: OpenAI API (JSON mode), Prompt-based integrations, Secure API key handling, Salesforce
+
+EXPERIENCE
+Self-improvement — Spanish Language Course, SpeakEasy Spanish School, Barcelona, Spain | Oct 2025 – May 2026
+• Spanish language course; reached B2 level (CEFR).
+
+Wicked Games — Backend / Math Developer | Feb 2025 – Oct 2025
+• Designed math models and game rules for online slot games, including payout logic, RTP and volatility.
+• Implemented game logic and backend functionality in Java.
+• Kept game math within legal and regulatory requirements while balancing mechanics for an engaging player experience.
+
+Quadro Consulting — Backend Developer | Jan 2024 – Dec 2024
+• Developed new features for an enterprise Java application and helped define how system components integrate.
+• Moved to a U.S. client project, maintaining and extending their production C# web application, including front-end changes in C#, HTML and JavaScript.
+• Investigated and resolved production issues, including hard-to-reproduce bugs, keeping the application stable.
+
+Kameleon Solutions — Salesforce Developer (Internship) | Sep 2022 – Feb 2023
+• Developed components for client Salesforce orgs and supported senior developers with development and administration tasks.
+
+PROJECTS
+Recruiter Scanner — AI-Powered Recruiter Matching & Outreach Tool
+C# · .NET 8 · ASP.NET Core MVC · OpenAI API · CsvHelper · JavaScript · Docker
+• Built a web app that scores recruiters and companies against a candidate's CV using the OpenAI API in JSON mode, returning a 1–10 match score with reasoning, strengths and weaknesses.
+• Generates editable email and LinkedIn outreach drafts per recruiter; imports recruiter lists from CSV (CsvHelper) and JSON with validation and clear error messages.
+• Analyzes recruiters in parallel with limited concurrency and a real-time progress bar; refactored a shared OpenAI service base class (typed HttpClient, auth, response parsing), cutting compiler warnings from 94 to 0 and HTML-escaping AI output to prevent XSS.
+GitHub: github.com/markokeser/Recruiter-Scanner | Live demo: recruiter-scanner-production.up.railway.app
+
+Zubac-Matine — Restaurant Management System
+ASP.NET Core MVC · C# · MySQL · Docker · Railway
+• Built an end-to-end web app for managing orders, tables and billing; used at live events to track tables, drinks and shared bills in real time.
+• Implemented authentication, authorization and role separation using claims-based RBAC, and designed the MySQL schema with optimized queries for daily operational use.
+• Containerized the app with Docker and deployed it to Railway; added error handling for stability during live use.
+GitHub: github.com/markokeser/Zubac-Matine | Live demo: zubac-matine-production.up.railway.app
+
+EDUCATION & CERTIFICATIONS
+Gymnasium "Kosta Cukić" — General Secondary Education, Belgrade, Serbia | 2016 – 2020
+Salesforce Certified Platform Developer I | 2022
+C# Advanced Course — OIT | 2021
+
+LANGUAGES
+Serbian – Native | English – C1 | Spanish – B2
