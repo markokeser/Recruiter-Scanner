@@ -10,6 +10,7 @@ namespace Recruiter_Scanner
 
             builder.Services.AddHttpClient<IAIService, OpenAIService>();
             builder.Services.AddHttpClient<IEmailGenerationService, OpenAIEmailService>();
+            builder.Services.AddSingleton<DemoCvProvider>();
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();

@@ -92,6 +92,7 @@ namespace Recruiter_Scanner.Models
     {
         public List<Recruiter> Recruiters { get; set; } = new List<Recruiter>();
         public string? ErrorMessage { get; set; }
+        public string DemoCv { get; set; } = string.Empty;
     }
 
     public class JsonRecruiter

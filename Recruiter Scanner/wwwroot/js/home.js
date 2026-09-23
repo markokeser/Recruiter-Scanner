@@ -2,30 +2,8 @@
 (() => {
     const { icon, escapeHtml, scoreTier, scoreVerdict, scoreRing, avatar, toast, openModal, submitFile, cv } = RS;
 
-    const DEMO_CV = `SOFTWARE ENGINEER - FULL STACK DEVELOPER
-
-PERSONAL INFORMATION
-Location: Barcelona, Spain (EU Citizen)
-Languages: English (Fluent), Serbian (Native), Spanish (Learning)
-
-PROFESSIONAL SUMMARY
-Full Stack Developer with 5+ years of experience building scalable web applications and AI integrations.
-
-TECHNICAL SKILLS
-• Backend: C# / .NET Core, Java, Node.js, Python
-• Frontend: JavaScript, TypeScript, React, Vue.js
-• Databases: SQL Server, PostgreSQL, MongoDB
-• Cloud & DevOps: Azure, AWS, Docker, Kubernetes
-• AI & Tools: OpenAI API, LangChain, Prompt Engineering
-
-WORK EXPERIENCE
-• Senior Full Stack Developer (2022-Present) - Leading team of 4 developers
-• Full Stack Developer (2020-2022) - Fintech web applications
-• Backend Developer (2018-2020) - RESTful APIs, database optimization
-
-EDUCATION
-• Master's in Computer Science - University of Barcelona
-• Bachelor's in Software Engineering - Faculty of Technical Sciences`;
+    // Demo CV comes from the server (wwwroot/demo/demo_cv.txt).
+    const DEMO_CV = JSON.parse(document.getElementById('demoCvData').textContent || '""');
 
     const ANALYZE_CONCURRENCY = 3;
 
