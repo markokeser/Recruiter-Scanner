@@ -1,6 +1,19 @@
-﻿@{
-    ViewData["Title"] = "Privacy Policy";
+@{
+    ViewData["Title"] = "Privacy";
 }
-<h1>@ViewData["Title"]</h1>
 
-<p>Use this page to detail your site's privacy policy.</p>
+<section class="page-head">
+    <div>
+        <span class="eyebrow plain">Privacy</span>
+        <h1 class="h1">How your data is handled</h1>
+    </div>
+</section>
+
+<div class="card" style="max-width:760px">
+    <ul class="tip-list">
+        <li><i data-icon="shield"></i><span>Your CV is stored only in your browser's <span class="mono">localStorage</span>. Clear your site data to remove it.</span></li>
+        <li><i data-icon="cpu"></i><span>CV text and recruiter details are sent to the OpenAI API only when you run an analysis or generate a message.</span></li>
+        <li><i data-icon="database"></i><span>Uploaded files are processed in memory and are not stored on the server.</span></li>
+        <li><i data-icon="mail"></i><span>Nothing is sent to recruiters automatically — you copy drafts and send them yourself.</span></li>
+    </ul>
+</div>

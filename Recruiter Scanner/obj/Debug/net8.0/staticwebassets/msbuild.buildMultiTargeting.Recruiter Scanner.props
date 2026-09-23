@@ -1,3 +1,0 @@
-﻿<Project>
-  <Import Project="..\build\Recruiter Scanner.props" />
-</Project>
